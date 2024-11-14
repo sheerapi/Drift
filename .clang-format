@@ -1,0 +1,15 @@
+BasedOnStyle: Microsoft
+FixNamespaceComments: false
+UseTab: Always
+TabWidth: 4
+AccessModifierOffset: -4
+PointerAlignment: Left
+QualifierAlignment: Left
+ReferenceAlignment: Left
+ReflowComments: true
+ColumnLimit: 90
+SortIncludes: CaseSensitive
+IndentPPDirectives: AfterHash
+AlignOperands: Align
+BreakBeforeBraces: Allman
+NamespaceIndentation: All
