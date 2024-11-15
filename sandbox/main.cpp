@@ -1,6 +1,7 @@
 #include "core/Application.h"
 
-int main(int argc, const char** argv) {
+auto main(int argc, const char** argv) -> int {
     auto* app = new Drift::Application("com.drift.sandbox");
-    return 0;
+
+    return app->Present();
 }

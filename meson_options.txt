@@ -1,0 +1,6 @@
+option(
+    'no_glfw',
+    type: 'boolean',
+    value: false,
+    description: 'Whether to compile or not with GLFW',
+)

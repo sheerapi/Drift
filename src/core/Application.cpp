@@ -1,17 +1,23 @@
 #include "core/Application.h"
+#include "core/ApplicationInfo.h"
 #include "core/Logger.h"
 
 namespace Drift
 {
-    Application::Application(const std::string& appId)
-    {
-        if (main != nullptr)
-        {
-            dt_coreFatal("Another application instance is running!");
-        }
+	Application::Application(const std::string& appId)
+	{
+		Logger::Init();
 
-        main = this;
+		if (main != nullptr)
+		{
+			dt_coreFatal("Another application instance is running!");
+		}
 
-        _id = ApplicationID(appId);
-    }
+		main = this;
+
+		_id = ApplicationID(appId);
+		_env = EnvironmentInfo();
+
+		dt_coreInfo("Initialized \"{}\"", _id.GetCompoundID());
+	}
 }

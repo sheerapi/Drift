@@ -10,9 +10,10 @@ namespace Drift
 		inline static Application* main{nullptr};
 
 		Application(const std::string& appId);
-		void Present();
+		auto Present() -> int;
 
 	private:
 		ApplicationID _id;
+		EnvironmentInfo _env;
 	};
 }
