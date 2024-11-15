@@ -9,5 +9,9 @@ namespace Drift
         {
             dt_coreFatal("Another application instance is running!");
         }
+
+        main = this;
+
+        _id = ApplicationID(appId);
     }
 }

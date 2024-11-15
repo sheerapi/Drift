@@ -1,25 +1,18 @@
 #pragma once
+#include "core/ApplicationInfo.h"
 #include <string>
 
 namespace Drift
 {
-    struct ApplicationID
+	class Application
 	{
 	public:
-		std::string Domain{"com"};
-		std::string Organization;
-		std::string Name;
+		inline static Application* main{nullptr};
+
+		Application(const std::string& appId);
+		void Present();
+
+	private:
+		ApplicationID _id;
 	};
-
-    class Application
-    {
-    public:
-        inline static Application* main{nullptr};
-
-        Application(const std::string& appId);
-        void Present();
-
-    private:
-        ApplicationID _id;
-    };
 }

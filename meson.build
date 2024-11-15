@@ -1,6 +1,11 @@
-project('Drift', 'cpp', version: '0.0.1')
+project('Drift', 'cpp', version: '0.0.1', meson_version: '1.6.0')
 
-sources = []
+sources = [
+    'src/core/Application.cpp',
+    'src/core/ApplicationInfo.cpp',
+    'src/utils/Demangle.cpp',
+    'src/utils/StringUtils.cpp',
+]
 
 run_command('./skia.sh', host_machine.system(), 'x64', check: true)
 
@@ -32,3 +37,8 @@ drift_dep = declare_dependency(
 meson.override_dependency('drift', drift_dep)
 
 executable('sandbox', sources: 'sandbox/main.cpp', dependencies: drift_dep)
+executable(
+    'dac',
+    sources: 'tools/dac.cpp',
+    dependencies: [dependency('libzstd'), dependency('rapidjson')],
+)

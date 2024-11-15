@@ -4,7 +4,7 @@
 
 namespace Drift
 {
-    struct ApplicationID
+	struct ApplicationID
 	{
 	public:
 		std::string Domain{"com"};
@@ -17,15 +17,6 @@ namespace Drift
 		[[nodiscard]] auto GetCompoundID() const -> std::string;
 
 		static auto CheckAppID(const std::string& appId) -> bool;
-	};
-
-	struct ApplicationInfo
-	{
-	public:
-		std::string Organization;
-		std::string Name;
-		std::string Version;
-		ApplicationID AppID;
 	};
 
 	struct EnvironmentInfo
