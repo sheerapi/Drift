@@ -37,8 +37,3 @@ drift_dep = declare_dependency(
 meson.override_dependency('drift', drift_dep)
 
 executable('sandbox', sources: 'sandbox/main.cpp', dependencies: drift_dep)
-executable(
-    'dac',
-    sources: 'tools/dac.cpp',
-    dependencies: [dependency('libzstd'), dependency('rapidjson')],
-)
