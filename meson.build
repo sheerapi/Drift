@@ -7,6 +7,10 @@ sources = [
     'src/utils/StringUtils.cpp',
 ]
 
+if get_option('debug')
+    add_global_arguments('-DDEBUG', language: ['c', 'cpp'])
+endif
+
 run_command('./skia.sh', host_machine.system(), 'x64', check: true)
 
 dependencies = [

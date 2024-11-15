@@ -2,6 +2,10 @@
 #include "core/Logger.h"
 #include "utils/StringUtils.h"
 
+#ifdef DEBUG
+#	include <regex>
+#endif
+
 namespace Drift
 {
 	ApplicationID::ApplicationID(const std::string& appId)
@@ -32,16 +36,21 @@ namespace Drift
 	}
 
 	auto ApplicationID::CheckAppID(const std::string& appId) -> bool
-    {
+	{
 #ifdef DEBUG
 		if (!std::regex_match(
 				appId, std::regex("[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)?")))
 		{
-			es_coreError("Application ID \"{}\" is invalid", appId);
+			dt_coreError("Application ID \"{}\" is invalid", appId);
 			return false;
 		}
 #endif
 
-        return true;
+		return true;
+	}
+
+	auto ApplicationID::GetCompoundID() const -> std::string
+	{
+		return Domain + "." + Org + "." + Name;
 	}
 }
