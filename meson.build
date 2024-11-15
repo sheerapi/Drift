@@ -4,7 +4,17 @@ sources = []
 
 run_command('./skia.sh', host_machine.system(), 'x64', check: true)
 
-dependencies = [dependency('skia')]
+dependencies = [
+    dependency('skia'),
+    dependency(
+        'spdlog',
+        default_options: {
+            'external_fmt': 'enabled',
+            'compile_library': true,
+            'default_library': 'static',
+        },
+    ),
+]
 
 drift = shared_library(
     'drift',
