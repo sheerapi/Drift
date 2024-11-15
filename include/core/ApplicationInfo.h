@@ -27,5 +27,7 @@ namespace Drift
 		std::string AssetsDirectory;
 		std::string RootPath;
 		std::vector<std::string> CommandLineArgs;
+
+		EnvironmentInfo();
 	};
 }
