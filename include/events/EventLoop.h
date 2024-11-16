@@ -19,6 +19,8 @@ namespace Drift
 			Views.push_back(view);
 		}
 
+		void PrintViewTree();
+
 	protected:
 		std::vector<std::shared_ptr<View>> Views;
 	};

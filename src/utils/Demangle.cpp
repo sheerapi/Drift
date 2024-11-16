@@ -32,7 +32,7 @@ auto demangle(const char* name) -> std::string {
 #endif
 }
 
-auto getNamespaceFreeName(const char* name) -> std::string
+auto getNamespaceFreeName(const std::string& name) -> std::string
 {
     return stringSplit(name, "::").back();
 }

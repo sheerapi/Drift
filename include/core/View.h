@@ -1,4 +1,7 @@
 #pragma once
+#include "core/Element.h"
+#include <memory>
+#include <vector>
 
 namespace Drift
 {
@@ -19,7 +22,12 @@ namespace Drift
             _enabled = enabled;
         }
 
-    private:
+        void PrintElementTree();
+
+    protected:
+		std::vector<std::shared_ptr<Element>> Children;
+
+	private:
         bool _enabled{true};
     };
 }

@@ -3,11 +3,14 @@ project('Drift', 'cpp', version: '0.0.1', meson_version: '1.6.0', default_option
 sources = [
     'src/core/Application.cpp',
     'src/core/ApplicationInfo.cpp',
+    'src/core/Element.cpp',
+    'src/core/View.cpp',
     'src/utils/Demangle.cpp',
     'src/utils/StringUtils.cpp',
     'src/events/Observable.cpp',
     'src/events/EventManager.cpp',
-    'src/events/DummyEventLoop.cpp'
+    'src/events/DummyEventLoop.cpp',
+    'src/events/EventLoop.cpp'
 ]
 
 cmake = import('cmake')

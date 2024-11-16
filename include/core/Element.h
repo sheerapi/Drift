@@ -4,13 +4,18 @@
 
 namespace Drift
 {
-    class Element
-    {
-    public:
-        Element();
-        
-    private:
-        std::vector<std::shared_ptr<Element>> _children;
-        std::weak_ptr<Element> _parent;
-    };
+	class Element
+	{
+	public:
+		Element();
+
+		virtual auto ToString() -> std::string;
+		void DebugPrint(int depth = 0);
+
+	protected:
+		std::vector<std::shared_ptr<Element>> Children;
+
+	private:
+		std::weak_ptr<Element> _parent;
+	};
 }

@@ -13,7 +13,7 @@ auto demangle(const char* name) -> std::string;
 
 #define dt_type(type) demangle(typeid(type).name())
 
-auto getNamespaceFreeName(const char* name) -> std::string;
+auto getNamespaceFreeName(const std::string& name) -> std::string;
 
 template <typename T1, typename T2> auto typeCheck() -> bool
 {

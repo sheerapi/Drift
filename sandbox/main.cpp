@@ -7,6 +7,7 @@ auto main(int argc, const char** argv) -> int {
     app->AttachEventLoop<Drift::Events::DummyEventLoop>();
 
     auto window = app->AttachView<Drift::View>();
+    app->GetEventLoop()->PrintViewTree();
 
     return app->Present();
 }
