@@ -31,7 +31,7 @@ namespace Drift
 		auto AttachView(Args&&... args) -> std::shared_ptr<T>
 		{
 			auto view = std::make_shared<T>(args...);
-			if (_eventLoop != nullptr)
+			if (_eventLoop == nullptr)
 			{
 				dt_coreError("No event loop attached!");
 			}
