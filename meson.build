@@ -1,11 +1,15 @@
-project('Drift', 'cpp', version: '0.0.1', meson_version: '1.6.0')
+project('Drift', 'cpp', version: '0.0.1', meson_version: '1.6.0', default_options: ['cpp_std=c++20'])
 
 sources = [
     'src/core/Application.cpp',
     'src/core/ApplicationInfo.cpp',
     'src/utils/Demangle.cpp',
     'src/utils/StringUtils.cpp',
+    'src/events/Observable.cpp',
+    'src/events/EventManager.cpp'
 ]
+
+cmake = import('cmake')
 
 if get_option('debug')
     add_global_arguments('-DDEBUG', language: ['c', 'cpp'])
@@ -23,6 +27,7 @@ dependencies = [
             'default_library': 'static',
         },
     ),
+    cmake.subproject('yoga').dependency('yogacore'),
 ]
 
 drift = shared_library(

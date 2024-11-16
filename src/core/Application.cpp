@@ -20,4 +20,9 @@ namespace Drift
 
 		dt_coreInfo("Initialized \"{}\"", _id.GetCompoundID());
 	}
+
+	auto Application::Present() -> int
+	{
+		return 0;
+	}
 }
