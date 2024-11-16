@@ -1,4 +1,5 @@
 #pragma once
+#include "utils/Demangle.h"
 #include <memory>
 #include <vector>
 
@@ -9,6 +10,15 @@ namespace Drift
 	public:
 		Element();
 
+        template<typename T, typename... Args> auto AddChild(Args&& ...args) -> std::shared_ptr<T>
+        {
+            typeCheck<Element, T>();
+            return AddChild(std::make_shared<T>(args...));
+        }
+
+        auto AddChild(Element* element) -> std::shared_ptr<Element>;
+		auto AddChild(const std::shared_ptr<Element>& element) -> std::shared_ptr<Element>;
+
 		virtual auto ToString() -> std::string;
 		void DebugPrint(int depth = 0);
 
@@ -16,6 +26,8 @@ namespace Drift
 		std::vector<std::shared_ptr<Element>> Children;
 
 	private:
-		std::weak_ptr<Element> _parent;
+		Element* _parent;
+        std::string _id;
+        std::vector<std::string> _className;
 	};
 }
