@@ -1,6 +1,6 @@
 #include "core/Application.h"
 #include "core/ApplicationInfo.h"
-#include "core/Logger.h"
+#include "utils/Demangle.h" // IWYU pragma: keep
 
 namespace Drift
 {
@@ -23,6 +23,38 @@ namespace Drift
 
 	auto Application::Present() -> int
 	{
+		if (_eventLoop == nullptr)
+		{
+			dt_coreError("No event loop attached!");
+			return 2;
+		}
+
+		if (_presented)
+		{
+			dt_coreError("Application already presented!");
+			return 3;
+		}
+
+		_presented = true;
+
+		try
+		{
+			_eventLoop->Start();
+
+			while (_eventLoop->IsRunning())
+			{
+				_eventLoop->Tick();
+			}
+		}
+		catch (const std::exception& e)
+		{
+			auto& evloop = *_eventLoop;
+
+			dt_coreFatal("An error ocurred when executing \"{}\": {}",
+						 dt_type(evloop), e.what());
+			return 4;
+		}
+
 		return 0;
 	}
 }

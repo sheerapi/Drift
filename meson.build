@@ -6,7 +6,8 @@ sources = [
     'src/utils/Demangle.cpp',
     'src/utils/StringUtils.cpp',
     'src/events/Observable.cpp',
-    'src/events/EventManager.cpp'
+    'src/events/EventManager.cpp',
+    'src/events/DummyEventLoop.cpp'
 ]
 
 cmake = import('cmake')
