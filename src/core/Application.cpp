@@ -57,4 +57,9 @@ namespace Drift
 
 		return 0;
 	}
+
+	auto Application::GetEventLoop() -> std::shared_ptr<EventLoop>
+	{
+		return _eventLoop;
+	}
 }

@@ -1,4 +1,7 @@
 #pragma once
+#include "core/View.h"
+#include <memory>
+#include <vector>
 
 namespace Drift
 {
@@ -10,5 +13,13 @@ namespace Drift
 		virtual ~EventLoop() = default;
 
 		virtual auto IsRunning() -> bool = 0;
+
+		inline void PushView(const std::shared_ptr<View>& view)
+		{
+			Views.push_back(view);
+		}
+
+	protected:
+		std::vector<std::shared_ptr<View>> Views;
 	};
 }

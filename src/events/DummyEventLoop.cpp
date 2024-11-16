@@ -3,9 +3,24 @@
 
 namespace Drift::Events
 {
+	void DummyEventLoop::Start()
+	{
+		for (auto& view : Views)
+		{
+			view->Present();
+		}
+	}
+
 	void DummyEventLoop::Tick()
 	{
-		sleep(1);
+		for (auto& view : Views)
+		{
+			if (view->IsEnabled())
+			{
+				view->Update();
+				view->Render();
+			}
+		}
 	}
 
 	auto DummyEventLoop::IsRunning() -> bool
