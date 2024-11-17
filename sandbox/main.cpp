@@ -9,5 +9,7 @@ auto main(int argc, const char** argv) -> int {
     auto window = app->AttachView<Drift::View>();
     app->GetEventLoop()->PrintViewTree();
 
+    window->NavigateBack();
+
     return app->Present();
 }

@@ -10,15 +10,24 @@ namespace Drift
 	{
 	public:
 		View();
+		virtual ~View() = default;
 
 		virtual void Present() {};
 		virtual void Update() {};
 		virtual void Render() {};
-		virtual void Close() {};
+		virtual void Close()
+		{
+			dt_info("Closing view!");
+		};
 
 		[[nodiscard]] inline auto IsEnabled() const -> bool
 		{
 			return _enabled;
+		}
+
+		[[nodiscard]] inline auto IsRunning() const -> bool
+		{
+			return Running;
 		}
 
 		inline void SetEnabled(bool enabled)

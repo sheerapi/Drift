@@ -24,6 +24,7 @@ namespace Drift
 		// If we closed every activity, close this View
 		if (Activities.empty())
 		{
+			Running = false;
 			Close();
 		}
 	}

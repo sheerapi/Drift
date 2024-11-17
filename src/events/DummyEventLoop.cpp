@@ -13,8 +13,18 @@ namespace Drift::Events
 
 	void DummyEventLoop::Tick()
 	{
+		if (Views.empty())
+		{
+			_running = false;
+		}
+		
 		for (auto& view : Views)
 		{
+			if (!view->IsRunning())
+			{
+				std::erase(Views, view);
+			}
+
 			if (view->IsEnabled())
 			{
 				view->Update();
@@ -25,6 +35,6 @@ namespace Drift::Events
 
 	auto DummyEventLoop::IsRunning() -> bool
 	{
-		return true;
+		return _running;
 	}
 }

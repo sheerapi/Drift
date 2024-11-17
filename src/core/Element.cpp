@@ -34,7 +34,7 @@ namespace Drift
             tabs += "   ";
         }
 
-        dt_coreInfo("{}{}", tabs, ToString());
+        dt_coreDebug("{}{}", tabs, ToString());
 
         for (auto& child : Children)
         {
