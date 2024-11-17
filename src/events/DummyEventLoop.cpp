@@ -1,3 +1,5 @@
+// Not exactly a dummy event loop anymore, but more like an example one without actual windowing systems
+
 #include "events/DummyEventLoop.h"
 #include <unistd.h>
 
@@ -17,7 +19,7 @@ namespace Drift::Events
 		{
 			_running = false;
 		}
-		
+
 		for (auto& view : Views)
 		{
 			if (!view->IsRunning())

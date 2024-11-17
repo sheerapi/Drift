@@ -2,8 +2,8 @@
 #include "core/Logger.h"
 #include "utils/StringUtils.h"
 #include <filesystem>
-#include <unistd.h>
 #include <fstream>
+#include <unistd.h>
 
 #ifdef DEBUG
 #	include <regex>
@@ -99,5 +99,16 @@ namespace Drift
 #endif
 
 		RootPath = std::filesystem::path(ExecutablePath).remove_filename();
+
+		if (HasFlag("--verbose") || HasFlag("-v"))
+		{
+			Verbose = true;
+		}
+	}
+
+	auto EnvironmentInfo::HasFlag(const std::string& flag) -> bool
+	{
+		return std::find(CommandLineArgs.begin(), CommandLineArgs.end(), flag) !=
+			   CommandLineArgs.end();
 	}
 }

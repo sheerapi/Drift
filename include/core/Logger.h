@@ -167,9 +167,15 @@ namespace Drift
 			if (!static_cast<bool>(condition))                                           \
 				SPDLOG_INFO("Assertion \"{}\" failed: {}", #condition, msg);             \
 		}
+#	define dt_verbose(msg, ...)                                                         \
+		{                                                                                \
+			if (Application::main->GetEnvironmentInfo().Verbose)                         \
+				SPDLOG_INFO(msg, ##__VA_ARGS__);                                         \
+		}
 #else
 #	define dt_debug(msg, ...)
 #	define dt_assert(condition, msg)
+#	define dt_verbose(msg, ...)
 #endif
 
 #define dt_coreInfo(msg, ...) Drift::Logger::Info(msg, ##__VA_ARGS__)
@@ -183,7 +189,13 @@ namespace Drift
 #	define dt_coreAssert(condition, msg)                                                \
 		Drift::Logger::Assert(static_cast<bool>(condition), #condition, __FILENAME__,    \
 							  msg, __LINE__)
+#	define dt_coreVerbose(msg, ...)                                                     \
+		{                                                                                \
+			if (Application::main->GetEnvironmentInfo().Verbose)                         \
+				Drift::Logger::Info(msg, ##__VA_ARGS__);                                 \
+		}
 #else
 #	define dt_coreDebug(msg, ...)
 #	define dt_coreAssert(condition, msg)
+#	define dt_coreVerbose(msg, ...)
 #endif
