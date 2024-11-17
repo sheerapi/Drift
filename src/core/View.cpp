@@ -3,6 +3,10 @@
 #include "core/Logger.h"
 #include "utils/Demangle.h"
 
+#ifdef DEBUG
+#	include "core/Application.h"
+#endif
+
 namespace Drift
 {
 	View::View()
@@ -18,8 +22,19 @@ namespace Drift
 			return;
 		}
 
+#ifdef DEBUG
+		auto old = GetCurrentActivity()->GetActivityID();
+#endif
+
 		GetCurrentActivity()->SetStatus(Activity::Status::Destroyed);
 		Activities.pop();
+
+#ifdef DEBUG
+		auto currentActivity =
+			Activities.empty() ? "No Activity" : GetCurrentActivity()->GetActivityID();
+#endif
+
+		dt_verbose("View changed activity: {} -> {}", old, currentActivity);
 
 		// If we closed every activity, close this View
 		if (Activities.empty())
@@ -45,10 +60,22 @@ namespace Drift
 			GetCurrentActivity()->SetStatus(Activity::Status::Paused);
 		}
 
+#ifdef DEBUG
+		auto old =
+			Activities.empty() ? "No Activity" : GetCurrentActivity()->GetActivityID();
+#endif
+
 		Activities.push(activity);
 		GetCurrentActivity()->OnCreate();
 		GetCurrentActivity()->SetStatus(Activity::Status::Active);
 		GetCurrentActivity()->SetContainingView(this);
+
+#ifdef DEBUG
+		auto current =
+			Activities.empty() ? "No Activity" : GetCurrentActivity()->GetActivityID();
+#endif
+
+		dt_verbose("View changed activity: {} -> {}", old, current);
 
 		return GetCurrentActivity();
 	}
@@ -61,10 +88,22 @@ namespace Drift
 	auto View::ReplaceActivity(const std::shared_ptr<Activity>& activity)
 		-> std::shared_ptr<Activity>
 	{
+#ifdef DEBUG
+		auto old =
+			Activities.empty() ? "No Activity" : GetCurrentActivity()->GetActivityID();
+#endif
+
 		Activities.top() = activity;
 		GetCurrentActivity()->OnCreate();
 		GetCurrentActivity()->SetStatus(Activity::Status::Active);
 		GetCurrentActivity()->SetContainingView(this);
+
+#ifdef DEBUG
+		auto current =
+			Activities.empty() ? "No Activity" : GetCurrentActivity()->GetActivityID();
+#endif
+
+		dt_verbose("View replaced activity: {} -> {}", old, current);
 
 		return GetCurrentActivity();
 	}
