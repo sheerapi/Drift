@@ -8,6 +8,7 @@ sources = [
     'src/core/Activity.cpp',
     'src/utils/Demangle.cpp',
     'src/utils/StringUtils.cpp',
+    'src/utils/PerformanceTimer.cpp',
     'src/events/Observable.cpp',
     'src/events/EventManager.cpp',
     'src/events/DummyEventLoop.cpp',

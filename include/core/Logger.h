@@ -169,7 +169,7 @@ namespace Drift
 		}
 #	define dt_verbose(msg, ...)                                                         \
 		{                                                                                \
-			if (Application::main->GetEnvironmentInfo().Verbose)                         \
+			if (Drift::Application::main->GetEnvironmentInfo().Verbose)                         \
 				SPDLOG_INFO(msg, ##__VA_ARGS__);                                         \
 		}
 #else
@@ -191,8 +191,8 @@ namespace Drift
 							  msg, __LINE__)
 #	define dt_coreVerbose(msg, ...)                                                     \
 		{                                                                                \
-			if (Application::main->GetEnvironmentInfo().Verbose)                         \
-				Drift::Logger::Info(msg, ##__VA_ARGS__);                                 \
+			if (Drift::Application::main->GetEnvironmentInfo().Verbose)                         \
+				Drift::Logger::Trace(msg, ##__VA_ARGS__);                                 \
 		}
 #else
 #	define dt_coreDebug(msg, ...)

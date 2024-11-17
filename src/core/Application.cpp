@@ -1,6 +1,7 @@
 #include "core/Application.h"
 #include "core/ApplicationInfo.h"
 #include "utils/Demangle.h" // IWYU pragma: keep
+#include "utils/PerformanceTimer.h"
 
 namespace Drift
 {
@@ -14,6 +15,8 @@ namespace Drift
 		}
 
 		main = this;
+
+		dt_stopwatch();
 
 		_id = ApplicationID(appId);
 		_env = EnvironmentInfo();
