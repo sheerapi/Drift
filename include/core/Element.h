@@ -8,7 +8,7 @@ namespace Drift
 	class Element
 	{
 	public:
-		Element();
+		Element() = default;
 
         template<typename T, typename... Args> auto AddChild(Args&& ...args) -> std::shared_ptr<T>
         {
@@ -21,6 +21,9 @@ namespace Drift
 
 		virtual auto ToString() -> std::string;
 		void DebugPrint(int depth = 0);
+
+		virtual void Update() {};
+		virtual void Draw() {};
 
 	protected:
 		std::vector<std::shared_ptr<Element>> Children;

@@ -5,7 +5,7 @@ namespace Drift
 {
     void EventLoop::PrintViewTree()
     {
-        dt_coreInfo("root@{}", getNamespaceFreeName(dt_type(*this)));
+        dt_coreDebug("root@{}", getNamespaceFreeName(dt_type(*this)));
         
         for (auto& view : Views)
         {

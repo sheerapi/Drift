@@ -62,4 +62,14 @@ namespace Drift
 	{
 		return _eventLoop;
 	}
+
+	auto Application::GetApplicationID() -> ApplicationID
+	{
+		return main->_id;
+	}
+
+	auto Application::GetEnvironmentInfo() -> EnvironmentInfo
+	{
+		return main->_env;
+	}
 }

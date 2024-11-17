@@ -1,33 +1,65 @@
 #pragma once
-#include "core/Element.h"
+#include "core/Activity.h"
+#include "utils/Demangle.h"
 #include <memory>
-#include <vector>
+#include <stack>
 
 namespace Drift
 {
-    class View
-    {
-    public:
-        virtual void Present() {};
-        virtual void Update() {};
-        virtual void Render() {};
+	class View
+	{
+	public:
+		View();
 
-        [[nodiscard]] inline auto IsEnabled() const -> bool
-        {
-            return _enabled;
-        }
+		virtual void Present() {};
+		virtual void Update() {};
+		virtual void Render() {};
+		virtual void Close() {};
 
-        inline void SetEnabled(bool enabled)
-        {
-            _enabled = enabled;
-        }
+		[[nodiscard]] inline auto IsEnabled() const -> bool
+		{
+			return _enabled;
+		}
 
-        void PrintElementTree();
+		inline void SetEnabled(bool enabled)
+		{
+			_enabled = enabled;
+		}
 
-    protected:
-		std::vector<std::shared_ptr<Element>> Children;
+		void PrintElementTree();
+		void NavigateBack();
+
+		auto GetCurrentActivity() -> std::shared_ptr<Activity>;
+
+		auto AddActivity(const std::shared_ptr<Activity>& activity)
+			-> std::shared_ptr<Activity>;
+
+		template <typename T, typename... Args>
+		auto AddActivity(Args&&... args) -> std::shared_ptr<T>
+		{
+			typeCheck<Activity, T>();
+			return AddActivity(std::make_shared<T>(args...));
+		}
+
+		auto AddActivity(Activity* activity) -> std::shared_ptr<Activity>;
+
+		template <typename T, typename... Args>
+		auto ReplaceActivity(Args&&... args) -> std::shared_ptr<T>
+		{
+			typeCheck<Activity, T>();
+			return ReplaceActivity(std::make_shared<T>(args...));
+		}
+
+		auto ReplaceActivity(const std::shared_ptr<Activity>& activity)
+			-> std::shared_ptr<Activity>;
+
+		auto ReplaceActivity(Activity* activity) -> std::shared_ptr<Activity>;
+
+	protected:
+		std::stack<std::shared_ptr<Activity>> Activities;
+		bool Running{true};
 
 	private:
-        bool _enabled{true};
-    };
+		bool _enabled{true};
+	};
 }

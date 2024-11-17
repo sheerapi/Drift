@@ -5,6 +5,7 @@ sources = [
     'src/core/ApplicationInfo.cpp',
     'src/core/Element.cpp',
     'src/core/View.cpp',
+    'src/core/Activity.cpp',
     'src/utils/Demangle.cpp',
     'src/utils/StringUtils.cpp',
     'src/events/Observable.cpp',

@@ -15,6 +15,8 @@ namespace Drift
 		Application(const std::string& appId);
 		auto Present() -> int;
 		auto GetEventLoop() -> std::shared_ptr<EventLoop>;
+		static auto GetApplicationID() -> ApplicationID;
+		static auto GetEnvironmentInfo() -> EnvironmentInfo;
 
 		template <typename T> void AttachEventLoop()
 		{
