@@ -1,11 +1,12 @@
 #pragma once
 #ifdef DEBUG
+#	include "core/Macros.h"
 #	include <chrono>
 #	include <string>
 
 namespace Drift::Internals
 {
-	class PerformanceTimer
+	class dt_api PerformanceTimer
 	{
 	public:
 		PerformanceTimer(const std::string& name);

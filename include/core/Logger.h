@@ -1,4 +1,5 @@
 #pragma once
+#include "core/Macros.h"
 #include <memory>
 
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
@@ -18,7 +19,7 @@ namespace Drift
 	 * Used only by Drift, as it has the huge "Drift" name on it.
 	 * For normal logging, use the "dt_" related macros
 	 */
-	class Logger
+	class dt_api Logger
 	{
 	public:
 		/**

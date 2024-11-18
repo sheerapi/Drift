@@ -1,4 +1,5 @@
 #pragma once
+#include "core/Macros.h"
 #include <functional>
 #include <mutex>
 #include <string>
@@ -9,7 +10,7 @@ namespace Drift::Events
 {
 	using EventListener = std::function<void(void*)>;
 
-	class EventManager
+	class dt_api EventManager
 	{
 	public:
 		static void TriggerEvent(const std::string& name, void* data = nullptr);

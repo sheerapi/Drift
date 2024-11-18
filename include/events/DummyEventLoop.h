@@ -1,9 +1,10 @@
 #pragma once
 #include "EventLoop.h"
+#include "core/Macros.h"
 
 namespace Drift::Events
 {
-	class DummyEventLoop : public EventLoop
+	class dt_api DummyEventLoop : public EventLoop
 	{
 		void Start() override;
 		void Tick() override;

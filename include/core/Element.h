@@ -1,11 +1,12 @@
 #pragma once
 #include "utils/Demangle.h"
+#include "core/Macros.h"
 #include <memory>
 #include <vector>
 
 namespace Drift
 {
-	class Element
+	class dt_api Element
 	{
 	public:
 		Element() = default;

@@ -7,7 +7,7 @@
 
 namespace Drift
 {
-	class Application
+	class dt_api Application
 	{
 	public:
 		inline static Application* main{nullptr};
@@ -48,5 +48,3 @@ namespace Drift
 		bool _presented{false};
 	};
 }
-
-#define dt_verboseFlag Drift::Application::main->GetEnvironmentInfo().Verbose

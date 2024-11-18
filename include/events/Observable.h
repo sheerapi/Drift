@@ -1,7 +1,5 @@
 #pragma once
-#include "core/Logger.h"
-#include "utils/StringUtils.h"
-#include <algorithm>
+#include "core/Macros.h"
 #include <functional>
 #include <string>
 #include <unordered_map>
@@ -15,7 +13,7 @@ namespace Drift::Events
 	 */
 	using SignalHandler = std::function<void(void*)>;
 
-	class Observable
+	class dt_api Observable
 	{
 	public:
 		/**

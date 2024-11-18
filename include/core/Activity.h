@@ -1,11 +1,12 @@
 #pragma once
 #include "core/Element.h"
+#include "core/Macros.h"
 
 namespace Drift
 {
     class View;
 
-    class Activity
+    class dt_api Activity
     {
     public:
         enum class Status

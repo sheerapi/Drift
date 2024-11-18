@@ -1,11 +1,12 @@
 #pragma once
+#include "core/Macros.h"
 #include "core/View.h"
 #include <memory>
 #include <vector>
 
 namespace Drift
 {
-	class EventLoop
+	class dt_api EventLoop
 	{
 	public:
 		virtual void Start() {};

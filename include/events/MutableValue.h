@@ -1,10 +1,11 @@
 #pragma once
+#include "core/Macros.h"
 #include <functional>
 #include <memory>
 
 namespace Drift::Events
 {
-	template <typename T> class MutableValue
+	template <typename T> class dt_api MutableValue
 	{
 	public:
 		MutableValue(T value) : _value(std::make_unique<T>(value)) {};

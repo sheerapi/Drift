@@ -1,4 +1,10 @@
-project('Drift', 'cpp', version: '0.0.1', meson_version: '1.6.0', default_options: ['cpp_std=c++20'])
+project(
+    'Drift',
+    'cpp',
+    version: '0.0.1',
+    meson_version: '1.6.0',
+    default_options: ['cpp_std=c++20'],
+)
 
 sources = [
     'src/core/Application.cpp',
@@ -13,13 +19,13 @@ sources = [
     'src/events/Observable.cpp',
     'src/events/EventManager.cpp',
     'src/events/DummyEventLoop.cpp',
-    'src/events/EventLoop.cpp'
+    'src/events/EventLoop.cpp',
 ]
 
 cmake = import('cmake')
 
 if get_option('debug')
-    add_global_arguments('-DDEBUG', language: ['c', 'cpp'])
+    add_global_arguments(['-DDEBUG', '-fvisibility=hidden'], language: ['c', 'cpp'])
 endif
 
 run_command('./skia.sh', host_machine.system(), 'x64', check: true)

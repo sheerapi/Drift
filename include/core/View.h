@@ -1,12 +1,13 @@
 #pragma once
 #include "core/Activity.h"
+#include "core/Macros.h"
 #include "utils/Demangle.h"
 #include <memory>
 #include <stack>
 
 namespace Drift
 {
-	class View
+	class dt_api View
 	{
 	public:
 		View();

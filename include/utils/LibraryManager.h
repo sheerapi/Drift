@@ -1,4 +1,5 @@
 #pragma once
+#include "core/Macros.h"
 #define _GNU_SOURCE 1
 #include <cstdint>
 #include <link.h>
@@ -9,7 +10,7 @@
 
 namespace Drift
 {
-	class Library
+	class dt_api Library
 	{
 	public:
 		Library(void* handle) : _handle(handle) {};
@@ -33,7 +34,7 @@ namespace Drift
 		friend class LibraryManager;
 	};
 
-	class LibraryManager
+	class dt_api LibraryManager
 	{
 	public:
 		static auto LoadLibrary(const std::string& name) -> std::shared_ptr<Library>;

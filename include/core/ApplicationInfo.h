@@ -1,10 +1,11 @@
 #pragma once
+#include "core/Macros.h"
 #include <string>
 #include <vector>
 
 namespace Drift
 {
-	struct ApplicationID
+	struct dt_api ApplicationID
 	{
 	public:
 		std::string Domain{"com"};
@@ -19,7 +20,7 @@ namespace Drift
 		static auto CheckAppID(const std::string& appId) -> bool;
 	};
 
-	struct EnvironmentInfo
+	struct dt_api EnvironmentInfo
 	{
 	public:
 		std::string WorkingDirectory;
