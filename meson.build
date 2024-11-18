@@ -9,6 +9,7 @@ sources = [
     'src/utils/Demangle.cpp',
     'src/utils/StringUtils.cpp',
     'src/utils/PerformanceTimer.cpp',
+    'src/utils/LibraryManager.cpp',
     'src/events/Observable.cpp',
     'src/events/EventManager.cpp',
     'src/events/DummyEventLoop.cpp',
@@ -25,6 +26,7 @@ run_command('./skia.sh', host_machine.system(), 'x64', check: true)
 
 dependencies = [
     dependency('skia'),
+    dependency('dl'),
     dependency(
         'spdlog',
         default_options: {

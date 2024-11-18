@@ -4,7 +4,7 @@
 #include "utils/Demangle.h"
 
 #ifdef DEBUG
-#	include "core/Application.h"
+#	include "core/Application.h" // IWYU pragma: keep
 #endif
 
 namespace Drift

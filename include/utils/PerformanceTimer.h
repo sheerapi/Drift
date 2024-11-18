@@ -18,8 +18,7 @@ namespace Drift::Internals
 }
 
 #	define dt_stopwatch()                                                               \
-		auto stopwatch_##__PRETTY_FUNCTION__ =                                           \
-			Drift::Internals::PerformanceTimer(__PRETTY_FUNCTION__);
+		auto stopwatch_func = Drift::Internals::PerformanceTimer(__FUNCTION__);
 
 #else
 #	define dt_stopwatch()

@@ -170,7 +170,7 @@ namespace Drift
 #	define dt_verbose(msg, ...)                                                         \
 		{                                                                                \
 			if (Drift::Application::main->GetEnvironmentInfo().Verbose)                         \
-				SPDLOG_INFO(msg, ##__VA_ARGS__);                                         \
+				SPDLOG_TRACE(msg, ##__VA_ARGS__);                                         \
 		}
 #else
 #	define dt_debug(msg, ...)

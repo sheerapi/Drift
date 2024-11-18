@@ -1,6 +1,7 @@
 #include "core/Application.h"
 #include "core/ApplicationInfo.h"
 #include "utils/Demangle.h" // IWYU pragma: keep
+#include "utils/LibraryManager.h"
 #include "utils/PerformanceTimer.h"
 
 namespace Drift
@@ -20,6 +21,8 @@ namespace Drift
 
 		_id = ApplicationID(appId);
 		_env = EnvironmentInfo();
+
+		LibraryManager::Init();
 
 		dt_coreInfo("Initialized \"{}\"", _id.GetCompoundID());
 	}
@@ -53,8 +56,8 @@ namespace Drift
 		{
 			auto& evloop = *_eventLoop;
 
-			dt_coreFatal("An error ocurred when executing \"{}\": {}",
-						 dt_type(evloop), e.what());
+			dt_coreFatal("An error ocurred when executing \"{}\": {}", dt_type(evloop),
+						 e.what());
 			return 4;
 		}
 
