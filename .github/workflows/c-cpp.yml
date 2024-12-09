@@ -22,6 +22,6 @@ jobs:
         key: ${{ runner.os }}-${{ hashFiles('**/meson.build') }}
         restore-keys: ${{ runner.os }}-
     - name: Configure
-      run: meson setup build -Dbuildtype=release -Dwarning_level=highest
+      run: meson setup build -Dbuildtype=release -Dwarning_level=everything
     - name: Compile
       run: ninja -C build
