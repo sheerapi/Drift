@@ -8,10 +8,10 @@ namespace Drift
 		Root = std::make_shared<Element>();
 	}
 
-    void Activity::Finish()
-    {
-        _containingView->NavigateBack();
-    }
+	void Activity::Finish()
+	{
+		_containingView->NavigateBack();
+	}
 
 	auto Activity::GetActivityID() -> std::string
 	{
@@ -25,6 +25,12 @@ namespace Drift
 					 (void*)_containingView);
 
 		Root->DebugPrint(3);
+	}
+
+	auto Activity::AttachRoot(const std::shared_ptr<Element>& root) -> std::shared_ptr<Element>
+	{
+		Root = root;
+		return root;
 	}
 
 	void Activity::SetStatus(Status status)

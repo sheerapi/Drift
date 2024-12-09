@@ -17,7 +17,13 @@ namespace Drift
             return AddChild(std::make_shared<T>(args...));
         }
 
-        auto AddChild(Element* element) -> std::shared_ptr<Element>;
+		auto ID(const std::string& newId) -> Element*;
+		[[nodiscard]] auto ID() const -> std::string;
+
+		auto ClassName(const std::string& classes) -> Element*;
+		[[nodiscard]] auto ClassName() const -> std::string;
+
+		auto AddChild(Element* element) -> std::shared_ptr<Element>;
 		auto AddChild(const std::shared_ptr<Element>& element) -> std::shared_ptr<Element>;
 
 		virtual auto ToString() -> std::string;

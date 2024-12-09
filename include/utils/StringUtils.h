@@ -1,4 +1,5 @@
 #pragma once
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -35,5 +36,29 @@ auto stringToLower(std::string str) -> std::string;
  * @param delimiter String to split from (delimiter)
  * @return std::vector<std::string> Array of the splitted string results
  */
-auto stringSplit(const std::string& str, const std::string& delimiter)
-	-> std::vector<std::string>;
+auto stringSplit(const std::string& str,
+				 const std::string& delimiter) -> std::vector<std::string>;
+
+template <typename Iterator>
+auto join(Iterator begin, Iterator end, char separator = '.') -> std::string
+{
+	std::ostringstream o;
+	if (begin != end)
+	{
+		o << *begin++;
+		for (; begin != end; ++begin)
+		{
+			o << separator << *begin;
+		}
+	}
+	return o.str();
+}
+
+template <typename Container>
+auto join(const Container& c,
+				 char separator = '.') -> std::string // can pass array as reference, too
+{
+	using std::begin;
+	using std::end;
+	return join(begin(c), end(c), separator);
+}

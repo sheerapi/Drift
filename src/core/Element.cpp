@@ -1,5 +1,6 @@
 #include "core/Element.h"
 #include "utils/Demangle.h"
+#include "utils/StringUtils.h"
 
 namespace Drift
 {
@@ -23,7 +24,36 @@ namespace Drift
 
 	auto Element::ToString() -> std::string
     {
-        return getNamespaceFreeName(dt_type(*this));
+        std::string classString;
+        for (size_t i = 0; i < _className.size(); i++)
+        {
+            auto cls = _className[i];
+			classString += "." + cls + (i >= _className.size() - 1 ? "" : " ");
+		}
+
+        return getNamespaceFreeName(dt_type(*this)) + "[#" + _id + " " + classString + "]";
+    }
+
+	auto Element::ID(const std::string& newId) -> Element*
+    {
+        _id = newId;
+        return this;
+    }
+
+	auto Element::ID() const -> std::string
+    {
+        return _id;
+    }
+
+	auto Element::ClassName(const std::string& classes) -> Element*
+    {
+        _className = stringSplit(classes, " ");
+        return this;
+    }
+
+    auto Element::ClassName() const -> std::string
+    {
+        return join(_className, ' ');
     }
 
 	void Element::DebugPrint(int depth)

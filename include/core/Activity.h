@@ -26,7 +26,9 @@ namespace Drift
         virtual void OnResume() {};
         virtual void OnDestroy() {};
 
-        void Finish();
+		auto AttachRoot(const std::shared_ptr<Element>& root) -> std::shared_ptr<Element>;
+
+		void Finish();
         void PrintElementTree();
 
         void SetStatus(Status status);
