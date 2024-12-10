@@ -1,6 +1,6 @@
 #pragma once
-#include "core/Element.h"
-#include "core/Macros.h"
+#include "../core/Element.h"
+#include "../core/Macros.h"
 
 namespace Drift
 {

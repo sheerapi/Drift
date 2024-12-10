@@ -1,6 +1,6 @@
 #pragma once
-#include "core/Macros.h"
-#include "core/View.h"
+#include "../core/Macros.h"
+#include "../core/View.h"
 #include <memory>
 #include <vector>
 

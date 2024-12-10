@@ -1,5 +1,5 @@
 #pragma once
-#include "core/Macros.h"
+#include "../core/Macros.h"
 #include <memory>
 
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE

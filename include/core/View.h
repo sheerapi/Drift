@@ -1,6 +1,6 @@
 #pragma once
-#include "core/Activity.h"
-#include "core/Macros.h"
+#include "../core/Activity.h"
+#include "../core/Macros.h"
 #include "utils/Demangle.h"
 #include <memory>
 #include <stack>

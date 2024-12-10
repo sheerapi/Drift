@@ -1,6 +1,6 @@
 #pragma once
-#include "EventLoop.h"
-#include "core/Macros.h"
+#include "./EventLoop.h"
+#include "../core/Macros.h"
 
 namespace Drift::Events
 {

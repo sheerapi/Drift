@@ -1,7 +1,7 @@
 #pragma once
-#include "core/ApplicationInfo.h"
-#include "core/Logger.h"
-#include "events/EventLoop.h"
+#include "../core/ApplicationInfo.h"
+#include "../core/Logger.h"
+#include "../events/EventLoop.h"
 #include <memory>
 #include <string>
 
