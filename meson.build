@@ -19,6 +19,7 @@ sources = [
     'src/events/EventManager.cpp',
     'src/events/DummyEventLoop.cpp',
     'src/events/EventLoop.cpp',
+    'src/events/DesktopEventLoop.cpp'
 ]
 
 cmake = import('cmake')
@@ -41,6 +42,7 @@ dependencies = [
         },
     ),
     cmake.subproject('yoga').dependency('yogacore'),
+    dependency('glfw3')
 ]
 
 drift = shared_library(

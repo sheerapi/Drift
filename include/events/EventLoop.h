@@ -4,7 +4,7 @@
 #include <memory>
 #include <vector>
 
-namespace Drift
+namespace Drift::Events
 {
 	class dt_api EventLoop
 	{
@@ -15,7 +15,10 @@ namespace Drift
 		void Update();
 		virtual ~EventLoop() = default;
 
-		virtual auto IsRunning() -> bool = 0;
+		virtual auto IsRunning() -> bool
+		{
+			return Running;
+		}
 
 		inline void PushView(const std::shared_ptr<View>& view)
 		{

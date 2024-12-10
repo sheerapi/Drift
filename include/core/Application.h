@@ -14,7 +14,7 @@ namespace Drift
 
 		Application(const std::string& appId);
 		auto Present() -> int;
-		auto GetEventLoop() -> std::shared_ptr<EventLoop>;
+		auto GetEventLoop() -> std::shared_ptr<Events::EventLoop>;
 		static auto GetApplicationID() -> ApplicationID;
 		static auto GetEnvironmentInfo() -> EnvironmentInfo;
 
@@ -44,7 +44,7 @@ namespace Drift
 	private:
 		ApplicationID _id;
 		EnvironmentInfo _env;
-		std::shared_ptr<EventLoop> _eventLoop{nullptr};
+		std::shared_ptr<Events::EventLoop> _eventLoop{nullptr};
 		bool _presented{false};
 	};
 }
