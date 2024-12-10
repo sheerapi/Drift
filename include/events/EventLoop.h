@@ -11,6 +11,8 @@ namespace Drift
 	public:
 		virtual void Start() {};
 		virtual void Tick() = 0;
+		virtual void HandleView(const std::shared_ptr<View>& view) {};
+		void Update();
 		virtual ~EventLoop() = default;
 
 		virtual auto IsRunning() -> bool = 0;
@@ -24,5 +26,6 @@ namespace Drift
 
 	protected:
 		std::vector<std::shared_ptr<View>> Views;
+		bool Running{true};
 	};
 }

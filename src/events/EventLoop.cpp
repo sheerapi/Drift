@@ -16,4 +16,27 @@ namespace Drift
 
 		dt_coreDebug(" ");
 	}
+
+	void EventLoop::Update()
+	{
+		if (Views.empty())
+		{
+			Running = false;
+		}
+
+		for (auto& view : Views)
+		{
+			if (!view->IsRunning())
+			{
+				std::erase(Views, view);
+			}
+
+			if (view->IsEnabled())
+			{
+				HandleView(view);
+				view->Update();
+				view->Render();
+			}
+		}
+	}
 }

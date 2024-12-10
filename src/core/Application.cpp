@@ -49,7 +49,7 @@ namespace Drift
 
 			while (_eventLoop->IsRunning())
 			{
-				_eventLoop->Tick();
+				_eventLoop->Update();
 			}
 		}
 		catch (const std::exception& e)

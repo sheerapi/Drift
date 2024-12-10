@@ -9,8 +9,5 @@ namespace Drift::Events
 		void Start() override;
 		void Tick() override;
 		auto IsRunning() -> bool override;
-
-	private:
-		bool _running{true};
 	};
 }
