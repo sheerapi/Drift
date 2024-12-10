@@ -15,6 +15,7 @@ namespace Drift
 		Application(const std::string& appId);
 		auto Present() -> int;
 		auto GetEventLoop() -> std::shared_ptr<Events::EventLoop>;
+		auto HasEventLoop() -> bool;
 		static auto GetApplicationID() -> ApplicationID;
 		static auto GetEnvironmentInfo() -> EnvironmentInfo;
 

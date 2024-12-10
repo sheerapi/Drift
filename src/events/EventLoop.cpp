@@ -24,6 +24,11 @@ namespace Drift::Events
 			Running = false;
 		}
 
+		if (Running)
+		{
+			Tick();
+		}
+
 		for (auto& view : Views)
 		{
 			if (!view->IsRunning())

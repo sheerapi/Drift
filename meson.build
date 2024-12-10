@@ -19,7 +19,8 @@ sources = [
     'src/events/EventManager.cpp',
     'src/events/DummyEventLoop.cpp',
     'src/events/EventLoop.cpp',
-    'src/events/DesktopEventLoop.cpp'
+    'src/events/DesktopEventLoop.cpp',
+    'src/components/Window.cpp'
 ]
 
 cmake = import('cmake')

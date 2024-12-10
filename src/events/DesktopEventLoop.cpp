@@ -1,14 +1,30 @@
 #include "events/DesktopEventLoop.h"
 #include "GLFW/glfw3.h"
+#include "utils/PerformanceTimer.h"
+
+void driftHandleGlfwError(int err, const char* msg)
+{
+    dt_coreError("An error ocurred within Glfw: {} ({})", msg, err);
+}
 
 namespace Drift::Events
 {
     void DesktopEventLoop::Start()
     {
-		for (auto& view : Views)
-		{
-			view->Present();
-		}
+        dt_stopwatch();
+
+        glfwSetErrorCallback(&driftHandleGlfwError);
+
+		if (glfwInit() == 0)
+        {
+            dt_coreError("Failed to initialize Glfw!");
+            return;
+        }
+
+			for (auto& view : Views)
+			{
+				view->Present();
+			}
 	}
 
     void DesktopEventLoop::Tick()
@@ -19,5 +35,10 @@ namespace Drift::Events
 	void DesktopEventLoop::HandleView(const std::shared_ptr<View>& view)
     {
 
+    }
+
+    DesktopEventLoop::~DesktopEventLoop()
+    {
+        glfwTerminate();
     }
 }
