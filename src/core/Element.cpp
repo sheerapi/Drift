@@ -2,22 +2,31 @@
 #include "utils/Demangle.h"
 #include "utils/StringUtils.h"
 #include "yoga/YGNode.h"
+#include "yoga/YGNodeLayout.h"
 #include "yoga/YGNodeStyle.h" // IWYU pragma: keep
+#include <format>
 
 namespace Drift
 {
-    Element::Element()
+	Element::Element()
+	{
+		_ygNode = YGNodeNew();
+		_bounds = new BoundingBox();
+	}
+
+    Element::~Element()
     {
-        _ygNode = YGNodeNew();
-        
+        YGNodeFree(_ygNode);
+        delete _bounds;
     }
 
-    auto Element::AddChild(Element* element) -> std::shared_ptr<Element>
-    {
+	auto Element::AddChild(Element* element) -> std::shared_ptr<Element>
+	{
 		return AddChild(std::shared_ptr<Element>(element));
 	}
 
-	auto Element::AddChild(const std::shared_ptr<Element>& element) -> std::shared_ptr<Element>
+	auto Element::AddChild(const std::shared_ptr<Element>& element)
+		-> std::shared_ptr<Element>
 	{
 		if (element == nullptr)
 		{
@@ -27,57 +36,103 @@ namespace Drift
 
 		element->_parent = this;
 		Children.push_back(element);
+        YGNodeInsertChild(_ygNode, element->_ygNode, YGNodeGetChildCount(_ygNode));
 		return element;
 	}
 
 	auto Element::ToString() -> std::string
-    {
-        std::string classString;
-        for (size_t i = 0; i < _className.size(); i++)
-        {
-            auto cls = _className[i];
+	{
+		std::string classString;
+		for (size_t i = 0; i < _className.size(); i++)
+		{
+			auto cls = _className[i];
 			classString += "." + cls + (i >= _className.size() - 1 ? "" : " ");
 		}
 
-        return getNamespaceFreeName(dt_type(*this)) + "[#" + _id + " " + classString + "]";
-    }
+		return std::format("{} [#{} {} ({}x{} @ {},{})]",
+							getNamespaceFreeName(dt_type(*this)), _id, classString,
+							GetBoundingBox().Width, GetBoundingBox().Height,
+							GetBoundingBox().X, GetBoundingBox().Y);
+	}
 
 	auto Element::ID(const std::string& newId) -> Element*
-    {
-        _id = newId;
-        return this;
-    }
+	{
+		_id = newId;
+		return this;
+	}
 
 	auto Element::ID() const -> std::string
-    {
-        return _id;
-    }
+	{
+		return _id;
+	}
 
 	auto Element::ClassName(const std::string& classes) -> Element*
-    {
-        _className = stringSplit(classes, " ");
-        return this;
-    }
+	{
+		_className = stringSplit(classes, " ");
+		return this;
+	}
 
-    auto Element::ClassName() const -> std::string
-    {
-        return join(_className, ' ');
-    }
+	auto Element::ClassName() const -> std::string
+	{
+		return join(_className, ' ');
+	}
 
 	void Element::DebugPrint(int depth)
+	{
+		std::string tabs;
+		for (int i = 0; i < depth; i++)
+		{
+			tabs += "   ";
+		}
+
+		dt_coreDebug("{}{}", tabs, ToString());
+
+		for (auto& child : Children)
+		{
+			child->DebugPrint(depth + 1);
+		}
+	}
+
+	void Element::Tick()
+	{
+		if (_enabled)
+		{
+			Update();
+		}
+
+		for (auto& child : Children)
+		{
+			child->Tick();
+		}
+
+		if (YGNodeGetHasNewLayout(_ygNode))
+		{
+			YGNodeSetHasNewLayout(_ygNode, false);
+			YGNodeCalculateLayout(_ygNode, YGUndefined, YGUndefined, YGDirectionLTR);
+
+			_bounds->X = GetAbsoluteX();
+			_bounds->Y = GetAbsoluteY();
+			_bounds->Width = YGNodeLayoutGetWidth(_ygNode);
+			_bounds->Height = YGNodeLayoutGetHeight(_ygNode);
+		}
+	}
+
+	void Element::Render()
+	{
+		if (_enabled)
+		{
+			Draw();
+
+			for (auto& child : Children)
+			{
+				child->Render();
+			}
+		}
+	}
+
+    auto Element::GetBoundingBox() -> BoundingBox
     {
-        std::string tabs;
-        for (int i = 0; i < depth; i++)
-        {
-            tabs += "   ";
-        }
-
-        dt_coreDebug("{}{}", tabs, ToString());
-
-        for (auto& child : Children)
-        {
-            child->DebugPrint(depth + 1);
-        }
+        return *_bounds;
     }
 
 	dt_yogaPropertyValueDef(Width);
@@ -108,11 +163,21 @@ namespace Drift
 	dt_yogaPropertyEnumDef(FlexDirection, enum FlexDirection, YGFlexDirection);
 	dt_yogaPropertyEnumDef(PositionType, enum PositionType, YGPositionType);
 
-    auto Element::GapHorizontal(float val) -> Element*
-    {
-        YGNodeStyleSetGap(_ygNode, YGGutter::YGGutterRow, val);
-        return this;
-    }
+	auto Element::NodeType(enum NodeType val) -> Element*
+	{
+		YGNodeSetNodeType(_ygNode, (YGNodeType)((int)val));
+		return this;
+	}
+	auto Element::NodeType() -> enum NodeType
+	{
+		return (enum NodeType)((int)YGNodeGetNodeType(_ygNode));
+	}
+
+	auto Element::GapHorizontal(float val) -> Element*
+	{
+		YGNodeStyleSetGap(_ygNode, YGGutter::YGGutterRow, val);
+		return this;
+	}
 
 	auto Element::GapHorizontal() -> float
 	{

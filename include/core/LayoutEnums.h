@@ -60,4 +60,10 @@ namespace Drift
 		None,
 		Contents
 	};
+
+	enum class NodeType
+	{
+		Default,
+		Text
+	};
 }

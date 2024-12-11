@@ -2,6 +2,7 @@
 #include "../utils/Demangle.h"
 #include "../core/Macros.h"
 #include "core/LayoutEnums.h"
+#include "utils/BoundingBox.h"
 #include "yoga/YGConfig.h"
 #include <memory>
 #include <vector>
@@ -12,6 +13,7 @@ namespace Drift
 	{
 	public:
 		Element();
+		virtual ~Element();
 
         template<typename T, typename... Args> auto AddChild(Args&& ...args) -> std::shared_ptr<T>
         {
@@ -22,17 +24,24 @@ namespace Drift
 		auto ID(const std::string& newId) -> Element*;
 		[[nodiscard]] auto ID() const -> std::string;
 
+		auto Enabled(bool enabled) -> Element*;
+		[[nodiscard]] auto Enabled() const -> bool;
+
 		auto ClassName(const std::string& classes) -> Element*;
 		[[nodiscard]] auto ClassName() const -> std::string;
 
 		auto AddChild(Element* element) -> std::shared_ptr<Element>;
 		auto AddChild(const std::shared_ptr<Element>& element) -> std::shared_ptr<Element>;
 
+		auto GetBoundingBox() -> BoundingBox;
+		auto GetAbsoluteX() -> float;
+		auto GetAbsoluteY() -> float;
+
+		void Tick();
+		void Render();
+
 		virtual auto ToString() -> std::string;
 		void DebugPrint(int depth = 0);
-
-		virtual void Update() {};
-		virtual void Draw() {};
 
 		dt_yogaPropertySimple(Width);
 		dt_yogaPropertySimple(Height);
@@ -60,6 +69,7 @@ namespace Drift
 		dt_yogaPropertyType(FlexWrap, enum Wrap);
 		dt_yogaPropertyType(FlexDirection, enum FlexDirection);
 		dt_yogaPropertyType(PositionType, enum PositionType);
+		dt_yogaPropertyType(NodeType, enum NodeType);
 
 		dt_yogaPropertyEdge(Margin);
 		dt_yogaPropertyEdge(Padding);
@@ -68,11 +78,15 @@ namespace Drift
 
 	protected:
 		std::vector<std::shared_ptr<Element>> Children;
+		virtual void Update() {};
+		virtual void Draw() {};
 
 	private:
 		YGNodeRef _ygNode;
 		Element* _parent;
+		bool _enabled{true};
         std::string _id;
+		BoundingBox* _bounds;
         std::vector<std::string> _className;
 	};
 }
