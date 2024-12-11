@@ -15,6 +15,8 @@ namespace Drift::Events
 
         glfwSetErrorCallback(&driftHandleGlfwError);
 
+		glfwInitHint(GLFW_WAYLAND_LIBDECOR, GLFW_WAYLAND_DISABLE_LIBDECOR);
+
 		if (glfwInit() == 0)
         {
             dt_coreError("Failed to initialize Glfw!");
