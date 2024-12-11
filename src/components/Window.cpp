@@ -38,9 +38,16 @@ namespace Drift
 
     void Window::Update()
     {
+        if (_depends != nullptr && !_depends->IsRunning())
+        {
+            Close();
+            return;
+        }
+
         if (glfwWindowShouldClose(_window) == GLFW_TRUE)
         {
             Close();
+            return;
         }
     }
 
@@ -81,4 +88,14 @@ namespace Drift
 		glfwMakeContextCurrent(nullptr);
 		_window = nullptr;
 	}
+
+    void Window::DependsOn(const std::shared_ptr<Window>& parent)
+    {
+        _depends = parent.get();
+    }
+
+    auto Window::HasDependencies() -> bool
+    {
+        return _depends == nullptr;
+    }
 }

@@ -16,8 +16,12 @@ namespace Drift
 		void Render() override;
 		void Update() override;
 
+		void DependsOn(const std::shared_ptr<Window>& parent);
+		auto HasDependencies() -> bool;
+
 	private:
 		std::string _title;
+		Window* _depends{nullptr};
 		int _width;
 		int _height;
 		GLFWwindow* _window{nullptr};

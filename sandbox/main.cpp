@@ -7,6 +7,8 @@ auto main(int argc, const char** argv) -> int
 
 	auto window = app->AttachView<Drift::Window>("Sandbox");
 	auto window2 = app->AttachView<Drift::Window>("Sandbox2");
+	window2->DependsOn(window);
+
 	auto root =
 		window->GetCurrentActivity()->AttachRoot(std::make_shared<Drift::Element>());
 
