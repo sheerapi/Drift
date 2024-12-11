@@ -55,6 +55,8 @@ namespace Drift
 			Close();
 			return;
 		}
+
+        GetCurrentActivity()->Update();
 	}
 
 	void Window::Render()
@@ -64,7 +66,8 @@ namespace Drift
 		glfwGetFramebufferSize(_window, &_width, &_height);
 		_context->RefreshContext(_width, _height);
 
-		_context->Canvas->clear(SK_ColorWHITE);
+		GetCurrentActivity()->Render();
+
 		_context->GrContext->flushAndSubmit();
 
 		glfwSwapBuffers(_window);

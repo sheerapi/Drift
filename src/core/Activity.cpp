@@ -57,4 +57,14 @@ namespace Drift
 	{
 		_containingView = view;
 	}
+
+	void Activity::Update()
+	{
+		Root->Update();
+	}
+
+	void Activity::Render()
+	{
+		Root->Draw();
+	}
 }

@@ -2,11 +2,12 @@
 #include "../core/View.h"
 #include "GLFW/glfw3.h"
 #include "core/Macros.h"
+#include "events/Observable.h"
 #include "graphics/RendererContext.h"
 
 namespace Drift
 {
-	class dt_api Window : public View
+	class dt_api Window : public View, Events::Observable
 	{
 	public:
 		Window(const std::string& title, int width = 800, int height = 600);

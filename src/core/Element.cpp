@@ -1,9 +1,15 @@
 #include "core/Element.h"
 #include "utils/Demangle.h"
 #include "utils/StringUtils.h"
+#include "yoga/YGNode.h"
 
 namespace Drift
 {
+    Element::Element()
+    {
+        _ygNode = YGNodeNew();
+    }
+
     auto Element::AddChild(Element* element) -> std::shared_ptr<Element>
     {
 		return AddChild(std::shared_ptr<Element>(element));

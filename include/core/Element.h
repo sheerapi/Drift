@@ -1,6 +1,7 @@
 #pragma once
 #include "../utils/Demangle.h"
 #include "../core/Macros.h"
+#include "yoga/YGConfig.h"
 #include <memory>
 #include <vector>
 
@@ -9,7 +10,7 @@ namespace Drift
 	class dt_api Element
 	{
 	public:
-		Element() = default;
+		Element();
 
         template<typename T, typename... Args> auto AddChild(Args&& ...args) -> std::shared_ptr<T>
         {
@@ -36,6 +37,7 @@ namespace Drift
 		std::vector<std::shared_ptr<Element>> Children;
 
 	private:
+		YGNodeRef _ygNode;
 		Element* _parent;
         std::string _id;
         std::vector<std::string> _className;
