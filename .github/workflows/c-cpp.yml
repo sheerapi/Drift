@@ -14,7 +14,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Install dependencies
-      run: sudo apt-get install ninja-build meson libwayland-dev wayland-protocols libgl1-mesa-dev libgles2-mesa-dev libwayland-egl1-mesa libegl1-mesa-dev
+      run: sudo apt-get install ninja-build meson libwayland-dev wayland-protocols libgl1-mesa-dev libgles2-mesa-dev libwayland-egl1-mesa libegl1-mesa-dev libxcb-xkb-dev libxi-dev libxcursor-dev libxinerama-dev libxrandr-dev
 
     - name: Cache build output
       uses: actions/cache@v4.1.2
