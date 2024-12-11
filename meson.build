@@ -44,7 +44,8 @@ dependencies = [
         },
     ),
     cmake.subproject('yoga').dependency('yogacore'),
-    dependency('glfw3')
+    dependency('glfw3', default_options: { 'display-api': 'wayland', }),
+    dependency('opengl')
 ]
 
 drift = shared_library(
