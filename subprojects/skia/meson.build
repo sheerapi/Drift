@@ -12,7 +12,7 @@ skia_dep = declare_dependency(
         cc.find_library('sksg', dirs: meson.current_source_dir()),
         cc.find_library('skshaper', dirs: meson.current_source_dir()),
     ],
-    include_directories: include_directories('skia/include', 'skia'),
+    include_directories: include_directories('skia/include', 'skia/modules', 'skia'),
 )
 
 meson.override_dependency('skia', skia_dep)

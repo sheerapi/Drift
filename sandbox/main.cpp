@@ -1,5 +1,4 @@
 #include "core/Application.h"
-#include "events/DummyEventLoop.h"
 #include "components/Window.h"
 
 auto main(int argc, const char** argv) -> int
@@ -7,6 +6,7 @@ auto main(int argc, const char** argv) -> int
 	auto* app = new Drift::Application("com.drift.sandbox");
 
 	auto window = app->AttachView<Drift::Window>("Sandbox");
+	auto window2 = app->AttachView<Drift::Window>("Sandbox2");
 	auto root =
 		window->GetCurrentActivity()->AttachRoot(std::make_shared<Drift::Element>());
 

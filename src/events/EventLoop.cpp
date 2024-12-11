@@ -31,17 +31,21 @@ namespace Drift::Events
 
 		for (auto& view : Views)
 		{
-			if (!view->IsRunning())
-			{
-				std::erase(Views, view);
-			}
-
 			if (view->IsEnabled())
 			{
 				HandleView(view);
 				view->Update();
-				view->Render();
+				
+				if (view->IsRunning())
+				{
+					// window could have been closed mid update
+					view->Render();
+				}
 			}
 		}
+
+		Views.erase(std::remove_if(Views.begin(), Views.end(), [](auto& view)
+								   { return view == nullptr || !view->IsRunning(); }),
+					Views.end());
 	}
 }
