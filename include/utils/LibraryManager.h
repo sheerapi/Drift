@@ -44,6 +44,7 @@ namespace Drift
 									void* data) -> int;
 
 		static auto GetLoadedLibraries() -> std::vector<std::shared_ptr<Library>>;
+		static auto GetLoadedLibraryNames() -> std::vector<std::string>;
 
 	private:
 		inline static std::unordered_map<std::string, std::shared_ptr<Library>> libraries;

@@ -63,9 +63,22 @@ namespace Drift
 	auto LibraryManager::GetLoadedLibraries() -> std::vector<std::shared_ptr<Library>>
 	{
 		std::vector<std::shared_ptr<Library>> result;
-		for (auto it = result.begin(); it != result.end(); ++it)
+		result.reserve(libraries.size());
+		for (auto& lib : libraries)
 		{
-			result.push_back(*it);
+			result.push_back(lib.second);
+		}
+
+		return result;
+	}
+
+	auto LibraryManager::GetLoadedLibraryNames() -> std::vector<std::string>
+	{
+		std::vector<std::string> result;
+		result.reserve(libraries.size());
+		for (auto& lib : libraries)
+		{
+			result.push_back(lib.second->GetName());
 		}
 
 		return result;
@@ -136,15 +149,15 @@ namespace Drift
 	}
 
 	void LibraryManager::UnloadLibrary(const std::string& name)
-    {
-        if (!HasLibrary(name))
-        {
-            dt_coreError("Library {} is not loaded!");
-            return;
-        }
-        
-        libraries.erase(name);
-    }
+	{
+		if (!HasLibrary(name))
+		{
+			dt_coreError("Library {} is not loaded!");
+			return;
+		}
+
+		libraries.erase(name);
+	}
 
 	auto Library::ToString() -> std::string
 	{

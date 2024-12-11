@@ -1,11 +1,15 @@
 #include "core/Application.h"
 #include "components/Window.h"
+#include "utils/LibraryManager.h"
+#include "utils/StringUtils.h"
 
 auto main(int argc, const char** argv) -> int
 {
 	auto* app = new Drift::Application("com.drift.sandbox");
 
 	auto window = app->AttachView<Drift::Window>("Sandbox");
+	auto window2 = app->AttachView<Drift::Window>("Sandbox");
+	window2->DependsOn(window);
 
 	auto root =
 		window->GetCurrentActivity()->AttachRoot(std::make_shared<Drift::Element>());
@@ -13,6 +17,8 @@ auto main(int argc, const char** argv) -> int
 	root->ID("root")->ClassName("bg-neutral-950 text-slate-100");
 
 	app->GetEventLoop()->PrintViewTree();
+
+	dt_coreVerbose("{}", join(Drift::LibraryManager::GetLoadedLibraryNames(), ' '));
 
 	return app->Present();
 }
