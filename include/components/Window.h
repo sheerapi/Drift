@@ -3,7 +3,6 @@
 #include "GLFW/glfw3.h"
 #include "core/Macros.h"
 #include "events/Observable.h"
-#include "graphics/RendererContext.h"
 
 namespace Drift
 {
@@ -26,6 +25,5 @@ namespace Drift
 		int _width;
 		int _height;
 		GLFWwindow* _window{nullptr};
-		std::shared_ptr<Graphics::RendererContext> _context;
 	};
 }

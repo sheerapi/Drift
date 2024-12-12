@@ -10,6 +10,8 @@ namespace Drift::Graphics
     class RendererContext
     {
     public:
+		inline static RendererContext* main;
+		
         SkCanvas* Canvas;
 		sk_sp<const GrGLInterface> GLInterface;
 		sk_sp<GrDirectContext> GrContext;
@@ -26,3 +28,6 @@ namespace Drift::Graphics
 		GrGLFramebufferInfo _fbInfo;
 	};
 }
+
+#define dt_renderContext Drift::Graphics::RendererContext::main
+#define dt_canvas Drift::Graphics::RendererContext::main->Canvas

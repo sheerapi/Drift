@@ -1,4 +1,8 @@
 #include "core/Element.h"
+#include "core/SkColor.h"
+#include "core/SkPaint.h"
+#include "core/SkRect.h"
+#include "graphics/RendererContext.h"
 #include "utils/Demangle.h"
 #include "utils/StringUtils.h"
 #include "yoga/YGNode.h"
@@ -74,6 +78,21 @@ namespace Drift
 	auto Element::ClassName() const -> std::string
 	{
 		return join(_className, ' ');
+	}
+
+	void Element::Draw()
+	{
+		if (_parent != nullptr)
+		{
+			SkPaint paint;
+			paint.setColor(SK_ColorWHITE);
+			paint.setStroke(true);
+			paint.setStrokeWidth(2);
+
+			dt_canvas->drawRect(
+				SkRect::MakeXYWH(_bounds->X, _bounds->Y, _bounds->Width, _bounds->Height),
+				paint);
+		}
 	}
 
 	void Element::DebugPrint(int depth)

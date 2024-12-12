@@ -1,6 +1,7 @@
 #pragma once
 #include "../core/Activity.h"
 #include "../core/Macros.h"
+#include "graphics/RendererContext.h"
 #include "utils/Demangle.h"
 #include <memory>
 #include <stack>
@@ -34,6 +35,11 @@ namespace Drift
 		[[nodiscard]] inline auto GetBoundingBox() const -> BoundingBox
 		{
 			return *Bounds;
+		}
+
+		[[nodiscard]] inline auto GetRendererContext() const -> Graphics::RendererContext
+		{
+			return *RendererContext;
 		}
 
 		inline void SetEnabled(bool enabled)
@@ -73,6 +79,7 @@ namespace Drift
 
 	protected:
 		std::stack<std::shared_ptr<Activity>> Activities;
+		std::shared_ptr<Graphics::RendererContext> RendererContext;
 		std::shared_ptr<BoundingBox> Bounds;
 		bool Running{true};
 

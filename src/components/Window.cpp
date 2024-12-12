@@ -3,6 +3,7 @@
 #include "core/Application.h"
 #include "core/Logger.h"
 #include "events/DesktopEventLoop.h"
+#include "graphics/RendererContext.h"
 #include "utils/PerformanceTimer.h"
 
 namespace Drift
@@ -42,7 +43,7 @@ namespace Drift
 
 		glfwMakeContextCurrent(_window);
 
-		_context = std::make_shared<Graphics::RendererContext>(_width, _height);
+		RendererContext = std::make_shared<Graphics::RendererContext>(_width, _height);
 	}
 
 	void Window::Update()
@@ -68,13 +69,15 @@ namespace Drift
 
 	void Window::Render()
 	{
-		glfwMakeContextCurrent(_window);
+		Graphics::RendererContext::main = RendererContext.get();
 		
-		_context->RefreshContext(_width, _height);
+		glfwMakeContextCurrent(_window);
+
+		RendererContext->RefreshContext(_width, _height);
 
 		GetCurrentActivity()->Render();
 
-		_context->GrContext->flushAndSubmit();
+		RendererContext->GrContext->flushAndSubmit();
 
 		glfwSwapBuffers(_window);
 	}

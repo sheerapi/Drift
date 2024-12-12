@@ -83,7 +83,7 @@ namespace Drift
 	protected:
 		std::vector<std::shared_ptr<Element>> Children;
 		virtual void Update() {};
-		virtual void Draw() {};
+		virtual void Draw();
 
 	private:
 		YGNodeRef _ygNode;
