@@ -17,6 +17,9 @@ namespace Drift
 		_title = title;
 		Bounds->Width = (float)width;
 		Bounds->Height = (float)height;
+
+		_width = width;
+		_height = height;
 	}
 
 	void Window::Present()
