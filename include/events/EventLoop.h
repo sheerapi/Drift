@@ -25,7 +25,13 @@ namespace Drift::Events
 			Views.push_back(view);
 		}
 
+		inline auto GetViews() -> std::vector<std::shared_ptr<View>>
+		{
+			return Views;
+		}
+
 		void PrintViewTree();
+		void ForceLayoutRefresh();
 
 	protected:
 		std::vector<std::shared_ptr<View>> Views;

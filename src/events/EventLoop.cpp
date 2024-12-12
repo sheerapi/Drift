@@ -48,4 +48,12 @@ namespace Drift::Events
 								   { return view == nullptr || !view->IsRunning(); }),
 					Views.end());
 	}
+
+	void EventLoop::ForceLayoutRefresh()
+	{
+		for (auto& view : Views)
+		{
+			view->ForceLayoutRefresh();
+		}
+	}
 }

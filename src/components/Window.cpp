@@ -15,8 +15,8 @@ namespace Drift
 		}
 
 		_title = title;
-		_width = width;
-		_height = height;
+		Bounds->Width = (float)width;
+		Bounds->Height = (float)height;
 	}
 
 	void Window::Present()
@@ -56,14 +56,17 @@ namespace Drift
 			return;
 		}
 
-        GetCurrentActivity()->Update();
+		glfwGetFramebufferSize(_window, &_width, &_height);
+		Bounds->Width = (float)_width;
+		Bounds->Height = (float)_height;
+
+		GetCurrentActivity()->Update();
 	}
 
 	void Window::Render()
 	{
 		glfwMakeContextCurrent(_window);
-
-		glfwGetFramebufferSize(_window, &_width, &_height);
+		
 		_context->RefreshContext(_width, _height);
 
 		GetCurrentActivity()->Render();

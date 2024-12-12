@@ -83,4 +83,14 @@ namespace Drift
 	{
 		return main->_env;
 	}
+
+	void Application::ForceGlobalLayoutRefresh()
+	{
+		if (!main->_eventLoop)
+		{
+			dt_coreError("No event loop attached!");
+			return;
+		}
+		main->_eventLoop->ForceLayoutRefresh();
+	}
 }

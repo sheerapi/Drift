@@ -4,7 +4,7 @@
 #include "gpu/ganesh/SkSurfaceGanesh.h"
 #include "gpu/ganesh/gl/GrGLBackendSurface.h"
 #include "gpu/ganesh/gl/GrGLDirectContext.h"
-#include "core/SkColorSpace.h"
+#include "core/SkColorSpace.h" // IWYU pragma: keep
 #include <GL/gl.h>
 
 namespace Drift::Graphics

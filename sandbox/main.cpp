@@ -1,7 +1,5 @@
 #include "core/Application.h"
 #include "components/Window.h"
-#include "utils/LibraryManager.h"
-#include "utils/StringUtils.h"
 
 auto main(int argc, const char** argv) -> int
 {
@@ -14,9 +12,8 @@ auto main(int argc, const char** argv) -> int
 
 	root->ID("root")->ClassName("bg-neutral-950 text-slate-100");
 
+	Drift::Application::ForceGlobalLayoutRefresh();
 	app->GetEventLoop()->PrintViewTree();
-
-	dt_coreVerbose("{}", join(Drift::LibraryManager::GetLoadedLibraryNames(), ' '));
 
 	return app->Present();
 }

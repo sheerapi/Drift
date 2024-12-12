@@ -34,11 +34,15 @@ namespace Drift
 		auto AddChild(const std::shared_ptr<Element>& element) -> std::shared_ptr<Element>;
 
 		auto GetBoundingBox() -> BoundingBox;
+
+		// actually these would still be relative to the containing view but wtv
 		auto GetAbsoluteX() -> float;
 		auto GetAbsoluteY() -> float;
 
 		void Tick();
 		void Render();
+
+		void ForceLayoutRefresh();
 
 		virtual auto ToString() -> std::string;
 		void DebugPrint(int depth = 0);
@@ -83,10 +87,10 @@ namespace Drift
 
 	private:
 		YGNodeRef _ygNode;
-		Element* _parent;
+		Element* _parent{nullptr};
 		bool _enabled{true};
         std::string _id;
-		BoundingBox* _bounds;
+		std::shared_ptr<BoundingBox> _bounds;
         std::vector<std::string> _className;
 	};
 }

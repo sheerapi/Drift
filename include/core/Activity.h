@@ -29,6 +29,8 @@ namespace Drift
         void Update();
         void Render();
 
+        void ForceLayoutRefresh();
+
 		auto AttachRoot(const std::shared_ptr<Element>& root) -> std::shared_ptr<Element>;
 
 		void Finish();

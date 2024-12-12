@@ -23,10 +23,10 @@ namespace Drift::Events
             return;
         }
 
-			for (auto& view : Views)
-			{
-				view->Present();
-			}
+        for (auto& view : Views)
+        {
+            view->Present();
+        }
 	}
 
     void DesktopEventLoop::Tick()

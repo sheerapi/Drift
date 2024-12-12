@@ -27,9 +27,15 @@ namespace Drift
 		Root->DebugPrint(3);
 	}
 
-	auto Activity::AttachRoot(const std::shared_ptr<Element>& root) -> std::shared_ptr<Element>
+	auto Activity::AttachRoot(const std::shared_ptr<Element>& root)
+		-> std::shared_ptr<Element>
 	{
 		Root = root;
+		if (_containingView != nullptr)
+		{
+			Root->Width(_containingView->GetBoundingBox().Width);
+			Root->Height(_containingView->GetBoundingBox().Height);
+		}
 		return root;
 	}
 
@@ -53,6 +59,11 @@ namespace Drift
 		}
 	}
 
+	void Activity::ForceLayoutRefresh()
+	{
+		Root->ForceLayoutRefresh();
+	}
+
 	void Activity::SetContainingView(View* view)
 	{
 		_containingView = view;
@@ -60,11 +71,18 @@ namespace Drift
 
 	void Activity::Update()
 	{
-		Root->Update();
+		if (Root->GetBoundingBox().Width != _containingView->GetBoundingBox().Width ||
+			Root->GetBoundingBox().Height != _containingView->GetBoundingBox().Height)
+		{
+			Root->Width(_containingView->GetBoundingBox().Width);
+			Root->Height(_containingView->GetBoundingBox().Height);
+		}
+
+		Root->Tick();
 	}
 
 	void Activity::Render()
 	{
-		Root->Draw();
+		Root->Render();
 	}
 }

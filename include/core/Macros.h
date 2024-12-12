@@ -218,4 +218,4 @@
 	auto Element::name() -> float                                                        \
 	{                                                                                    \
 		return YGNodeStyleGet##name(_ygNode, YGEdge::YGEdgeAll);                   \
-	}\
+	}

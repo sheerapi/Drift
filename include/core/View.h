@@ -31,12 +31,18 @@ namespace Drift
 			return Running;
 		}
 
+		[[nodiscard]] inline auto GetBoundingBox() const -> BoundingBox
+		{
+			return *Bounds;
+		}
+
 		inline void SetEnabled(bool enabled)
 		{
 			_enabled = enabled;
 		}
 
 		void PrintElementTree();
+		void ForceLayoutRefresh();
 		void NavigateBack();
 
 		auto GetCurrentActivity() -> std::shared_ptr<Activity>;
@@ -67,6 +73,7 @@ namespace Drift
 
 	protected:
 		std::stack<std::shared_ptr<Activity>> Activities;
+		std::shared_ptr<BoundingBox> Bounds;
 		bool Running{true};
 
 	private:

@@ -11,13 +11,12 @@ namespace Drift
 	Element::Element()
 	{
 		_ygNode = YGNodeNew();
-		_bounds = new BoundingBox();
+		_bounds = std::make_shared<BoundingBox>();
 	}
 
     Element::~Element()
     {
         YGNodeFree(_ygNode);
-        delete _bounds;
     }
 
 	auto Element::AddChild(Element* element) -> std::shared_ptr<Element>
@@ -135,7 +134,34 @@ namespace Drift
         return *_bounds;
     }
 
-	dt_yogaPropertyValueDef(Width);
+    auto Element::GetAbsoluteX() -> float
+    {
+        return YGNodeLayoutGetLeft(_ygNode) + (_parent != nullptr ? _parent->GetAbsoluteX() : 0);
+    }
+
+	auto Element::GetAbsoluteY() -> float
+	{
+		return YGNodeLayoutGetTop(_ygNode) +
+			   (_parent != nullptr ? _parent->GetAbsoluteY() : 0);
+	}
+
+	void Element::ForceLayoutRefresh()
+    {
+		YGNodeSetHasNewLayout(_ygNode, false);
+		YGNodeCalculateLayout(_ygNode, YGUndefined, YGUndefined, YGDirectionLTR);
+
+		_bounds->X = GetAbsoluteX();
+		_bounds->Y = GetAbsoluteY();
+		_bounds->Width = YGNodeLayoutGetWidth(_ygNode);
+		_bounds->Height = YGNodeLayoutGetHeight(_ygNode);
+
+        for (auto& child : Children)
+        {
+            child->ForceLayoutRefresh();
+        }
+	}
+
+		dt_yogaPropertyValueDef(Width);
 	dt_yogaPropertyValueDef(Height);
 
 	dt_yogaPropertyValueDef(MinWidth);

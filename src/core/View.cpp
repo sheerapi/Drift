@@ -12,6 +12,7 @@ namespace Drift
 	View::View()
 	{
 		AddActivity<Activity>();
+		Bounds = std::make_shared<BoundingBox>();
 	}
 
 	void View::NavigateBack()
@@ -106,6 +107,11 @@ namespace Drift
 		dt_verbose("View replaced activity: {} -> {}", old, current);
 
 		return GetCurrentActivity();
+	}
+
+	void View::ForceLayoutRefresh()
+	{
+		GetCurrentActivity()->ForceLayoutRefresh();
 	}
 
 	auto View::ReplaceActivity(Activity* activity) -> std::shared_ptr<Activity>
