@@ -26,7 +26,7 @@ sources = [
 
 cmake = import('cmake')
 
-if get_option('debug')
+if get_option('debug') or get_option('verbose')
     add_global_arguments(['-DDEBUG', '-fvisibility=hidden'], language: ['c', 'cpp'])
 endif
 

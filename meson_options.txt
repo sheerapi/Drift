@@ -4,3 +4,10 @@ option(
     value: false,
     description: 'Whether to compile or not with GLFW',
 )
+
+option(
+    'verbose',
+    type: 'boolean',
+    value: false,
+    description: 'Whether to compile with debug messages',
+)

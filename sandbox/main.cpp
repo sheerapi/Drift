@@ -9,14 +9,11 @@ auto main(int argc, const char** argv) -> int
 	auto* app = new Application("com.drift.sandbox");
 
 	auto window = app->AttachView<Window>("Sandbox");
-	auto window2 = app->AttachView<Window>("Sandbox");
-
+	
 	auto* root = window->GetCurrentActivity()
 					 ->AttachRoot(std::make_shared<Element>())
 					 ->FlexDirection(FlexDirection::Column)
 					 ->JustifyContent(JustifyContent::SpaceBetween);
-
-	window2->ReplaceActivity(window->GetCurrentActivity());
 
 	auto* container1 = root->AddChild<Element>()->HeightPercent(100)->FlexShrink(1)->Padding(20)->FlexDirection(FlexDirection::Row);
 
