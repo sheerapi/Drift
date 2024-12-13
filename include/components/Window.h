@@ -15,6 +15,7 @@ namespace Drift
 		void Close() override;
 		void Render() override;
 		void Update() override;
+		auto GetBoundingBox() -> BoundingBox override;
 
 		void DependsOn(const std::shared_ptr<Window>& parent);
 		auto HasDependencies() -> bool;

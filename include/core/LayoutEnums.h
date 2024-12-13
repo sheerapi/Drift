@@ -66,4 +66,10 @@ namespace Drift
 		Default,
 		Text
 	};
+
+	enum class BoxSizing
+	{
+		BorderBox,
+		ContentBox
+	};
 }

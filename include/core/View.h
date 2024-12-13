@@ -32,10 +32,7 @@ namespace Drift
 			return Running;
 		}
 
-		[[nodiscard]] inline auto GetBoundingBox() const -> BoundingBox
-		{
-			return *Bounds;
-		}
+		[[nodiscard]] inline virtual auto GetBoundingBox() -> BoundingBox { return {}; };
 
 		[[nodiscard]] inline auto GetRendererContext() const -> Graphics::RendererContext
 		{
@@ -80,7 +77,6 @@ namespace Drift
 	protected:
 		std::stack<std::shared_ptr<Activity>> Activities;
 		std::shared_ptr<Graphics::RendererContext> RendererContext;
-		std::shared_ptr<BoundingBox> Bounds;
 		bool Running{true};
 
 	private:

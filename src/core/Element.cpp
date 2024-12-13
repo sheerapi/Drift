@@ -1,10 +1,12 @@
 #include "core/Element.h"
+#include "core/Logger.h"
 #include "core/SkColor.h"
 #include "core/SkPaint.h"
 #include "core/SkRect.h"
 #include "graphics/RendererContext.h"
 #include "utils/Demangle.h"
 #include "utils/StringUtils.h"
+#include "yoga/YGConfig.h"
 #include "yoga/YGNode.h"
 #include "yoga/YGNodeLayout.h"
 #include "yoga/YGNodeStyle.h" // IWYU pragma: keep
@@ -14,14 +16,19 @@ namespace Drift
 {
 	Element::Element()
 	{
-		_ygNode = YGNodeNew();
-		_bounds = std::make_shared<BoundingBox>();
+		YGConfigRef config = YGConfigNew();
+		YGConfigSetUseWebDefaults(config, true);
+
+		_ygNode = YGNodeNewWithConfig(config);
+		Overflow(Overflow::Visible);
+		FlexShrink(0);
+		PositionType(PositionType::Static);
 	}
 
-    Element::~Element()
-    {
-        YGNodeFree(_ygNode);
-    }
+	Element::~Element()
+	{
+		YGNodeFree(_ygNode);
+	}
 
 	auto Element::AddChild(Element* element) -> std::shared_ptr<Element>
 	{
@@ -39,12 +46,14 @@ namespace Drift
 
 		element->_parent = this;
 		Children.push_back(element);
-        YGNodeInsertChild(_ygNode, element->_ygNode, YGNodeGetChildCount(_ygNode));
+		YGNodeInsertChild(_ygNode, element->_ygNode, YGNodeGetChildCount(_ygNode));
 		return element;
 	}
 
 	auto Element::ToString() -> std::string
 	{
+		auto bounds = GetBoundingBox();
+		
 		std::string classString;
 		for (size_t i = 0; i < _className.size(); i++)
 		{
@@ -53,9 +62,8 @@ namespace Drift
 		}
 
 		return std::format("{} [#{} {} ({}x{} @ {},{})]",
-							getNamespaceFreeName(dt_type(*this)), _id, classString,
-							GetBoundingBox().Width, GetBoundingBox().Height,
-							GetBoundingBox().X, GetBoundingBox().Y);
+						   getNamespaceFreeName(dt_type(*this)), _id, classString,
+						   bounds.Width, bounds.Height, bounds.X, bounds.Y);
 	}
 
 	auto Element::ID(const std::string& newId) -> Element*
@@ -84,14 +92,23 @@ namespace Drift
 	{
 		if (_parent != nullptr)
 		{
+			auto bounds = GetBoundingBox();
+			// dt_info("{} {} {} {}", bounds.X, bounds.Y, bounds.Width, bounds.Height);
+
 			SkPaint paint;
 			paint.setColor(SK_ColorWHITE);
-			paint.setStroke(true);
-			paint.setStrokeWidth(2);
+			paint.setAntiAlias(true);
+
+			SkPaint outline;
+			outline.setColor(SK_ColorBLACK);
+			outline.setAntiAlias(true);
+
+			dt_canvas->drawRect(SkRect::MakeXYWH(bounds.X - 1, bounds.Y - 1,
+												 bounds.Width + 2, bounds.Height + 2),
+								outline);
 
 			dt_canvas->drawRect(
-				SkRect::MakeXYWH(_bounds->X, _bounds->Y, _bounds->Width, _bounds->Height),
-				paint);
+				SkRect::MakeXYWH(bounds.X, bounds.Y, bounds.Width, bounds.Height), paint);
 		}
 	}
 
@@ -123,15 +140,9 @@ namespace Drift
 			child->Tick();
 		}
 
-		if (YGNodeGetHasNewLayout(_ygNode))
+		if (_parent == nullptr)
 		{
-			YGNodeSetHasNewLayout(_ygNode, false);
-			YGNodeCalculateLayout(_ygNode, YGUndefined, YGUndefined, YGDirectionLTR);
-
-			_bounds->X = GetAbsoluteX();
-			_bounds->Y = GetAbsoluteY();
-			_bounds->Width = YGNodeLayoutGetWidth(_ygNode);
-			_bounds->Height = YGNodeLayoutGetHeight(_ygNode);
+			_refreshLayout();
 		}
 	}
 
@@ -148,15 +159,17 @@ namespace Drift
 		}
 	}
 
-    auto Element::GetBoundingBox() -> BoundingBox
-    {
-        return *_bounds;
-    }
+	auto Element::GetBoundingBox() -> BoundingBox
+	{
+		return {YGNodeLayoutGetWidth(_ygNode), YGNodeLayoutGetHeight(_ygNode),
+				GetAbsoluteX(), GetAbsoluteY()};
+	}
 
-    auto Element::GetAbsoluteX() -> float
-    {
-        return YGNodeLayoutGetLeft(_ygNode) + (_parent != nullptr ? _parent->GetAbsoluteX() : 0);
-    }
+	auto Element::GetAbsoluteX() -> float
+	{
+		return YGNodeLayoutGetLeft(_ygNode) +
+			   (_parent != nullptr ? _parent->GetAbsoluteX() : 0);
+	}
 
 	auto Element::GetAbsoluteY() -> float
 	{
@@ -165,22 +178,70 @@ namespace Drift
 	}
 
 	void Element::ForceLayoutRefresh()
-    {
-		YGNodeSetHasNewLayout(_ygNode, false);
-		YGNodeCalculateLayout(_ygNode, YGUndefined, YGUndefined, YGDirectionLTR);
-
-		_bounds->X = GetAbsoluteX();
-		_bounds->Y = GetAbsoluteY();
-		_bounds->Width = YGNodeLayoutGetWidth(_ygNode);
-		_bounds->Height = YGNodeLayoutGetHeight(_ygNode);
-
-        for (auto& child : Children)
-        {
-            child->ForceLayoutRefresh();
-        }
+	{
+		_refreshLayout(true);
 	}
 
-		dt_yogaPropertyValueDef(Width);
+	void Element::_refreshLayout(bool force)
+	{
+		if (YGNodeGetHasNewLayout(_ygNode) || force)
+		{
+			if (_parent == nullptr)
+			{
+				YGNodeSetHasNewLayout(_ygNode, false);
+				YGNodeCalculateLayout(_ygNode, YGUndefined, YGUndefined, YGDirectionLTR);
+			}
+			else
+			{
+				_parent->_refreshLayout(force);
+			}
+		}
+	}
+
+	auto Element::GetLayoutEngineHandle() -> void*
+	{
+		return (void*)_ygNode;
+	}
+
+	auto Element::GetPercentWidth(float percent) -> float
+	{
+		_refreshLayout(); // We need to refresh the layout to get the latest bounds
+
+		return GetBoundingBox().Width * (percent / 100);
+	}
+
+	auto Element::GetPercentHeight(float percent) -> float
+	{
+		_refreshLayout();
+
+		return GetBoundingBox().Height * (percent / 100);
+	}
+
+	auto Element::WidthPercent(float val) -> Element*
+	{
+		if (_parent == nullptr)
+		{
+			dt_coreWarn("Element is orphaned! Percent requires a parent");
+			return this;
+		}
+
+		YGNodeStyleSetWidthPercent(_ygNode, val);
+		return this;
+	}
+
+	auto Element::HeightPercent(float val) -> Element*
+	{
+		if (_parent == nullptr)
+		{
+			dt_coreWarn("Element is orphaned! Percent requires a parent");
+			return this;
+		}
+
+		YGNodeStyleSetHeightPercent(_ygNode, val);
+		return this;
+	}
+
+	dt_yogaPropertyValueDef(Width);
 	dt_yogaPropertyValueDef(Height);
 
 	dt_yogaPropertyValueDef(MinWidth);
@@ -207,6 +268,7 @@ namespace Drift
 	dt_yogaPropertyEnumDef(FlexWrap, enum Wrap, YGWrap);
 	dt_yogaPropertyEnumDef(FlexDirection, enum FlexDirection, YGFlexDirection);
 	dt_yogaPropertyEnumDef(PositionType, enum PositionType, YGPositionType);
+	dt_yogaPropertyEnumDef(BoxSizing, enum BoxSizing, YGBoxSizing);
 
 	auto Element::NodeType(enum NodeType val) -> Element*
 	{

@@ -2,6 +2,7 @@
 #include "GLFW/glfw3.h"
 #include "core/Application.h"
 #include "core/Logger.h"
+#include "core/SkColor.h"
 #include "events/DesktopEventLoop.h"
 #include "graphics/RendererContext.h"
 #include "utils/PerformanceTimer.h"
@@ -16,8 +17,6 @@ namespace Drift
 		}
 
 		_title = title;
-		Bounds->Width = (float)width;
-		Bounds->Height = (float)height;
 
 		_width = width;
 		_height = height;
@@ -27,9 +26,12 @@ namespace Drift
 	{
 		dt_stopwatch();
 
-		glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+		glfwWindowHint(GLFW_DECORATED, GLFW_TRUE);
 		glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GLFW_TRUE);
 		glfwWindowHint(GLFW_SRGB_CAPABLE, GLFW_TRUE);
+		glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+		glfwWindowHint(GLFW_FLOATING, GLFW_TRUE);
+		glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_TRUE);
 		glfwWindowHintString(GLFW_X11_CLASS_NAME,
 							 Application::GetApplicationID().GetCompoundID().c_str());
 
@@ -42,6 +44,8 @@ namespace Drift
 		}
 
 		glfwMakeContextCurrent(_window);
+
+		glfwGetFramebufferSize(_window, &_width, &_height);
 
 		RendererContext = std::make_shared<Graphics::RendererContext>(_width, _height);
 	}
@@ -61,8 +65,6 @@ namespace Drift
 		}
 
 		glfwGetFramebufferSize(_window, &_width, &_height);
-		Bounds->Width = (float)_width;
-		Bounds->Height = (float)_height;
 
 		GetCurrentActivity()->Update();
 	}
@@ -70,10 +72,12 @@ namespace Drift
 	void Window::Render()
 	{
 		Graphics::RendererContext::main = RendererContext.get();
-		
+
 		glfwMakeContextCurrent(_window);
 
 		RendererContext->RefreshContext(_width, _height);
+
+		RendererContext->Canvas->clear(SK_ColorTRANSPARENT);
 
 		GetCurrentActivity()->Render();
 
@@ -115,5 +119,10 @@ namespace Drift
 	auto Window::HasDependencies() -> bool
 	{
 		return _depends == nullptr;
+	}
+
+	auto Window::GetBoundingBox() -> BoundingBox
+	{
+		return {(float)_width, (float)_height, 0, 0};
 	}
 }

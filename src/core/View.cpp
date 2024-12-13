@@ -12,7 +12,6 @@ namespace Drift
 	View::View()
 	{
 		AddActivity<Activity>();
-		Bounds = std::make_shared<BoundingBox>();
 	}
 
 	void View::NavigateBack()
@@ -47,8 +46,10 @@ namespace Drift
 
 	void View::PrintElementTree()
 	{
-		dt_coreDebug("   {} [enabled = {}]", getNamespaceFreeName(dt_type(*this)),
-					 _enabled);
+		auto bounds = GetBoundingBox();
+
+		dt_coreDebug("   {} [enabled = {} ({}x{} @ {},{})]", getNamespaceFreeName(dt_type(*this)),
+					 _enabled, bounds.Width, bounds.Height, bounds.X, bounds.Y);
 
 		GetCurrentActivity()->PrintElementTree();
 	}

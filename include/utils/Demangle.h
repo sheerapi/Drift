@@ -1,5 +1,6 @@
 #pragma once
 #include "../core/Logger.h"
+#include "core/Macros.h"
 #include <string>
 #include <typeinfo>
 
@@ -9,11 +10,11 @@
  * @param name Name to demangle, usually by typeid().name()
  * @return std::string Demangled name, if using GCC/Clang/MSVC, otherwise the mangled one
  */
-auto demangle(const char* name) -> std::string;
+auto dt_api demangle(const char* name) -> std::string;
 
 #define dt_type(type) demangle(typeid(type).name())
 
-auto getNamespaceFreeName(const std::string& name) -> std::string;
+auto dt_api getNamespaceFreeName(const std::string& name) -> std::string;
 
 template <typename T1, typename T2> auto typeCheck() -> bool
 {

@@ -10,7 +10,7 @@
 #pragma comment(lib, "Dbghelp.lib")
 #endif
 
-auto demangle(const char* name) -> std::string {
+auto dt_api demangle(const char* name) -> std::string {
 #if defined(__GNUG__) || defined(__clang__)
     int status = -4; // some arbitrary value to eliminate the compiler warning
     std::unique_ptr<char, void(*)(void*)> res{
@@ -32,7 +32,7 @@ auto demangle(const char* name) -> std::string {
 #endif
 }
 
-auto getNamespaceFreeName(const std::string& name) -> std::string
+auto dt_api getNamespaceFreeName(const std::string& name) -> std::string
 {
     return stringSplit(name, "::").back();
 }

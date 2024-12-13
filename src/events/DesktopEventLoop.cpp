@@ -27,6 +27,9 @@ namespace Drift::Events
         {
             view->Present();
         }
+
+		Update();
+		ForceLayoutRefresh();
 	}
 
     void DesktopEventLoop::Tick()

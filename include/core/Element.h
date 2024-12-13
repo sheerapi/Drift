@@ -39,6 +39,9 @@ namespace Drift
 		auto GetAbsoluteX() -> float;
 		auto GetAbsoluteY() -> float;
 
+		[[nodiscard]] auto GetPercentWidth(float percent) -> float;
+		[[nodiscard]] auto GetPercentHeight(float percent) -> float;
+
 		void Tick();
 		void Render();
 
@@ -46,6 +49,11 @@ namespace Drift
 
 		virtual auto ToString() -> std::string;
 		void DebugPrint(int depth = 0);
+
+		auto WidthPercent(float val) -> Element*;
+		auto HeightPercent(float val) -> Element*;
+
+		auto GetLayoutEngineHandle() -> void*;
 
 		dt_yogaPropertySimple(Width);
 		dt_yogaPropertySimple(Height);
@@ -74,6 +82,7 @@ namespace Drift
 		dt_yogaPropertyType(FlexDirection, enum FlexDirection);
 		dt_yogaPropertyType(PositionType, enum PositionType);
 		dt_yogaPropertyType(NodeType, enum NodeType);
+		dt_yogaPropertyType(BoxSizing, enum BoxSizing);
 
 		dt_yogaPropertyEdge(Margin);
 		dt_yogaPropertyEdge(Padding);
@@ -90,7 +99,8 @@ namespace Drift
 		Element* _parent{nullptr};
 		bool _enabled{true};
         std::string _id;
-		std::shared_ptr<BoundingBox> _bounds;
         std::vector<std::string> _className;
+
+		void _refreshLayout(bool force = false);
 	};
 }
