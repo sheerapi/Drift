@@ -1,4 +1,6 @@
 #pragma once
+
+#ifndef DT_NO_GLFW
 #include "../core/View.h"
 #include "GLFW/glfw3.h"
 #include "core/Macros.h"
@@ -28,3 +30,4 @@ namespace Drift
 		GLFWwindow* _window{nullptr};
 	};
 }
+#endif

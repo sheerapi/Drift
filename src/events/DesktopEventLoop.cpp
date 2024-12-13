@@ -1,3 +1,4 @@
+#ifndef DT_NO_GLFW
 #include "events/DesktopEventLoop.h"
 #include "GLFW/glfw3.h"
 #include "utils/PerformanceTimer.h"
@@ -47,3 +48,4 @@ namespace Drift::Events
         glfwTerminate();
     }
 }
+#endif

@@ -30,6 +30,10 @@ if get_option('debug') or get_option('verbose')
     add_global_arguments(['-DDEBUG', '-fvisibility=hidden'], language: ['c', 'cpp'])
 endif
 
+if get_option('no_glfw')
+    add_global_arguments(['-DDT_NO_GLFW', '-fvisibility=hidden'], language: ['c', 'cpp'])
+endif
+
 run_command('./skia.sh', host_machine.system(), 'x64', check: true)
 
 dependencies = [
@@ -44,9 +48,12 @@ dependencies = [
         },
     ),
     cmake.subproject('yoga').dependency('yogacore'),
-    dependency('glfw3', default_options: { 'display-api': 'wayland', }),
     dependency('opengl')
 ]
+
+if not get_option('no_glfw')
+    dependencies += [dependency('glfw3', default_options: { 'display-api': 'wayland', })]
+endif
 
 drift = shared_library(
     'drift',

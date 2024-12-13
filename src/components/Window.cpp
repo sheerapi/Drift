@@ -1,3 +1,4 @@
+#ifndef DT_NO_GLFW
 #include "components/Window.h"
 #include "GLFW/glfw3.h"
 #include "core/Application.h"
@@ -127,3 +128,4 @@ namespace Drift
 		return {(float)_width, (float)_height, 0, 0};
 	}
 }
+#endif

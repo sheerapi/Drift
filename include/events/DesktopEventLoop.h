@@ -1,4 +1,6 @@
 #pragma once
+
+#ifndef DT_NO_GLFW
 #include "EventLoop.h"
 #include "core/Macros.h"
 
@@ -13,3 +15,4 @@ namespace Drift::Events
         ~DesktopEventLoop() override;
     };
 }
+#endif
