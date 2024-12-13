@@ -96,7 +96,7 @@ namespace Drift
 			// dt_info("{} {} {} {}", bounds.X, bounds.Y, bounds.Width, bounds.Height);
 
 			SkPaint paint;
-			paint.setColor(SK_ColorWHITE);
+			paint.setColor(Children.size() == 0 ? SK_ColorRED : SK_ColorWHITE);
 			paint.setAntiAlias(true);
 
 			SkPaint outline;
