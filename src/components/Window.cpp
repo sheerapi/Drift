@@ -66,6 +66,7 @@ namespace Drift
 
 		glfwGetFramebufferSize(_window, &_width, &_height);
 
+		GetCurrentActivity()->SetContainingView(this);
 		GetCurrentActivity()->Update();
 	}
 

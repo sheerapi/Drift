@@ -16,7 +16,7 @@ auto main(int argc, const char** argv) -> int
 					 ->FlexDirection(FlexDirection::Column)
 					 ->JustifyContent(JustifyContent::SpaceBetween);
 
-	window2->GetCurrentActivity()->AttachRoot(window->GetCurrentActivity()->CloneRoot());
+	window2->ReplaceActivity(window->GetCurrentActivity());
 
 	auto* container1 = root->AddChild<Element>()->HeightPercent(100)->FlexShrink(1)->Padding(20)->FlexDirection(FlexDirection::Row);
 
