@@ -85,4 +85,9 @@ namespace Drift
 	{
 		Root->Render();
 	}
+
+	auto Activity::CloneRoot() -> std::shared_ptr<Element>
+	{
+		return {Root};
+	}
 }
