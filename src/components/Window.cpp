@@ -27,11 +27,9 @@ namespace Drift
 	{
 		dt_stopwatch();
 
-		glfwWindowHint(GLFW_DECORATED, GLFW_TRUE);
+		glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
 		glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GLFW_TRUE);
 		glfwWindowHint(GLFW_SRGB_CAPABLE, GLFW_TRUE);
-		glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-		glfwWindowHint(GLFW_FLOATING, GLFW_TRUE);
 		glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_TRUE);
 		glfwWindowHintString(GLFW_X11_CLASS_NAME,
 							 Application::GetApplicationID().GetCompoundID().c_str());
@@ -47,7 +45,7 @@ namespace Drift
 		glfwMakeContextCurrent(_window);
 
 		glfwGetFramebufferSize(_window, &_width, &_height);
-		glfwSwapInterval(0);
+		glfwSwapInterval(1);
 
 		RendererContext = std::make_shared<Graphics::RendererContext>(_width, _height);
 	}

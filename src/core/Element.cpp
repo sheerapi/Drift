@@ -6,7 +6,6 @@
 #include "graphics/RendererContext.h"
 #include "utils/Demangle.h"
 #include "utils/StringUtils.h"
-#include "yoga/YGConfig.h"
 #include "yoga/YGNode.h"
 #include "yoga/YGNodeLayout.h"
 #include "yoga/YGNodeStyle.h" // IWYU pragma: keep
@@ -16,13 +15,12 @@ namespace Drift
 {
 	Element::Element()
 	{
-		YGConfigRef config = YGConfigNew();
-		YGConfigSetUseWebDefaults(config, true);
-
-		_ygNode = YGNodeNewWithConfig(config);
+		_ygNode = YGNodeNew();
 		Overflow(Overflow::Visible);
 		FlexShrink(0);
 		PositionType(PositionType::Static);
+		FlexDirection(FlexDirection::Row);
+		AlignContent(AlignItems::Stretch);
 	}
 
 	Element::~Element()
@@ -53,7 +51,7 @@ namespace Drift
 	auto Element::ToString() -> std::string
 	{
 		auto bounds = GetBoundingBox();
-		
+
 		std::string classString;
 		for (size_t i = 0; i < _className.size(); i++)
 		{
