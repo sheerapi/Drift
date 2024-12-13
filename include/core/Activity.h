@@ -1,12 +1,13 @@
 #pragma once
 #include "../core/Element.h"
 #include "../core/Macros.h"
+#include "events/Observable.h"
 
 namespace Drift
 {
 	class View;
 
-	class dt_api Activity
+	class dt_api Activity : public Events::Observable
 	{
 	public:
 		enum class Status

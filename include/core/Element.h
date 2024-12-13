@@ -2,6 +2,7 @@
 #include "../utils/Demangle.h"
 #include "../core/Macros.h"
 #include "core/LayoutEnums.h"
+#include "events/Observable.h"
 #include "utils/BoundingBox.h"
 #include "yoga/YGConfig.h"
 #include <memory>
@@ -9,7 +10,7 @@
 
 namespace Drift
 {
-	class dt_api Element
+	class dt_api Element : public Events::Observable
 	{
 	public:
 		Element();

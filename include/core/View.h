@@ -1,6 +1,7 @@
 #pragma once
 #include "../core/Activity.h"
 #include "../core/Macros.h"
+#include "events/Observable.h"
 #include "graphics/RendererContext.h"
 #include "utils/Demangle.h"
 #include <memory>
@@ -8,7 +9,7 @@
 
 namespace Drift
 {
-	class dt_api View
+	class dt_api View : public Events::Observable
 	{
 	public:
 		View();

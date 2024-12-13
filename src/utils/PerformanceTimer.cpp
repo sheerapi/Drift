@@ -19,14 +19,27 @@ namespace Drift::Internals
 		{
 			auto end = std::chrono::high_resolution_clock::now();
 			auto duration =
-				std::chrono::duration_cast<std::chrono::milliseconds>(end - _start)
+				std::chrono::duration_cast<std::chrono::microseconds>(end - _start)
 					.count();
 
 			if (duration < 1000)
 			{
-				dt_coreVerbose("{} took {}ms to run", _name, duration);
+				dt_coreVerbose("{} took {}µs to run", _name,
+							std::chrono::duration_cast<std::chrono::microseconds>(end - _start)
+								.count());
+				return;
 			}
-			else
+
+			if (duration > 1000 && duration < 1000000)
+			{
+				dt_coreVerbose(
+					"{} took {}ms to run", _name,
+					std::chrono::duration_cast<std::chrono::milliseconds>(end - _start)
+						.count());
+				return;
+			}
+
+			if (duration > 1000000)
 			{
 				dt_coreWarn("{} took {}s to run", _name,
 							std::chrono::duration_cast<std::chrono::seconds>(end - _start)

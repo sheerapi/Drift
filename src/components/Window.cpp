@@ -47,6 +47,7 @@ namespace Drift
 		glfwMakeContextCurrent(_window);
 
 		glfwGetFramebufferSize(_window, &_width, &_height);
+		glfwSwapInterval(0);
 
 		RendererContext = std::make_shared<Graphics::RendererContext>(_width, _height);
 	}
