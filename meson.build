@@ -34,6 +34,8 @@ if get_option('no_glfw')
     add_global_arguments(['-DDT_NO_GLFW', '-fvisibility=hidden'], language: ['c', 'cpp'])
 endif
 
+message('Downloading Skia binaries...')
+
 run_command('./skia.sh', host_machine.system(), 'x64', check: true)
 
 dependencies = [
