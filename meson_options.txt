@@ -1,8 +1,8 @@
 option(
-    'no_glfw',
+    'no_wayland',
     type: 'boolean',
     value: false,
-    description: 'Whether to compile or not with GLFW',
+    description: 'Whether to compile or not with Wayland',
 )
 
 option(

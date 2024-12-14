@@ -1,14 +1,13 @@
 #pragma once
 
-#ifndef DT_NO_GLFW
+#ifndef DT_NO_WAYLAND
 #include "../core/View.h"
 #include "GLFW/glfw3.h"
 #include "core/Macros.h"
-#include "events/Observable.h"
 
 namespace Drift
 {
-	class dt_api Window : public View, Events::Observable
+	class dt_api Window : public View
 	{
 	public:
 		Window(const std::string& title, int width = 800, int height = 600);

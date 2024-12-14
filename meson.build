@@ -21,17 +21,24 @@ sources = [
     'src/events/EventLoop.cpp',
     'src/events/DesktopEventLoop.cpp',
     'src/components/Window.cpp',
-    'src/graphics/RendererContext.cpp'
+    'src/graphics/RendererContext.cpp',
 ]
 
 cmake = import('cmake')
 
+sys_os = host_machine.system()
+
+add_global_arguments(
+    ['-fvisibility=hidden', '-DDT_SYSTEM="' + sys_os + '"'],
+    language: ['c', 'cpp'],
+)
+
 if get_option('debug') or get_option('verbose')
-    add_global_arguments(['-DDEBUG', '-fvisibility=hidden'], language: ['c', 'cpp'])
+    add_global_arguments(['-DDEBUG'], language: ['c', 'cpp'])
 endif
 
-if get_option('no_glfw')
-    add_global_arguments(['-DDT_NO_GLFW', '-fvisibility=hidden'], language: ['c', 'cpp'])
+if get_option('no_wayland')
+    add_global_arguments(['-DDT_NO_WAYLAND'], language: ['c', 'cpp'])
 endif
 
 message('Downloading Skia binaries...')
@@ -50,11 +57,16 @@ dependencies = [
         },
     ),
     cmake.subproject('yoga').dependency('yogacore'),
-    dependency('opengl')
+    dependency('egl'),
+    dependency('glfw3')
 ]
 
-if not get_option('no_glfw')
-    dependencies += [dependency('glfw3', default_options: { 'display-api': 'wayland', })]
+if not get_option('no_wayland') and sys_os == 'linux'
+    dependencies += [
+        dependency('wayland-client'),
+        dependency('wayland-cursor'),
+        dependency('wayland-egl'),
+    ]
 endif
 
 drift = shared_library(
