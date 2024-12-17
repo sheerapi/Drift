@@ -142,16 +142,17 @@ namespace Drift
 				logger->set_pattern("[%^%n%$][%T][%l] %v");
 				logger->set_level(spdlog::level::trace);
 
-				std::shared_ptr<spdlog::logger> def = spdlog::stdout_color_mt("App");
-				def->set_pattern("[%^%n%$][%T][%l][%s:%# %!()] %v");
-				def->set_level(spdlog::level::trace);
+				defLogger = spdlog::stdout_color_mt("App");
+				defLogger->set_pattern("[%^%n%$][%T][%l][%s:%# %!()] %v");
+				defLogger->set_level(spdlog::level::trace);
 
-				spdlog::set_default_logger(def);
+				spdlog::set_default_logger(defLogger);
 			}
 		}
 
 	private:
 		inline static std::shared_ptr<spdlog::logger> logger{nullptr};
+		inline static std::shared_ptr<spdlog::logger> defLogger{nullptr};
 	};
 }
 

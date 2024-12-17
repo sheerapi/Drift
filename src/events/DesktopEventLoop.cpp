@@ -39,6 +39,9 @@ namespace Drift::Events
 
 				glfwSetCursorPosCallback((GLFWwindow*)window->GetInternalWindowHandle(),
 										 Internals::glfwCursorMoveCallback);
+
+				glfwSetMouseButtonCallback((GLFWwindow*)window->GetInternalWindowHandle(),
+										 Internals::glfwMouseButtonCallback);
 			}
 		}
 
@@ -90,6 +93,16 @@ namespace Drift::Events
 			dt_window->EmitSignal("cursor.move", relPos);
 
 			delete relPos;
+		}
+
+		void glfwMouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
+		{
+			auto* dt_window = (Window*)glfwGetWindowUserPointer(window);
+
+            if (Input::hoveredElement != nullptr)
+            {
+                
+            }
 		}
 	}
 }

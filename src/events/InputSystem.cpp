@@ -17,8 +17,15 @@ namespace Drift
 
         if (prevHover != hoveredElement)
         {
-            prevHover->EmitSignal("unhover");
-			hoveredElement->EmitSignal("hover");
+            if (prevHover != nullptr)
+            {
+				prevHover->EmitSignal("unhover");
+			}
+
+			if (hoveredElement != nullptr)
+            {
+				hoveredElement->EmitSignal("hover");
+			}
 		}
 	}
 }

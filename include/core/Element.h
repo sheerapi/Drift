@@ -11,6 +11,15 @@
 
 namespace Drift
 {
+	struct dt_api ElementStates
+	{
+	public:
+		bool Enabled{true};
+		bool Hovered{false};
+		bool Focused{false};
+		bool Clicked{false};
+	};
+
 	class dt_api Element : public Events::Observable
 	{
 	public:
@@ -57,6 +66,9 @@ namespace Drift
 
 		auto GetLayoutEngineHandle() -> void*;
 
+		auto ReceivesInput(bool receives) -> Element*;
+		auto ReceivesInput() const -> bool;
+
 		static auto FindDeepestMatch(Element* object, Vector2 pos) -> Element*;
 
 		dt_yogaPropertySimple(Width);
@@ -101,10 +113,17 @@ namespace Drift
 	private:
 		YGNodeRef _ygNode;
 		Element* _parent{nullptr};
-		bool _enabled{true};
+		bool _focusable{false};
+		bool _receivesInput{true};
+		ElementStates _states;
         std::string _id;
         std::vector<std::string> _className;
 
 		void _refreshLayout(bool force = false);
+		void _refreshState(const std::string& eventName);
+
+#ifdef DEBUG
+		auto _getPaint() const -> unsigned int;
+#endif
 	};
 }

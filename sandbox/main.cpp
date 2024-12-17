@@ -1,7 +1,7 @@
 #include "components/Window.h"
 #include "core/Application.h"
 #include "core/LayoutEnums.h"
-#include "utils/Vector2.h"
+#include "utils/Thread.h"
 
 using namespace Drift;
 
@@ -14,17 +14,17 @@ auto main(int argc, const char** argv) -> int
 	auto* root = window->GetCurrentActivity()
 					 ->AttachRoot(std::make_shared<Element>())
 					 ->FlexDirection(FlexDirection::Column)
-					 ->JustifyContent(JustifyContent::SpaceBetween);
+					 ->JustifyContent(JustifyContent::SpaceBetween)
+					 ->ReceivesInput(false);
 
 	auto* container1 = root->AddChild<Element>()
 						   ->HeightPercent(100)
 						   ->FlexShrink(1)
 						   ->Padding(20)
-						   ->FlexDirection(FlexDirection::Row);
+						   ->FlexDirection(FlexDirection::Row)
+						   ->ReceivesInput(false);
 
-	container1->AddChild<Element>()->FlexGrow(1)->On("hover", [](auto* data){
-		dt_coreVerbose("Hovered");
-	});
+	container1->AddChild<Element>()->FlexGrow(1);
 
 	auto* container1_sub = container1->AddChild<Element>()
 							   ->FlexGrow(1)
@@ -38,7 +38,8 @@ auto main(int argc, const char** argv) -> int
 						   ->Height(48)
 						   ->JustifyContent(JustifyContent::SpaceBetween)
 						   ->AlignItems(AlignItems::Center)
-						   ->PaddingHorizontal(16);
+						   ->PaddingHorizontal(16)
+						   ->ReceivesInput(false);
 
 	for (size_t i = 0; i < 5; i++)
 	{

@@ -21,6 +21,14 @@ namespace Drift
 		PositionType(PositionType::Static);
 		FlexDirection(FlexDirection::Row);
 		AlignContent(AlignItems::Stretch);
+
+		On("hover", [this](auto* data) { _refreshState("hover"); });
+		On("unhover", [this](auto* data) { _refreshState("unhover"); });
+		On("focus", [this](auto* data) { _refreshState("focus"); });
+		On("unfocus", [this](auto* data) { _refreshState("unfocus"); });
+
+		On("click.left", [this](auto* data) { _refreshState("click.left"); });
+		On("unclick.left", [this](auto* data) { _refreshState("unclick.left"); });
 	}
 
 	Element::~Element()
@@ -91,10 +99,11 @@ namespace Drift
 		if (_parent != nullptr)
 		{
 			auto bounds = GetBoundingBox();
-			// dt_info("{} {} {} {}", bounds.X, bounds.Y, bounds.Width, bounds.Height);
 
 			SkPaint paint;
-			paint.setColor(Children.size() == 0 ? SK_ColorRED : SK_ColorWHITE);
+#ifdef DEBUG
+			paint.setColor(_getPaint());
+#endif
 			paint.setAntiAlias(true);
 
 			SkPaint outline;
@@ -128,7 +137,7 @@ namespace Drift
 
 	void Element::Tick()
 	{
-		if (_enabled)
+		if (_states.Enabled)
 		{
 			Update();
 		}
@@ -146,7 +155,7 @@ namespace Drift
 
 	void Element::Render()
 	{
-		if (_enabled)
+		if (_states.Enabled)
 		{
 			Draw();
 
@@ -239,18 +248,20 @@ namespace Drift
 		return this;
 	}
 
-	auto Element::FindDeepestMatch(Element *object, Vector2 pos) -> Element*
+	auto Element::FindDeepestMatch(Element* object, Vector2 pos) -> Element*
 	{
 		auto bounds = object->GetBoundingBox();
 
-		if (!SkRect::Intersects(SkRect::MakeXYWH(bounds.X, bounds.Y, bounds.Width, bounds.Height), SkRect::MakeXYWH(pos.X, pos.Y, 1, 1)))
+		if (!SkRect::Intersects(
+				SkRect::MakeXYWH(bounds.X, bounds.Y, bounds.Width, bounds.Height),
+				SkRect::MakeXYWH(pos.X, pos.Y, 1, 1)))
 		{
 			return nullptr;
 		}
 
 		for (auto itr = object->Children.rbegin(); itr < object->Children.rend(); ++itr)
 		{
-			auto* hit = FindDeepestMatch((*itr).get(), pos);			
+			auto* hit = FindDeepestMatch((*itr).get(), pos);
 			if (hit != nullptr)
 			{
 				return hit;
@@ -258,6 +269,17 @@ namespace Drift
 		}
 
 		return object;
+	}
+
+	auto Element::ReceivesInput(bool receives) -> Element*
+	{
+		_receivesInput = receives;
+		return this;
+	}
+
+	auto Element::ReceivesInput() const -> bool
+	{
+		return _receivesInput;
 	}
 
 	dt_yogaPropertyValueDef(Width);
@@ -330,5 +352,71 @@ namespace Drift
 	auto Element::Gap() -> float
 	{
 		return YGNodeStyleGetGap(_ygNode, YGGutter::YGGutterAll).value;
+	}
+
+	auto Element::_getPaint() const -> unsigned int
+	{
+		if (_states.Hovered)
+		{
+			return SK_ColorBLACK;
+		}
+		
+		if (_states.Clicked)
+		{
+			return SK_ColorBLUE;
+		}
+
+		if (_states.Focused)
+		{
+			return SK_ColorMAGENTA;
+		}
+
+		return Children.size() == 0 ? SK_ColorRED : SK_ColorWHITE;
+	}
+
+	void Element::_refreshState(const std::string& eventName)
+	{
+		if (!_receivesInput || !_states.Enabled)
+		{
+			return;
+		}
+
+		// yandere dev moment
+		// why doesnt c++ have string switches ffs
+		if (eventName == "hover")
+		{
+			_states.Hovered = true;
+			return;
+		}
+
+		if (eventName == "unhover")
+		{
+			_states.Hovered = false;
+			return;
+		}
+
+		if (eventName == "focus")
+		{
+			_states.Focused = true;
+			return;
+		}
+
+		if (eventName == "unfocus")
+		{
+			_states.Focused = false;
+			return;
+		}
+
+		if (eventName == "click")
+		{
+			_states.Clicked = true;
+			return;
+		}
+
+		if (eventName == "unclick")
+		{
+			_states.Clicked = false;
+			return;
+		}
 	}
 }
