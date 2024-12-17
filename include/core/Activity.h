@@ -51,5 +51,7 @@ namespace Drift
 	private:
 		Status _status{Activity::Status::Active};
 		View* _containingView;
+
+		friend class Input;
 	};
 }

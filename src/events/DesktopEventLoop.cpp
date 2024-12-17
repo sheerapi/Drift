@@ -4,7 +4,6 @@
 #	include "components/Window.h"
 #	include "utils/PerformanceTimer.h"
 #	include "events/InputSystem.h"
-#	include "core/Application.h"
 
 void driftHandleGlfwError(int err, const char* msg)
 {
@@ -37,6 +36,9 @@ namespace Drift::Events
 
 				glfwSetCursorEnterCallback((GLFWwindow*)window->GetInternalWindowHandle(),
 										   Internals::glfwCursorEnterCallback);
+
+				glfwSetCursorPosCallback((GLFWwindow*)window->GetInternalWindowHandle(),
+										 Internals::glfwCursorMoveCallback);
 			}
 		}
 
@@ -66,7 +68,28 @@ namespace Drift::Events
 			dt_window->EmitSignal(entered == GLFW_TRUE ? "cursor.entered"
 													   : "cursor.exit");
 
-            Input::currentView = entered == 1 ? dt_window : nullptr;
+			Input::currentView = entered == 1 ? dt_window : nullptr;
+
+			if (entered == 0)
+			{
+				// we have to reset everything since we dont know if we are going
+				// to be focused again
+				Input::mousePosition = {0, 0};
+			}
+		}
+
+		void glfwCursorMoveCallback(GLFWwindow* window, double xpos, double ypos)
+		{
+			auto* dt_window = (Window*)glfwGetWindowUserPointer(window);
+			auto* relPos = new Vector2((float)xpos - Input::mousePosition.X,
+									   (float)ypos - Input::mousePosition.Y);
+
+			Input::mousePosition = {(float)xpos, (float)ypos};
+			Input::RecalculateState();
+
+			dt_window->EmitSignal("cursor.move", relPos);
+
+			delete relPos;
 		}
 	}
 }

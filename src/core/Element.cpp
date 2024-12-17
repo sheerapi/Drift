@@ -239,6 +239,27 @@ namespace Drift
 		return this;
 	}
 
+	auto Element::FindDeepestMatch(Element *object, Vector2 pos) -> Element*
+	{
+		auto bounds = object->GetBoundingBox();
+
+		if (!SkRect::Intersects(SkRect::MakeXYWH(bounds.X, bounds.Y, bounds.Width, bounds.Height), SkRect::MakeXYWH(pos.X, pos.Y, 1, 1)))
+		{
+			return nullptr;
+		}
+
+		for (auto itr = object->Children.rbegin(); itr < object->Children.rend(); ++itr)
+		{
+			auto* hit = FindDeepestMatch((*itr).get(), pos);			
+			if (hit != nullptr)
+			{
+				return hit;
+			}
+		}
+
+		return object;
+	}
+
 	dt_yogaPropertyValueDef(Width);
 	dt_yogaPropertyValueDef(Height);
 

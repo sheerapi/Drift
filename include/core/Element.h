@@ -4,6 +4,7 @@
 #include "core/LayoutEnums.h"
 #include "events/Observable.h"
 #include "utils/BoundingBox.h"
+#include "utils/Vector2.h"
 #include "yoga/YGConfig.h"
 #include <memory>
 #include <vector>
@@ -55,6 +56,8 @@ namespace Drift
 		auto HeightPercent(float val) -> Element*;
 
 		auto GetLayoutEngineHandle() -> void*;
+
+		static auto FindDeepestMatch(Element* object, Vector2 pos) -> Element*;
 
 		dt_yogaPropertySimple(Width);
 		dt_yogaPropertySimple(Height);

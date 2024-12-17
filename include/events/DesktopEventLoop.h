@@ -19,6 +19,7 @@ namespace Drift::Events
 	namespace Internals
 	{
 		void glfwCursorEnterCallback(GLFWwindow* window, int entered);
+        void glfwCursorMoveCallback(GLFWwindow* window, double xpos, double ypos);
 	}
 }
 #endif
