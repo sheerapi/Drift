@@ -1,4 +1,4 @@
-#ifndef DT_NO_GLFW
+#ifndef DT_NO_DESKTOP
 #include "components/Window.h"
 #include "GLFW/glfw3.h"
 #include "core/Application.h"
@@ -41,6 +41,8 @@ namespace Drift
 			dt_coreError("Failed to create Glfw window!");
 			return;
 		}
+
+		glfwSetWindowUserPointer(_window, this);
 
 		glfwMakeContextCurrent(_window);
 
@@ -125,6 +127,11 @@ namespace Drift
 	auto Window::GetBoundingBox() -> BoundingBox
 	{
 		return {(float)_width, (float)_height, 0, 0};
+	}
+
+	auto Window::GetInternalWindowHandle() -> void*
+	{
+		return _window;
 	}
 }
 #endif

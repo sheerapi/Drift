@@ -1,6 +1,6 @@
 #pragma once
 
-#ifndef DT_NO_WAYLAND
+#ifndef DT_NO_DESKTOP
 #include "../core/View.h"
 #include "GLFW/glfw3.h"
 #include "core/Macros.h"
@@ -20,6 +20,7 @@ namespace Drift
 
 		void DependsOn(const std::shared_ptr<Window>& parent);
 		auto HasDependencies() -> bool;
+		auto GetInternalWindowHandle() -> void*;
 
 	private:
 		std::string _title;
