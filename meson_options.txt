@@ -2,7 +2,14 @@ option(
     'no_wayland',
     type: 'boolean',
     value: false,
-    description: 'Whether to compile or not with Wayland',
+    description: 'Whether to compile or not with Wayland extensions for Glfw',
+)
+
+option(
+    'no_desktop',
+    type: 'boolean',
+    value: false,
+    description: 'Whether to compile or not with desktop support using Glfw',
 )
 
 option(

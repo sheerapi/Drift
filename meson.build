@@ -27,9 +27,20 @@ sources = [
 cmake = import('cmake')
 
 sys_os = host_machine.system()
+glfw = not get_option('no_desktop')
+
+glfw_backend = ''
+
+if sys_os == 'linux'
+    glfw_backend = 'wayland'
+elif sys_os == 'windows'
+    glfw_backend = 'win32'
+elif sys_os == 'macos'
+    glfw_backend = 'cocoa'
+endif
 
 add_global_arguments(
-    ['-fvisibility=hidden', '-DDT_SYSTEM="' + sys_os + '"'],
+    ['-fvisibility=hidden'],
     language: ['c', 'cpp'],
 )
 
@@ -39,6 +50,10 @@ endif
 
 if get_option('no_wayland')
     add_global_arguments(['-DDT_NO_WAYLAND'], language: ['c', 'cpp'])
+endif
+
+if get_option('no_desktop')
+    add_global_arguments(['-DDT_NO_DESKTOP'], language: ['c', 'cpp'])
 endif
 
 message('Downloading Skia binaries...')
@@ -57,8 +72,6 @@ dependencies = [
         },
     ),
     cmake.subproject('yoga').dependency('yogacore'),
-    dependency('egl'),
-    dependency('glfw3')
 ]
 
 if not get_option('no_wayland') and sys_os == 'linux'
@@ -66,6 +79,12 @@ if not get_option('no_wayland') and sys_os == 'linux'
         dependency('wayland-client'),
         dependency('wayland-cursor'),
         dependency('wayland-egl'),
+    ]
+endif
+
+if glfw
+    dependencies += [
+        dependency('glfw3', default_options: { 'display-api': glfw_backend })
     ]
 endif
 
