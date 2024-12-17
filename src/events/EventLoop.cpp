@@ -1,6 +1,5 @@
 #include "events/EventLoop.h"
 #include "utils/Demangle.h"
-#include "utils/PerformanceTimer.h"
 
 namespace Drift::Events
 {

@@ -1,8 +1,9 @@
 #pragma once
+#include "core/Macros.h"
 
 namespace Drift
 {
-    struct BoundingBox
+    struct dt_api BoundingBox
     {
     public:
         float Width;

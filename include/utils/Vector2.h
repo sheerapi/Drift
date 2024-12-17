@@ -1,8 +1,9 @@
 #pragma once
+#include "core/Macros.h"
 
 namespace Drift
 {
-    struct Vector2
+    struct dt_api Vector2
     {
     public:
         float X;

@@ -1,7 +1,6 @@
 #include "components/Window.h"
 #include "core/Application.h"
 #include "core/LayoutEnums.h"
-#include "utils/Thread.h"
 
 using namespace Drift;
 
@@ -31,6 +30,7 @@ auto main(int argc, const char** argv) -> int
 							   ->FlexDirection(FlexDirection::Column)
 							   ->MarginLeft(20)
 							   ->Gap(20);
+
 	container1_sub->AddChild<Element>()->FlexGrow(1);
 	container1_sub->AddChild<Element>()->FlexGrow(2);
 
