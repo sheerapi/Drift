@@ -43,7 +43,9 @@ auto main(int argc, const char** argv) -> int
 
 	for (size_t i = 0; i < 5; i++)
 	{
-		container2->AddChild<Element>()->Width(24)->Height(24);
+		container2->AddChild<Element>()->Width(24)->Height(24)->On("click", [](auto* data){
+			dt_info("Clicked!");
+		});
 	}
 
 	Application::ForceGlobalLayoutRefresh();

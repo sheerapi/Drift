@@ -5,14 +5,23 @@
 
 namespace Drift
 {
-    class dt_api Input
-    {
-    public:
-        inline static View* currentView{nullptr};
-        inline static Vector2 mousePosition;
-        inline static Element* hoveredElement{nullptr};
-        inline static Element* focusedElement{nullptr};
+	enum class MouseButton
+	{
+		Left,
+		Right,
+		Middle
+	};
 
-        static void RecalculateState();
-    };
+	class dt_api Input
+	{
+	public:
+		inline static View* currentView{nullptr};
+		inline static Vector2 mousePosition;
+		inline static Element* hoveredElement{nullptr};
+		inline static Element* focusedElement{nullptr};
+
+		static void RecalculateState();
+		static void TriggerMouseMove(Vector2 pos);
+		static void TriggerMouseClick(MouseButton button, bool clicked);
+	};
 }

@@ -74,6 +74,7 @@ dependencies = [
         },
     ),
     cmake.subproject('yoga').dependency('yogacore'),
+    dependency('magic_enum')
 ]
 
 if not get_option('no_wayland') and sys_os == 'linux'

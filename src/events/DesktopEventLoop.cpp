@@ -83,26 +83,12 @@ namespace Drift::Events
 
 		void glfwCursorMoveCallback(GLFWwindow* window, double xpos, double ypos)
 		{
-			auto* dt_window = (Window*)glfwGetWindowUserPointer(window);
-			auto* relPos = new Vector2((float)xpos - Input::mousePosition.X,
-									   (float)ypos - Input::mousePosition.Y);
-
-			Input::mousePosition = {(float)xpos, (float)ypos};
-			Input::RecalculateState();
-
-			dt_window->EmitSignal("cursor.move", relPos);
-
-			delete relPos;
+			Input::TriggerMouseMove({.X = (float)xpos, .Y = (float)ypos});
 		}
 
 		void glfwMouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 		{
-			auto* dt_window = (Window*)glfwGetWindowUserPointer(window);
-
-            if (Input::hoveredElement != nullptr)
-            {
-                
-            }
+			Input::TriggerMouseClick((MouseButton)button, action == GLFW_PRESS);
 		}
 	}
 }
