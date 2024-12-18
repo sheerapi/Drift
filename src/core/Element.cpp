@@ -22,13 +22,13 @@ namespace Drift
 		FlexDirection(FlexDirection::Row);
 		AlignContent(AlignItems::Stretch);
 
-		On("hover", [this](auto* data) { _refreshState("hover"); });
-		On("unhover", [this](auto* data) { _refreshState("unhover"); });
-		On("focus", [this](auto* data) { _refreshState("focus"); });
-		On("unfocus", [this](auto* data) { _refreshState("unfocus"); });
+		On("hover", [this](Event data) { _refreshState("hover"); });
+		On("unhover", [this](Event data) { _refreshState("unhover"); });
+		On("focus", [this](Event data) { _refreshState("focus"); });
+		On("unfocus", [this](Event data) { _refreshState("unfocus"); });
 
-		On("click.left", [this](auto* data) { _refreshState("click.left"); });
-		On("unclick.left", [this](auto* data) { _refreshState("unclick.left"); });
+		On("click.left", [this](Event data) { _refreshState("click.left"); });
+		On("unclick.left", [this](Event data) { _refreshState("unclick.left"); });
 	}
 
 	Element::~Element()
@@ -417,6 +417,85 @@ namespace Drift
 		{
 			_states.Clicked = false;
 			return;
+		}
+	}
+
+	void Element::On(std::string signal, const EventHandler& handler)
+	{
+		_handlers[stringToLower(std::move(signal))].push_back(handler);
+	}
+
+	void Element::Remove(std::string signal)
+	{
+		signal = stringToLower(std::move(signal));
+
+		if (!_handlers.contains(signal))
+		{
+			dt_coreWarn("Tried to remove handlers of signal \"{}\", but no handlers "
+						"of that signal could be found",
+						signal);
+
+			return;
+		}
+
+		_handlers[signal].clear();
+	}
+
+	void Element::Remove(std::string signal, EventHandler& handler)
+	{
+		signal = stringToLower(std::move(signal));
+
+		if (!_handlers.contains(signal))
+		{
+			dt_coreWarn("Tried to remove a handler of signal \"{}\", but no handlers "
+						"of that signal could be found",
+						signal);
+
+			return;
+		}
+
+		_handlers[signal].erase(std::remove_if(_handlers[signal].begin(),
+											   _handlers[signal].end(),
+											   [=](auto itr) { return itr = handler; }),
+								_handlers[signal].end());
+	}
+
+	void Element::EmitSignal(std::string signal, Event event)
+	{
+		signal = stringToLower(signal);
+
+		if (!_handlers.contains(signal))
+		{
+			return;
+		}
+
+		for (const auto& handler : _handlers[signal])
+		{
+			try
+			{
+				handler(event);
+			}
+			catch (const std::exception& e)
+			{
+				dt_coreError("Exception ocurred while handling signal \"{}\": {}", signal,
+							 e.what());
+			}
+			catch (...)
+			{
+				dt_coreFatal("An unknown exception ocurred while handling signal "
+							 "\"{}\" that will be re-throwed.");
+				throw "Unknown";
+			}
+
+			// just to be sure lol
+		}
+
+		if (event._propagate)
+		{
+			if (_parent != nullptr)
+			{
+				_parent->EmitSignal(signal, event);
+			}
 		}
 	}
 }

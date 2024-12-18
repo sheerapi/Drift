@@ -2,7 +2,6 @@
 #include "../utils/Demangle.h"
 #include "../core/Macros.h"
 #include "core/LayoutEnums.h"
-#include "events/Observable.h"
 #include "utils/BoundingBox.h"
 #include "utils/Vector2.h"
 #include "yoga/YGConfig.h"
@@ -11,6 +10,25 @@
 
 namespace Drift
 {
+	struct dt_api Event
+	{
+	public:
+		void* Data{nullptr};
+
+		inline void StopPropagation()
+		{
+			_propagate = false;
+		}
+
+		Event(void* data) : Data(data) {};
+
+	private:
+		bool _propagate{true};
+		friend class Element;
+	};
+
+	using EventHandler = std::function<void(Event)>;
+	
 	struct dt_api ElementStates
 	{
 	public:
@@ -20,7 +38,7 @@ namespace Drift
 		bool Clicked{false};
 	};
 
-	class dt_api Element : public Events::Observable
+	class dt_api Element
 	{
 	public:
 		Element();
@@ -105,6 +123,17 @@ namespace Drift
 		dt_yogaPropertyEdge(Border);
 		dt_yogaPropertyEdge(Position);
 
+		void On(std::string signal, const EventHandler& handler);
+		void Remove(std::string signal);
+		void Remove(std::string signal, EventHandler& handler);
+
+		inline void RemoveAll()
+		{
+			_handlers.clear();
+		}
+
+		void EmitSignal(std::string signal, Event event);
+
 	protected:
 		std::vector<std::shared_ptr<Element>> Children;
 		virtual void Update() {};
@@ -122,8 +151,10 @@ namespace Drift
 		void _refreshLayout(bool force = false);
 		void _refreshState(const std::string& eventName);
 
+		std::unordered_map<std::string, std::vector<EventHandler>> _handlers;
+
 #ifdef DEBUG
-		auto _getPaint() const -> unsigned int;
+		[[nodiscard]] auto _getPaint() const -> unsigned int;
 #endif
 	};
 }

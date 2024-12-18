@@ -38,9 +38,9 @@ namespace Drift::Events
 			return;
 		}
 
-		static_cast<void>(std::remove_if(_handlers[signal].begin(),
+		_handlers[signal].erase(std::remove_if(_handlers[signal].begin(),
 										 _handlers[signal].end(),
-										 [=](auto itr) { return itr = handler; }));
+										 [=](auto itr) { return itr = handler; }), _handlers[signal].end());
 	}
 
 	void Observable::EmitSignal(std::string signal, void* data)

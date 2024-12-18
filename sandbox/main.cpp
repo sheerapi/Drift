@@ -24,9 +24,19 @@ auto main(int argc, const char** argv) -> int
 						   ->FlexDirection(FlexDirection::Row)
 						   ->ReceivesInput(false);
 
-	container1->AddChild<Element>()->FlexGrow(1)->On(
-		"cursor.scroll",
-		[](auto* data) { dt_info("{} {}", ((Vector2*)data)->X, ((Vector2*)data)->Y); });
+	auto* container1_sub1 = container1->AddChild<Element>()
+							   ->FlexGrow(1)
+							   ->Padding(20)
+							   ->FlexDirection(FlexDirection::Column)
+							   ->Gap(20);
+
+	container1_sub1->On("cursor.scroll", [](Event event)
+						{ dt_info("{} {}", ((Vector2*)event.Data)->X, ((Vector2*)event.Data)->Y); });
+
+	for (int i = 0; i < 24; i++)
+	{
+		container1_sub1->AddChild<Element>()->Height(120)->WidthPercent(100)->ReceivesInput(false);
+	}
 
 	auto* container1_sub = container1->AddChild<Element>()
 							   ->FlexGrow(1)
@@ -49,9 +59,6 @@ auto main(int argc, const char** argv) -> int
 	{
 		container2->AddChild<Element>()->Width(24)->Height(24);
 	}
-
-	Application::ForceGlobalLayoutRefresh();
-	app->GetEventLoop()->PrintViewTree();
 
 	return app->Present();
 }
