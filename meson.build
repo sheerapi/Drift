@@ -23,7 +23,8 @@ sources = [
     'src/components/Window.cpp',
     'src/graphics/RendererContext.cpp',
     'src/events/InputSystem.cpp',
-    'src/utils/Time.cpp'
+    'src/utils/Time.cpp',
+    'src/events/ShortcutManager.cpp'
 ]
 
 cmake = import('cmake')

@@ -1,4 +1,5 @@
 #include "events/InputSystem.h"
+#include "events/ShortcutManager.h"
 #include "magic_enum.hpp"
 #include "utils/StringUtils.h"
 
@@ -94,11 +95,14 @@ namespace Drift
 
 	void Input::TriggerKeypress(Keycode key, bool pressed)
 	{
+		pressed ? ShortcutManager::OnKeyPress(key) : ShortcutManager::OnKeyRelease(key);
+		
 		if (currentView != nullptr)
 		{
 			if (hoveredElement != nullptr)
 			{
-				hoveredElement->EmitSignal("key." + std::string((pressed ? "pressed" : "released")), {&key});
+				hoveredElement->EmitSignal(
+					"key." + std::string((pressed ? "pressed" : "released")), {&key});
 				hoveredElement->EmitSignal(
 					(pressed ? "pressed." : "released.") +
 					stringToLower(std::string(magic_enum::enum_name(key))));

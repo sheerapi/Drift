@@ -1,6 +1,8 @@
 #include "components/Window.h"
 #include "core/Application.h"
 #include "core/LayoutEnums.h"
+#include "events/Keycode.h"
+#include "events/ShortcutManager.h"
 
 using namespace Drift;
 
@@ -45,6 +47,8 @@ auto main(int argc, const char** argv) -> int
 
 	container1_sub->AddChild<Element>()->FlexGrow(1);
 	container1_sub->AddChild<Element>()->FlexGrow(2);
+
+	ShortcutManager::Register("test", {Keycode::LeftControl, Keycode::F1});
 
 	auto* container2 = root->AddChild<Element>()
 						   ->Height(48)
