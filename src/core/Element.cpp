@@ -3,6 +3,7 @@
 #include "core/SkColor.h"
 #include "core/SkPaint.h"
 #include "core/SkRect.h"
+#include "events/InputSystem.h"
 #include "graphics/RendererContext.h"
 #include "utils/Demangle.h"
 #include "utils/StringUtils.h"
@@ -27,8 +28,8 @@ namespace Drift
 		On("focus", [this](Event data) { _refreshState("focus"); });
 		On("unfocus", [this](Event data) { _refreshState("unfocus"); });
 
-		On("click.left", [this](Event data) { _refreshState("click.left"); });
-		On("unclick.left", [this](Event data) { _refreshState("unclick.left"); });
+		On("click", [this](Event data) { _refreshState("click"); });
+		On("unclick", [this](Event data) { _refreshState("unclick"); });
 	}
 
 	Element::~Element()
@@ -131,6 +132,18 @@ namespace Drift
 	void Element::EndDraw()
 	{
 		dt_canvas->restore();
+	}
+
+	auto Element::Focus(bool focus) -> Element*
+	{
+		Input::Focus(this, focus);
+
+		return this;
+	}
+
+	auto Element::Focusable() const -> bool
+	{
+		return _focusable;
 	}
 
 	void Element::DebugPrint(int depth)
@@ -376,19 +389,19 @@ namespace Drift
 
 	auto Element::_getPaint() const -> unsigned int
 	{
-		if (_states.Hovered)
+		if (_states.Focused)
 		{
-			return SK_ColorBLACK;
+			return SK_ColorMAGENTA;
 		}
-		
+
 		if (_states.Clicked)
 		{
 			return SK_ColorBLUE;
 		}
 
-		if (_states.Focused)
+		if (_states.Hovered)
 		{
-			return SK_ColorMAGENTA;
+			return SK_ColorBLACK;
 		}
 
 		return Children.size() == 0 ? SK_ColorRED : SK_ColorWHITE;

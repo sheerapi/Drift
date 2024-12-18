@@ -53,6 +53,12 @@ namespace Drift
 					Input::hoveredElement->EmitSignal("shortcut." +
 													  stringToLower(shortcut.Name));
 				}
+
+				if (Input::focusedElement != nullptr)
+				{
+					Input::focusedElement->EmitSignal("shortcut." +
+													  stringToLower(shortcut.Name));
+				}
 			}
         }
     }

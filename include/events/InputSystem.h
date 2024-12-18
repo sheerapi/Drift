@@ -29,9 +29,13 @@ namespace Drift
 		static void TriggerTextInput(unsigned int codepoint);
 
 		static void StartTextInput();
-		static void EndTextInput();
+		static auto EndTextInput() -> std::string;
+		static auto GetTextInput() -> std::string;
+
+		static void Focus(Element* element, bool focus = true);
 
 	private:
 		inline static bool typing;
+		inline static std::string textTyped;
 	};
 }

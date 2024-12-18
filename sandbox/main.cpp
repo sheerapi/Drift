@@ -1,8 +1,7 @@
 #include "components/Window.h"
 #include "core/Application.h"
 #include "core/LayoutEnums.h"
-#include "events/Keycode.h"
-#include "events/ShortcutManager.h"
+#include "events/InputSystem.h"
 
 using namespace Drift;
 
@@ -46,9 +45,21 @@ auto main(int argc, const char** argv) -> int
 							   ->ReceivesInput(false);
 
 	container1_sub->AddChild<Element>()->FlexGrow(1);
-	container1_sub->AddChild<Element>()->FlexGrow(2);
+	auto* textInput = container1_sub->AddChild<Element>()->FlexGrow(2);
+	textInput->On("click", [textInput](Event event){
+		event.StopPropagation();
 
-	ShortcutManager::Register("test", {Keycode::LeftControl, Keycode::F1});
+		textInput->Focus();
+		Input::StartTextInput();
+	});
+
+	textInput->On("typed", [](auto event){
+		dt_info("{}", Input::GetTextInput());
+	});
+
+	textInput->On("unfocus", [](auto event){
+		Input::EndTextInput();
+	});
 
 	auto* container2 = root->AddChild<Element>()
 						   ->Height(48)

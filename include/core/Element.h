@@ -127,6 +127,9 @@ namespace Drift
 		void Remove(std::string signal);
 		void Remove(std::string signal, EventHandler& handler);
 
+		auto Focus(bool focus = true) -> Element*;
+		auto Focusable() const -> bool;
+
 		inline void RemoveAll()
 		{
 			_handlers.clear();
@@ -148,7 +151,7 @@ namespace Drift
 	private:
 		YGNodeRef _ygNode;
 		Element* _parent{nullptr};
-		bool _focusable{false};
+		bool _focusable{true};
 		bool _receivesInput{true};
 		ElementStates _states;
         std::string _id;

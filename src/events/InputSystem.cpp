@@ -2,6 +2,7 @@
 #include "events/ShortcutManager.h"
 #include "magic_enum.hpp"
 #include "utils/StringUtils.h"
+#include "utils/utf/checked.h"
 
 namespace Drift
 {
@@ -55,6 +56,15 @@ namespace Drift
 
 	void Input::TriggerMouseClick(MouseButton button, bool clicked)
 	{
+		if (clicked)
+		{
+			if (focusedElement != nullptr && hoveredElement != focusedElement)
+			{
+				focusedElement->EmitSignal("unfocus");
+				focusedElement = nullptr;
+			}
+		}
+
 		if (currentView != nullptr)
 		{
 			if (hoveredElement != nullptr)
@@ -96,7 +106,7 @@ namespace Drift
 	void Input::TriggerKeypress(Keycode key, bool pressed)
 	{
 		pressed ? ShortcutManager::OnKeyPress(key) : ShortcutManager::OnKeyRelease(key);
-		
+
 		if (currentView != nullptr)
 		{
 			if (hoveredElement != nullptr)
@@ -108,12 +118,88 @@ namespace Drift
 					stringToLower(std::string(magic_enum::enum_name(key))));
 			}
 
+			if (focusedElement != nullptr)
+			{
+				focusedElement->EmitSignal(
+					"key." + std::string((pressed ? "pressed" : "released")), {&key});
+				focusedElement->EmitSignal(
+					(pressed ? "pressed." : "released.") +
+					stringToLower(std::string(magic_enum::enum_name(key))));
+			}
+
 			currentView->EmitSignal(
 				"key." + std::string((pressed ? "pressed" : "released")), &key);
 
 			currentView->EmitSignal(
 				(pressed ? "pressed." : "released.") +
 				stringToLower(std::string(magic_enum::enum_name(key))));
+		}
+	}
+
+	void Input::StartTextInput()
+	{
+		typing = true;
+	}
+
+	auto Input::EndTextInput() -> std::string
+	{
+		auto text = textTyped;
+		typing = false;
+		textTyped = "";
+		return text;
+	}
+
+	auto Input::GetTextInput() -> std::string
+	{
+		return textTyped;
+	}
+
+	void Input::TriggerTextInput(unsigned int codepoint)
+	{
+		if (!typing)
+		{
+			return;
+		}
+
+		auto oldText = textTyped;
+
+		utf8::append(codepoint, textTyped);
+		utf8::replace_invalid(textTyped);
+
+		if (currentView != nullptr)
+		{
+			currentView->EmitSignal("typed", &oldText);
+		}
+
+		if (focusedElement != nullptr)
+		{
+			focusedElement->EmitSignal("typed", &oldText);
+		}
+	}
+
+	void Input::Focus(Element* element, bool focus)
+	{
+		if (focus && element->Focusable())
+		{
+			if (Input::focusedElement != nullptr)
+			{
+				if (Input::focusedElement != element)
+				{
+					Input::focusedElement->EmitSignal("unfocus");
+				}
+			}
+
+			Input::focusedElement = element;
+			Input::focusedElement->EmitSignal("focus");
+		}
+
+		if (!focus && Input::focusedElement != nullptr)
+		{
+			if (Input::focusedElement == element)
+			{
+				Input::focusedElement = nullptr;
+				Input::focusedElement->EmitSignal("unfocus");
+			}
 		}
 	}
 }
