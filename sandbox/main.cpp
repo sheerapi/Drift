@@ -2,6 +2,7 @@
 #include "core/Application.h"
 #include "core/LayoutEnums.h"
 #include "events/InputSystem.h"
+#include "events/ShortcutManager.h"
 
 using namespace Drift;
 
@@ -50,7 +51,7 @@ auto main(int argc, const char** argv) -> int
 		event.StopPropagation();
 
 		textInput->Focus();
-		Input::StartTextInput();
+		Input::StartTextInput(true);
 	});
 
 	textInput->On("typed", [](auto event){
@@ -60,6 +61,8 @@ auto main(int argc, const char** argv) -> int
 	textInput->On("unfocus", [](auto event){
 		Input::EndTextInput();
 	});
+
+	textInput->On("typed.end", [](auto event) { dt_info("Typed: {}", Input::GetTextInput()); });
 
 	auto* container2 = root->AddChild<Element>()
 						   ->Height(48)

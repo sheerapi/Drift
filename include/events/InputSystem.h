@@ -25,17 +25,21 @@ namespace Drift
 		static void TriggerMouseMove(Vector2 pos);
 		static void TriggerMouseScroll(Vector2 offset);
 		static void TriggerMouseClick(MouseButton button, bool clicked);
-		static void TriggerKeypress(Keycode key, bool pressed);
+		static void TriggerKeypress(Keycode key, bool pressed, bool repeat);
 		static void TriggerTextInput(unsigned int codepoint);
 
-		static void StartTextInput();
+		static void StartTextInput(bool multi = false);
 		static auto EndTextInput() -> std::string;
 		static auto GetTextInput() -> std::string;
 
 		static void Focus(Element* element, bool focus = true);
+		static void Paste(const std::string& str);
 
 	private:
 		inline static bool typing;
+		inline static bool multiLine;
+		inline static int cursorPos;
 		inline static std::string textTyped;
+		inline static void HandleTypeKey(Keycode key);
 	};
 }

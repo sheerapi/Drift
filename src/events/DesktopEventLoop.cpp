@@ -1,4 +1,3 @@
-#include "core/Application.h"
 #ifndef DT_NO_DESKTOP
 #	include "events/DesktopEventLoop.h"
 #	include "GLFW/glfw3.h"
@@ -42,16 +41,16 @@ namespace Drift::Events
 										 Internals::glfwCursorMoveCallback);
 
 				glfwSetMouseButtonCallback((GLFWwindow*)window->GetInternalWindowHandle(),
-										 Internals::glfwMouseButtonCallback);
+										   Internals::glfwMouseButtonCallback);
 
 				glfwSetScrollCallback((GLFWwindow*)window->GetInternalWindowHandle(),
-										   Internals::glfwCursorScrollCallback);
+									  Internals::glfwCursorScrollCallback);
 
 				glfwSetKeyCallback((GLFWwindow*)window->GetInternalWindowHandle(),
-									  Internals::glfwKeyCallback);
+								   Internals::glfwKeyCallback);
 
 				glfwSetCharCallback((GLFWwindow*)window->GetInternalWindowHandle(),
-								   Internals::glfwCharCallback);
+									Internals::glfwCharCallback);
 			}
 		}
 
@@ -106,9 +105,11 @@ namespace Drift::Events
 			Input::TriggerMouseScroll({.X = (float)xoff, .Y = (float)yoff});
 		}
 
-		void glfwKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+		void glfwKeyCallback(GLFWwindow* window, int key, int scancode, int action,
+							 int mods)
 		{
-			Input::TriggerKeypress((Keycode)key, action == GLFW_PRESS);
+			Input::TriggerKeypress((Keycode)key, action == GLFW_PRESS,
+								   action == GLFW_REPEAT);
 		}
 
 		void glfwCharCallback(GLFWwindow* window, unsigned int codepoint)

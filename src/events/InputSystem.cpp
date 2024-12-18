@@ -103,9 +103,19 @@ namespace Drift
 		}
 	}
 
-	void Input::TriggerKeypress(Keycode key, bool pressed)
+	void Input::TriggerKeypress(Keycode key, bool pressed, bool repeat)
 	{
 		pressed ? ShortcutManager::OnKeyPress(key) : ShortcutManager::OnKeyRelease(key);
+
+		if (!typing && ShortcutManager::CheckShortcuts())
+		{
+			return;
+		}
+
+		if (pressed || repeat)
+		{
+			HandleTypeKey(key);
+		}
 
 		if (currentView != nullptr)
 		{
@@ -136,16 +146,30 @@ namespace Drift
 		}
 	}
 
-	void Input::StartTextInput()
+	void Input::StartTextInput(bool multi)
 	{
 		typing = true;
+		multiLine = multi;
 	}
 
 	auto Input::EndTextInput() -> std::string
 	{
 		auto text = textTyped;
 		typing = false;
+		cursorPos = 0;
+
+		if (currentView != nullptr)
+		{
+			currentView->EmitSignal("typed.end", &text);
+		}
+
+		if (focusedElement != nullptr)
+		{
+			focusedElement->EmitSignal("typed.end", {&text});
+		}
+
 		textTyped = "";
+
 		return text;
 	}
 
@@ -161,10 +185,20 @@ namespace Drift
 			return;
 		}
 
+		if (ShortcutManager::CheckShortcuts())
+		{
+			return;
+		}
+
+		if (!utf8::internal::is_code_point_valid(codepoint))
+		{
+			return;
+		}
+
 		auto oldText = textTyped;
 
-		utf8::append(codepoint, textTyped);
-		utf8::replace_invalid(textTyped);
+		utf8::internal::append(codepoint, std::inserter(textTyped, textTyped.begin() + cursorPos));
+		cursorPos++;
 
 		if (currentView != nullptr)
 		{
@@ -199,6 +233,98 @@ namespace Drift
 			{
 				Input::focusedElement = nullptr;
 				Input::focusedElement->EmitSignal("unfocus");
+			}
+		}
+	}
+
+	void Input::HandleTypeKey(Keycode key)
+	{
+		if (!typing)
+		{
+			return;
+		}
+
+		auto oldText = textTyped;
+
+		bool send = true;
+
+		switch (key)
+		{
+		case Keycode::Backspace:
+		{
+			if (textTyped.empty())
+			{
+				break;
+			}
+
+			textTyped.pop_back();
+			cursorPos--;
+			break;
+		}
+
+		case Keycode::Enter:
+		{
+			if (!multiLine)
+			{
+				EndTextInput();
+				send = false;
+			}
+			else
+			{
+				textTyped.insert(textTyped.begin() + cursorPos, '\n');
+			}
+			break;
+		}
+
+		case Keycode::Home:
+			cursorPos = 0;
+			send = false;
+			break;
+
+		case Keycode::End:
+			cursorPos = (int)textTyped.size();
+			send = false;
+			break;
+
+		default:
+			send = false;
+			break;
+		}
+
+		utf8::replace_invalid(textTyped);
+
+		if (send)
+		{
+			if (currentView != nullptr)
+			{
+				currentView->EmitSignal("typed", &oldText);
+			}
+
+			if (focusedElement != nullptr)
+			{
+				focusedElement->EmitSignal("typed", &oldText);
+			}
+		}
+	}
+
+	void Input::Paste(const std::string& str)
+	{
+		if (typing)
+		{
+			auto oldText = textTyped;
+
+			textTyped += str;
+			utf8::replace_invalid(textTyped);
+			cursorPos += str.size();
+
+			if (currentView != nullptr)
+			{
+				currentView->EmitSignal("typed", &oldText);
+			}
+
+			if (focusedElement != nullptr)
+			{
+				focusedElement->EmitSignal("typed", &oldText);
 			}
 		}
 	}

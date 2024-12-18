@@ -35,12 +35,16 @@ namespace Drift
         keys.clear();
     }
 
-    void ShortcutManager::CheckShortcuts()
+    auto ShortcutManager::CheckShortcuts() -> bool
     {
+        bool result = false;
+
         for (auto& shortcut : shortcuts)
         {
             if (shortcut.Keys == keys)
             {
+                result = true;
+
                 dt_coreVerbose("Shortcut {} triggered", shortcut.Name);
 
                 if (Input::currentView != nullptr)
@@ -61,5 +65,7 @@ namespace Drift
 				}
 			}
         }
+
+        return result;
     }
 }

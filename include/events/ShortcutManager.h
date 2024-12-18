@@ -20,6 +20,7 @@ namespace Drift
 		static void Register(const std::string& name,
 							 const std::unordered_set<Keycode>& keys);
 		static void ClearInput();
+		static auto CheckShortcuts() -> bool;
 
 	private:
 		inline static std::vector<Shortcut> shortcuts;
@@ -27,7 +28,6 @@ namespace Drift
 
 		static void OnKeyPress(Keycode key);
 		static void OnKeyRelease(Keycode key);
-		static void CheckShortcuts();
 
 		friend class Input;
 	};
