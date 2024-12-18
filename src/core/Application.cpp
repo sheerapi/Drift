@@ -25,6 +25,7 @@ namespace Drift
 		LibraryManager::Init();
 
 		dt_coreInfo("Initialized \"{}\"", _id.GetCompoundID());
+		Time::Update();
 	}
 
 	auto Application::Present() -> int

@@ -1,5 +1,6 @@
 #include "events/EventLoop.h"
 #include "utils/Demangle.h"
+#include "utils/Time.h"
 
 namespace Drift::Events
 {
@@ -19,6 +20,8 @@ namespace Drift::Events
 
 	void EventLoop::Update()
 	{
+		Time::Update();
+		
 		if (Views.empty())
 		{
 			Running = false;

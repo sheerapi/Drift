@@ -22,7 +22,8 @@ sources = [
     'src/events/DesktopEventLoop.cpp',
     'src/components/Window.cpp',
     'src/graphics/RendererContext.cpp',
-    'src/events/InputSystem.cpp'
+    'src/events/InputSystem.cpp',
+    'src/utils/Time.cpp'
 ]
 
 cmake = import('cmake')
