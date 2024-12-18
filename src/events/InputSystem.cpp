@@ -91,4 +91,25 @@ namespace Drift
 			hoveredElement->EmitSignal("cursor.scroll", {&offsets});
 		}
 	}
+
+	void Input::TriggerKeypress(Keycode key, bool pressed)
+	{
+		if (currentView != nullptr)
+		{
+			if (hoveredElement != nullptr)
+			{
+				hoveredElement->EmitSignal("key." + std::string((pressed ? "pressed" : "released")), {&key});
+				hoveredElement->EmitSignal(
+					(pressed ? "pressed." : "released.") +
+					stringToLower(std::string(magic_enum::enum_name(key))));
+			}
+
+			currentView->EmitSignal(
+				"key." + std::string((pressed ? "pressed" : "released")), &key);
+
+			currentView->EmitSignal(
+				(pressed ? "pressed." : "released.") +
+				stringToLower(std::string(magic_enum::enum_name(key))));
+		}
+	}
 }

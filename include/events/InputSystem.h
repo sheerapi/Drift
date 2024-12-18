@@ -1,6 +1,7 @@
 #pragma once
 #include "core/Macros.h"
 #include "core/View.h"
+#include "events/Keycode.h"
 #include "utils/Vector2.h"
 
 namespace Drift
@@ -24,5 +25,6 @@ namespace Drift
 		static void TriggerMouseMove(Vector2 pos);
 		static void TriggerMouseScroll(Vector2 offset);
 		static void TriggerMouseClick(MouseButton button, bool clicked);
+		static void TriggerKeypress(Keycode key, bool pressed);
 	};
 }

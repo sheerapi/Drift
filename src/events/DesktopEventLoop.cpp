@@ -45,6 +45,9 @@ namespace Drift::Events
 
 				glfwSetScrollCallback((GLFWwindow*)window->GetInternalWindowHandle(),
 										   Internals::glfwCursorScrollCallback);
+
+				glfwSetKeyCallback((GLFWwindow*)window->GetInternalWindowHandle(),
+									  Internals::glfwKeyCallback);
 			}
 		}
 
@@ -97,6 +100,11 @@ namespace Drift::Events
 		void glfwCursorScrollCallback(GLFWwindow* window, double xoff, double yoff)
 		{
 			Input::TriggerMouseScroll({.X = (float)xoff, .Y = (float)yoff});
+		}
+
+		void glfwKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+		{
+			Input::TriggerKeypress((Keycode)key, action == GLFW_PRESS);
 		}
 	}
 }

@@ -1,7 +1,6 @@
 #include "components/Window.h"
 #include "core/Application.h"
 #include "core/LayoutEnums.h"
-#include "utils/Vector2.h"
 
 using namespace Drift;
 
@@ -31,7 +30,7 @@ auto main(int argc, const char** argv) -> int
 								->Gap(20)
 								->ReceivesInput(false)
 								->Overflow(Overflow::Hidden);
-								
+
 	for (int i = 0; i < 24; i++)
 	{
 		container1_sub1->AddChild<Element>()->Height(120)->WidthPercent(100);
