@@ -387,6 +387,7 @@ namespace Drift
 		return YGNodeStyleGetGap(_ygNode, YGGutter::YGGutterAll).value;
 	}
 
+#ifdef DEBUG
 	auto Element::_getPaint() const -> unsigned int
 	{
 		if (_states.Focused)
@@ -406,6 +407,7 @@ namespace Drift
 
 		return Children.size() == 0 ? SK_ColorRED : SK_ColorWHITE;
 	}
+#endif
 
 	void Element::_refreshState(const std::string& eventName)
 	{
