@@ -315,7 +315,7 @@ namespace Drift
 
 			textTyped += str;
 			utf8::replace_invalid(textTyped);
-			cursorPos += str.size();
+			cursorPos += (int)str.size();
 
 			if (currentView != nullptr)
 			{

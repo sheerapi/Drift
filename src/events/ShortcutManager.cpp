@@ -22,7 +22,6 @@ namespace Drift
     void ShortcutManager::OnKeyPress(Keycode key)
     {
         keys.insert((int)key);
-        CheckShortcuts();
     }
 
     void ShortcutManager::OnKeyRelease(Keycode key)

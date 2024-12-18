@@ -36,8 +36,8 @@ namespace Drift
 		static void Paste(const std::string& str);
 
 	private:
-		inline static bool typing;
-		inline static bool multiLine;
+		inline static bool typing{false};
+		inline static bool multiLine{false};
 		inline static int cursorPos;
 		inline static std::string textTyped;
 		inline static void HandleTypeKey(Keycode key);

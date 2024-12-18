@@ -46,23 +46,7 @@ auto main(int argc, const char** argv) -> int
 							   ->ReceivesInput(false);
 
 	container1_sub->AddChild<Element>()->FlexGrow(1);
-	auto* textInput = container1_sub->AddChild<Element>()->FlexGrow(2);
-	textInput->On("click", [textInput](Event event){
-		event.StopPropagation();
-
-		textInput->Focus();
-		Input::StartTextInput(true);
-	});
-
-	textInput->On("typed", [](auto event){
-		dt_info("{}", Input::GetTextInput());
-	});
-
-	textInput->On("unfocus", [](auto event){
-		Input::EndTextInput();
-	});
-
-	textInput->On("typed.end", [](auto event) { dt_info("Typed: {}", Input::GetTextInput()); });
+	container1_sub->AddChild<Element>()->FlexGrow(2);
 
 	auto* container2 = root->AddChild<Element>()
 						   ->Height(48)
