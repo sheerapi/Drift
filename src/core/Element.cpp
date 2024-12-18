@@ -466,6 +466,13 @@ namespace Drift
 
 		if (!_handlers.contains(signal))
 		{
+			if (event._propagate)
+			{
+				if (_parent != nullptr)
+				{
+					_parent->EmitSignal(signal, event);
+				}
+			}
 			return;
 		}
 

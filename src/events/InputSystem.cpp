@@ -46,7 +46,7 @@ namespace Drift
 
 		if (hoveredElement != nullptr)
 		{
-			hoveredElement->EmitSignal("cursor.move", relPos);
+			hoveredElement->EmitSignal("cursor.move", {relPos});
 		}
 
 		delete relPos;
@@ -88,7 +88,7 @@ namespace Drift
 
 		if (hoveredElement != nullptr)
 		{
-			hoveredElement->EmitSignal("cursor.scroll", &offsets);
+			hoveredElement->EmitSignal("cursor.scroll", {&offsets});
 		}
 	}
 }

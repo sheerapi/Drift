@@ -132,7 +132,7 @@ namespace Drift
 			_handlers.clear();
 		}
 
-		void EmitSignal(std::string signal, Event event);
+		void EmitSignal(std::string signal, Event event = {nullptr});
 
 	protected:
 		std::vector<std::shared_ptr<Element>> Children;
