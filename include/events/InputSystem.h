@@ -22,6 +22,7 @@ namespace Drift
 
 		static void RecalculateState();
 		static void TriggerMouseMove(Vector2 pos);
+		static void TriggerMouseScroll(Vector2 offset);
 		static void TriggerMouseClick(MouseButton button, bool clicked);
 	};
 }

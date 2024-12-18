@@ -78,4 +78,17 @@ namespace Drift
 				stringToLower(std::string(magic_enum::enum_name(button))));
 		}
 	}
+
+	void Input::TriggerMouseScroll(Vector2 offsets)
+	{
+		if (currentView != nullptr)
+		{
+			currentView->EmitSignal("cursor.scroll", &offsets);
+		}
+
+		if (hoveredElement != nullptr)
+		{
+			hoveredElement->EmitSignal("cursor.scroll", &offsets);
+		}
+	}
 }

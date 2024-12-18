@@ -90,6 +90,11 @@ namespace Drift::Events
 		{
 			Input::TriggerMouseClick((MouseButton)button, action == GLFW_PRESS);
 		}
+
+		void glfwCursorScrollCallback(GLFWwindow* window, double xoff, double yoff)
+		{
+			Input::TriggerMouseScroll({.X = (float)xoff, .Y = (float)yoff});
+		}
 	}
 }
 #endif

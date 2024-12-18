@@ -22,6 +22,7 @@ namespace Drift::Events
 		void glfwMouseButtonCallback(GLFWwindow* window, int button, int action,
 									 int mods);
 		void glfwCursorMoveCallback(GLFWwindow* window, double xpos, double ypos);
+		void glfwCursorScrollCallback(GLFWwindow* window, double xoff, double yoff);
 	}
 }
 #endif
