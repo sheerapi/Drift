@@ -75,7 +75,10 @@ dependencies = [
         },
     ),
     cmake.subproject('yoga').dependency('yogacore'),
-    dependency('magic_enum')
+    dependency('magic_enum'),
+    dependency('tomlplusplus'),
+    dependency('utf8cpp'),
+    dependency('libzstd')
 ]
 
 if not get_option('no_wayland') and sys_os == 'linux'

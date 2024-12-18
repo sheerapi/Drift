@@ -2,7 +2,7 @@
 #include "events/ShortcutManager.h"
 #include "magic_enum.hpp"
 #include "utils/StringUtils.h"
-#include "utils/utf/checked.h"
+#include "utf8/checked.h"
 
 namespace Drift
 {
