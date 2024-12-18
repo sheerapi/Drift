@@ -1,3 +1,4 @@
+#include "core/Application.h"
 #ifndef DT_NO_DESKTOP
 #	include "events/DesktopEventLoop.h"
 #	include "GLFW/glfw3.h"
@@ -48,6 +49,9 @@ namespace Drift::Events
 
 				glfwSetKeyCallback((GLFWwindow*)window->GetInternalWindowHandle(),
 									  Internals::glfwKeyCallback);
+
+				glfwSetCharCallback((GLFWwindow*)window->GetInternalWindowHandle(),
+								   Internals::glfwCharCallback);
 			}
 		}
 
@@ -105,6 +109,11 @@ namespace Drift::Events
 		void glfwKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 		{
 			Input::TriggerKeypress((Keycode)key, action == GLFW_PRESS);
+		}
+
+		void glfwCharCallback(GLFWwindow* window, unsigned int codepoint)
+		{
+			Input::TriggerTextInput(codepoint);
 		}
 	}
 }

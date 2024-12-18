@@ -25,6 +25,7 @@ namespace Drift::Events
 									 int mods);
 		void glfwCursorMoveCallback(GLFWwindow* window, double xpos, double ypos);
 		void glfwCursorScrollCallback(GLFWwindow* window, double xoff, double yoff);
+		void glfwCharCallback(GLFWwindow* window, unsigned int codepoint);
 	}
 }
 #endif

@@ -26,5 +26,12 @@ namespace Drift
 		static void TriggerMouseScroll(Vector2 offset);
 		static void TriggerMouseClick(MouseButton button, bool clicked);
 		static void TriggerKeypress(Keycode key, bool pressed);
+		static void TriggerTextInput(unsigned int codepoint);
+
+		static void StartTextInput();
+		static void EndTextInput();
+
+	private:
+		inline static bool typing;
 	};
 }
