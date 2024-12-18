@@ -1,6 +1,7 @@
 #include "components/Window.h"
 #include "core/Application.h"
 #include "core/LayoutEnums.h"
+#include "utils/Vector2.h"
 
 using namespace Drift;
 
@@ -23,13 +24,16 @@ auto main(int argc, const char** argv) -> int
 						   ->FlexDirection(FlexDirection::Row)
 						   ->ReceivesInput(false);
 
-	container1->AddChild<Element>()->FlexGrow(1);
+	container1->AddChild<Element>()->FlexGrow(1)->On(
+		"cursor.scroll",
+		[](auto* data) { dt_info("{} {}", ((Vector2*)data)->X, ((Vector2*)data)->Y); });
 
 	auto* container1_sub = container1->AddChild<Element>()
 							   ->FlexGrow(1)
 							   ->FlexDirection(FlexDirection::Column)
 							   ->MarginLeft(20)
-							   ->Gap(20)->ReceivesInput(false);
+							   ->Gap(20)
+							   ->ReceivesInput(false);
 
 	container1_sub->AddChild<Element>()->FlexGrow(1);
 	container1_sub->AddChild<Element>()->FlexGrow(2);
@@ -43,9 +47,7 @@ auto main(int argc, const char** argv) -> int
 
 	for (size_t i = 0; i < 5; i++)
 	{
-		container2->AddChild<Element>()->Width(24)->Height(24)->On("click", [](auto* data){
-			dt_info("Clicked!");
-		});
+		container2->AddChild<Element>()->Width(24)->Height(24);
 	}
 
 	Application::ForceGlobalLayoutRefresh();

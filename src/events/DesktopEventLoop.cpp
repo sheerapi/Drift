@@ -42,6 +42,9 @@ namespace Drift::Events
 
 				glfwSetMouseButtonCallback((GLFWwindow*)window->GetInternalWindowHandle(),
 										 Internals::glfwMouseButtonCallback);
+
+				glfwSetScrollCallback((GLFWwindow*)window->GetInternalWindowHandle(),
+										   Internals::glfwCursorScrollCallback);
 			}
 		}
 
