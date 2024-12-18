@@ -139,6 +139,12 @@ namespace Drift
 		virtual void Update() {};
 		virtual void Draw();
 
+		virtual void BeginDraw();
+		virtual void EndDraw();
+
+		virtual void BeginUpdate() {};
+		virtual void EndUpdate() {};
+
 	private:
 		YGNodeRef _ygNode;
 		Element* _parent{nullptr};

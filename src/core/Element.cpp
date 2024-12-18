@@ -119,6 +119,20 @@ namespace Drift
 		}
 	}
 
+	void Element::BeginDraw()
+	{
+		dt_canvas->save();
+
+		auto bounds = GetBoundingBox();
+		dt_canvas->clipRect(SkRect::MakeXYWH(bounds.X - 1, bounds.Y - 1, bounds.Width + 2,
+											 bounds.Height + 2));
+	}
+
+	void Element::EndDraw()
+	{
+		dt_canvas->restore();
+	}
+
 	void Element::DebugPrint(int depth)
 	{
 		std::string tabs;
@@ -139,12 +153,16 @@ namespace Drift
 	{
 		if (_states.Enabled)
 		{
-			Update();
-		}
+			BeginUpdate();
 
-		for (auto& child : Children)
-		{
-			child->Tick();
+			Update();
+
+			for (auto& child : Children)
+			{
+				child->Tick();
+			}
+
+			EndUpdate();
 		}
 
 		if (_parent == nullptr)
@@ -157,12 +175,14 @@ namespace Drift
 	{
 		if (_states.Enabled)
 		{
+			BeginDraw();
 			Draw();
 
 			for (auto& child : Children)
 			{
 				child->Render();
 			}
+			EndDraw();
 		}
 	}
 

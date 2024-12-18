@@ -31,11 +31,7 @@ auto main(int argc, const char** argv) -> int
 								->Gap(20)
 								->ReceivesInput(false)
 								->Overflow(Overflow::Hidden);
-
-	container1_sub1->On(
-		"cursor.scroll", [](Event event)
-		{ dt_info("{} {}", ((Vector2*)event.Data)->X, ((Vector2*)event.Data)->Y); });
-
+								
 	for (int i = 0; i < 24; i++)
 	{
 		container1_sub1->AddChild<Element>()->Height(120)->WidthPercent(100);
