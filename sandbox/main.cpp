@@ -29,7 +29,7 @@ auto main(int argc, const char** argv) -> int
 							   ->FlexGrow(1)
 							   ->FlexDirection(FlexDirection::Column)
 							   ->MarginLeft(20)
-							   ->Gap(20);
+							   ->Gap(20)->ReceivesInput(false);
 
 	container1_sub->AddChild<Element>()->FlexGrow(1);
 	container1_sub->AddChild<Element>()->FlexGrow(2);

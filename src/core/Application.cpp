@@ -3,6 +3,7 @@
 #include "utils/Demangle.h" // IWYU pragma: keep
 #include "utils/LibraryManager.h"
 #include "utils/PerformanceTimer.h"
+#include "utils/Time.h"
 
 namespace Drift
 {
