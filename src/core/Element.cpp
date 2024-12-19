@@ -16,7 +16,10 @@ namespace Drift
 {
 	Element::Element()
 	{
-		_ygNode = YGNodeNew();
+		auto config = YGConfigNew();
+		YGConfigSetPointScaleFactor(config, 1.0);
+
+		_ygNode = YGNodeNewWithConfig(config);
 		Overflow(Overflow::Visible);
 		FlexShrink(0);
 		PositionType(PositionType::Static);
@@ -106,14 +109,6 @@ namespace Drift
 			paint.setColor(_getPaint());
 #endif
 			paint.setAntiAlias(true);
-
-			SkPaint outline;
-			outline.setColor(SK_ColorBLACK);
-			outline.setAntiAlias(true);
-
-			dt_canvas->drawRect(SkRect::MakeXYWH(bounds.X - 1, bounds.Y - 1,
-												 bounds.Width + 2, bounds.Height + 2),
-								outline);
 
 			dt_canvas->drawRect(
 				SkRect::MakeXYWH(bounds.X, bounds.Y, bounds.Width, bounds.Height), paint);
@@ -281,6 +276,18 @@ namespace Drift
 		return this;
 	}
 
+	auto Element::FlexBasisPercent(float val) -> Element*
+	{
+		if (_parent == nullptr)
+		{
+			dt_coreWarn("Element is orphaned! Percent requires a parent");
+			return this;
+		}
+
+		YGNodeStyleSetFlexBasisPercent(_ygNode, val);
+		return this;
+	}
+
 	auto Element::FindDeepestMatch(Element* object, Vector2 pos) -> Element*
 	{
 		auto bounds = object->GetBoundingBox();
@@ -313,6 +320,20 @@ namespace Drift
 	auto Element::ReceivesInput() const -> bool
 	{
 		return _receivesInput;
+	}
+
+	auto Element::ChildAt(int index) -> std::shared_ptr<Element>
+	{
+		if (index <= 0 || index >= Children.size())
+		{
+			dt_coreError("Tried to access a child out of bounds! (Expected 0 < index < "
+						 "{}, index = {})",
+						 Children.size(), index);
+						
+			return nullptr;
+		}
+
+		return Children[index];
 	}
 
 	dt_yogaPropertyValueDef(Width);
@@ -402,10 +423,10 @@ namespace Drift
 
 		if (_states.Hovered)
 		{
-			return SK_ColorBLACK;
+			return SK_ColorRED;
 		}
 
-		return Children.size() == 0 ? SK_ColorRED : SK_ColorWHITE;
+		return Children.size() == 0 ? SK_ColorWHITE : SK_ColorTRANSPARENT;
 	}
 #endif
 
@@ -421,37 +442,31 @@ namespace Drift
 		if (eventName == "hover")
 		{
 			_states.Hovered = true;
-			return;
 		}
 
 		if (eventName == "unhover")
 		{
 			_states.Hovered = false;
-			return;
 		}
 
 		if (eventName == "focus")
 		{
 			_states.Focused = true;
-			return;
 		}
 
 		if (eventName == "unfocus")
 		{
 			_states.Focused = false;
-			return;
 		}
 
 		if (eventName == "click")
 		{
 			_states.Clicked = true;
-			return;
 		}
 
 		if (eventName == "unclick")
 		{
 			_states.Clicked = false;
-			return;
 		}
 	}
 

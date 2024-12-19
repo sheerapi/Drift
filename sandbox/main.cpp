@@ -15,50 +15,45 @@ auto main(int argc, const char** argv) -> int
 	auto* root = window->GetCurrentActivity()
 					 ->AttachRoot(std::make_shared<Element>())
 					 ->FlexDirection(FlexDirection::Column)
-					 ->JustifyContent(JustifyContent::SpaceBetween)
-					 ->ReceivesInput(false);
+					 ->JustifyContent(JustifyContent::SpaceBetween);
 
-	auto* container1 = root->AddChild<Element>()
-						   ->HeightPercent(100)
-						   ->FlexShrink(1)
-						   ->Padding(20)
-						   ->FlexDirection(FlexDirection::Row)
-						   ->ReceivesInput(false);
+	auto* result = root->AddChild<Element>()
+					   ->ReceivesInput(false)
+					   ->Padding(4)
+					   ->HeightPercent(30)
+					   ->FlexGrow(0)
+					   ->FlexShrink(0);
 
-	auto* container1_sub1 = container1->AddChild<Element>()
-								->FlexGrow(1)
-								->Padding(20)
-								->FlexDirection(FlexDirection::Column)
-								->Gap(20)
-								->ReceivesInput(false)
-								->Overflow(Overflow::Hidden);
+	auto* panel = root->AddChild<Element>()
+					  ->FlexGrow(1)
+					  ->FlexShrink(1)
+					  ->Padding(10)
+					  ->FlexDirection(FlexDirection::Column)
+					  ->FlexBasisPercent(0)
+					  ->ReceivesInput(false)
+					  ->Gap(5)
+					  ->FlexWrap(Drift::Wrap::Wrap);
 
-	for (int i = 0; i < 24; i++)
+	for (int i = 0; i < 5; i++)
 	{
-		container1_sub1->AddChild<Element>()->Height(120)->WidthPercent(100);
+		auto row = panel->AddChild<Element>()->WidthPercent(100)->FlexGrow(1)->FlexDirection(
+			FlexDirection::Row)->ReceivesInput(false)->Gap(5)->JustifyContent(JustifyContent::SpaceBetween);
+
+		for (int y = 0; y < (i == 4 ? 3 : 4); y++)
+		{
+			auto btn = row->AddChild<Element>()->HeightPercent(100)->FlexGrow(1);
+
+			btn->On("unclick", [](auto event) { dt_info("H"); });
+
+			if (i == 4 && y == 2)
+			{
+				btn->WidthPercent(25.5);
+			}
+		}
 	}
 
-	auto* container1_sub = container1->AddChild<Element>()
-							   ->FlexGrow(1)
-							   ->FlexDirection(FlexDirection::Column)
-							   ->MarginLeft(20)
-							   ->Gap(20)
-							   ->ReceivesInput(false);
-
-	container1_sub->AddChild<Element>()->FlexGrow(1);
-	container1_sub->AddChild<Element>()->FlexGrow(2);
-
-	auto* container2 = root->AddChild<Element>()
-						   ->Height(48)
-						   ->JustifyContent(JustifyContent::SpaceBetween)
-						   ->AlignItems(AlignItems::Center)
-						   ->PaddingHorizontal(16)
-						   ->ReceivesInput(false);
-
-	for (size_t i = 0; i < 5; i++)
-	{
-		container2->AddChild<Element>()->Width(24)->Height(24);
-	}
+	Application::ForceGlobalLayoutRefresh();
+	app->GetEventLoop()->PrintViewTree();
 
 	return app->Present();
 }

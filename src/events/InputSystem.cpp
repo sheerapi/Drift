@@ -33,6 +33,56 @@ namespace Drift
 		}
 	}
 
+	void Input::Reset()
+	{
+		mousePosition = {0, 0};
+
+		if (clickedElement != nullptr)
+		{
+			if (lastButton != MouseButton::None)
+			{
+				clickedElement->EmitSignal("unclick");
+				clickedElement->EmitSignal(
+					"unclick." +
+					stringToLower(std::string(magic_enum::enum_name(lastButton))));
+			}
+
+			if (lastKeycode != Keycode::None)
+			{
+				clickedElement->EmitSignal("key.released", {&lastKeycode});
+				clickedElement->EmitSignal(
+					"released." +
+					stringToLower(std::string(magic_enum::enum_name(lastKeycode))));
+			}
+		}
+
+		if (currentView != nullptr)
+		{
+			if (lastButton != MouseButton::None)
+			{
+				currentView->EmitSignal("unclick");
+				currentView->EmitSignal(
+					"unclick." +
+					stringToLower(std::string(magic_enum::enum_name(lastButton))));
+			}
+
+			if (lastKeycode != Keycode::None)
+			{
+				currentView->EmitSignal("key.released", &lastKeycode);
+				currentView->EmitSignal(
+					"released." +
+					stringToLower(std::string(magic_enum::enum_name(lastKeycode))));
+			}
+		}
+
+		clickedElement = nullptr;
+		hoveredElement = nullptr;
+		currentView = nullptr;
+
+		lastButton = MouseButton::None;
+		lastKeycode = Keycode::None;
+	}
+
 	void Input::TriggerMouseMove(Vector2 pos)
 	{
 		auto* relPos = new Vector2((float)pos.X - Input::mousePosition.X,
@@ -56,6 +106,9 @@ namespace Drift
 
 	void Input::TriggerMouseClick(MouseButton button, bool clicked)
 	{
+		lastButton = clicked ? button : MouseButton::None;
+		clickedElement = clicked ? hoveredElement : nullptr;
+
 		if (clicked)
 		{
 			if (focusedElement != nullptr && hoveredElement != focusedElement)
@@ -106,6 +159,7 @@ namespace Drift
 	void Input::TriggerKeypress(Keycode key, bool pressed, bool repeat)
 	{
 		pressed ? ShortcutManager::OnKeyPress(key) : ShortcutManager::OnKeyRelease(key);
+		lastKeycode = pressed ? key : Keycode::None;
 
 		if (!typing && ShortcutManager::CheckShortcuts())
 		{

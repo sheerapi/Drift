@@ -80,14 +80,14 @@ namespace Drift::Events
 			dt_window->EmitSignal(entered == GLFW_TRUE ? "cursor.entered"
 													   : "cursor.exit");
 
-			Input::currentView = entered == 1 ? dt_window : nullptr;
-
 			if (entered == 0)
 			{
 				// we have to reset everything since we dont know if we are going
 				// to be focused again
-				Input::mousePosition = {0, 0};
+				Input::Reset();
 			}
+
+			Input::currentView = entered == 1 ? dt_window : nullptr;
 		}
 
 		void glfwCursorMoveCallback(GLFWwindow* window, double xpos, double ypos)

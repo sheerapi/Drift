@@ -81,6 +81,9 @@ namespace Drift
 
 		auto WidthPercent(float val) -> Element*;
 		auto HeightPercent(float val) -> Element*;
+		auto FlexBasisPercent(float val) -> Element*;
+
+		auto ChildAt(int index) -> std::shared_ptr<Element>;
 
 		auto GetLayoutEngineHandle() -> void*;
 

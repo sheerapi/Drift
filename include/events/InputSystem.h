@@ -10,7 +10,8 @@ namespace Drift
 	{
 		Left,
 		Right,
-		Middle
+		Middle,
+		None = -1
 	};
 
 	class dt_api Input
@@ -35,11 +36,18 @@ namespace Drift
 		static void Focus(Element* element, bool focus = true);
 		static void Paste(const std::string& str);
 
+		static void Reset();
+
 	private:
 		inline static bool typing{false};
 		inline static bool multiLine{false};
+		inline static Element* clickedElement{nullptr};
 		inline static int cursorPos;
 		inline static std::string textTyped;
+
+		inline static MouseButton lastButton;
+		inline static Keycode lastKeycode;
+		
 		inline static void HandleTypeKey(Keycode key);
 	};
 }

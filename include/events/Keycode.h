@@ -5,6 +5,7 @@ namespace Drift
     // casually arranged in the glfw layout huh
     enum class Keycode
     {
+        None = 0,
         A = 65,
         B,
         C,
