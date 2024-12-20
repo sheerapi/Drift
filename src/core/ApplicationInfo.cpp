@@ -1,9 +1,11 @@
 #include "core/ApplicationInfo.h"
+#include "core/Application.h"
 #include "core/Logger.h"
 #include "utils/StringUtils.h"
 #include <filesystem>
 #include <fstream>
 #include <unistd.h>
+#include <pwd.h>
 
 #ifdef DEBUG
 #	include <regex>
@@ -91,6 +93,20 @@ namespace Drift
 			dt_coreError("Unable to get command line arguments on Linux.");
 		}
 
+		const char* home = std::getenv("HOME");
+		if (home != nullptr)
+		{
+			HomeDirectory = std::string(home);
+		}
+		else
+		{
+			struct passwd* pwd = getpwuid(getuid());
+			if (pwd != nullptr)
+			{
+				HomeDirectory = std::string(pwd->pw_dir);
+			}
+		}
+
 #ifdef DEBUG
 		AssetsDirectory =
 			std::filesystem::path(ExecutablePath).remove_filename() / "assets";
@@ -104,6 +120,8 @@ namespace Drift
 		{
 			Verbose = true;
 		}
+
+		ApplicationDirectory = std::filesystem::path(HomeDirectory) / ".config" / "drift" / "apps" / stringToLower(Application::GetApplicationID().GetCompoundID());
 	}
 
 	auto EnvironmentInfo::HasFlag(const std::string& flag) -> bool

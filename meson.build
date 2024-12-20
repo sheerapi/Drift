@@ -24,7 +24,8 @@ sources = [
     'src/graphics/RendererContext.cpp',
     'src/events/InputSystem.cpp',
     'src/utils/Time.cpp',
-    'src/events/ShortcutManager.cpp'
+    'src/events/ShortcutManager.cpp',
+    'src/utils/ConfigManager.cpp'
 ]
 
 cmake = import('cmake')
@@ -42,7 +43,7 @@ elif sys_os == 'macos'
     glfw_backend = 'cocoa'
 endif
 
-add_global_arguments(
+add_project_arguments(
     ['-fvisibility=hidden'],
     language: ['c', 'cpp'],
 )

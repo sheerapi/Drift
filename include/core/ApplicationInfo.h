@@ -26,6 +26,8 @@ namespace Drift
 		std::string WorkingDirectory;
 		std::string ExecutablePath;
 		std::string AssetsDirectory;
+		std::string HomeDirectory;
+		std::string ApplicationDirectory;
 		std::string RootPath;
 		std::vector<std::string> CommandLineArgs;
 		bool Verbose{false};

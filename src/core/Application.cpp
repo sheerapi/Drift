@@ -1,5 +1,6 @@
 #include "core/Application.h"
 #include "core/ApplicationInfo.h"
+#include "utils/ConfigManager.h"
 #include "utils/Demangle.h" // IWYU pragma: keep
 #include "utils/LibraryManager.h"
 #include "utils/PerformanceTimer.h"
@@ -18,11 +19,12 @@ namespace Drift
 
 		main = this;
 
-		dt_stopwatch();
-
 		_id = ApplicationID(appId);
-		_env = EnvironmentInfo();
+		_env = new EnvironmentInfo();
 
+		dt_stopwatch(); // Not really accurate but still lol
+
+		ConfigManager::Init();
 		LibraryManager::Init();
 
 		dt_coreInfo("Initialized \"{}\"", _id.GetCompoundID());
@@ -63,6 +65,7 @@ namespace Drift
 			return 4;
 		}
 
+		delete this; // suicide
 		return 0;
 	}
 
@@ -83,7 +86,7 @@ namespace Drift
 
 	auto Application::GetEnvironmentInfo() -> EnvironmentInfo
 	{
-		return main->_env;
+		return *(main->_env);
 	}
 
 	void Application::ForceGlobalLayoutRefresh()
@@ -94,5 +97,11 @@ namespace Drift
 			return;
 		}
 		main->_eventLoop->ForceLayoutRefresh();
+	}
+
+	Application::~Application()
+	{
+		ConfigManager::Write();
+		delete _env;
 	}
 }

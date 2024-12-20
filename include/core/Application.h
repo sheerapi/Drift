@@ -13,6 +13,7 @@ namespace Drift
 		inline static Application* main{nullptr};
 
 		Application(const std::string& appId);
+		~Application();
 		auto Present() -> int;
 		auto GetEventLoop() -> std::shared_ptr<Events::EventLoop>;
 		auto HasEventLoop() -> bool;
@@ -45,7 +46,7 @@ namespace Drift
 
 	private:
 		ApplicationID _id;
-		EnvironmentInfo _env;
+		EnvironmentInfo* _env;
 		std::shared_ptr<Events::EventLoop> _eventLoop{nullptr};
 		bool _presented{false};
 	};

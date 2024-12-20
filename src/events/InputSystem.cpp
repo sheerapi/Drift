@@ -101,6 +101,15 @@ namespace Drift
 			hoveredElement->EmitSignal("cursor.move", {relPos});
 		}
 
+		if (clickedElement != nullptr && clickedElement != hoveredElement)
+		{
+			clickedElement->EmitSignal("unclick");
+			clickedElement->EmitSignal(
+				"unclick." +
+				stringToLower(std::string(magic_enum::enum_name(lastButton))));
+			clickedElement = nullptr;
+		}
+
 		delete relPos;
 	}
 
