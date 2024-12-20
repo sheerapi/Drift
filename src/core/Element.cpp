@@ -16,7 +16,7 @@ namespace Drift
 {
 	Element::Element()
 	{
-		auto config = YGConfigNew();
+		auto* config = YGConfigNew();
 		YGConfigSetPointScaleFactor(config, 1.0);
 
 		_ygNode = YGNodeNewWithConfig(config);
@@ -57,6 +57,10 @@ namespace Drift
 		element->_parent = this;
 		Children.push_back(element);
 		YGNodeInsertChild(_ygNode, element->_ygNode, YGNodeGetChildCount(_ygNode));
+
+		std::sort(Children.begin(), Children.end(),
+				  [](const auto& a, const auto& b) { return a->_zIndex < b->_zIndex; });
+
 		return element;
 	}
 
@@ -100,33 +104,17 @@ namespace Drift
 
 	void Element::Draw()
 	{
-		if (_parent != nullptr)
-		{
-			auto bounds = GetBoundingBox();
 
-			SkPaint paint;
-#ifdef DEBUG
-			paint.setColor(_getPaint());
-#endif
-			paint.setAntiAlias(true);
-
-			dt_canvas->drawRect(
-				SkRect::MakeXYWH(bounds.X, bounds.Y, bounds.Width, bounds.Height), paint);
-		}
 	}
 
 	void Element::BeginDraw()
 	{
-		dt_canvas->save();
-
-		auto bounds = GetBoundingBox();
-		dt_canvas->clipRect(SkRect::MakeXYWH(bounds.X - 1, bounds.Y - 1, bounds.Width + 2,
-											 bounds.Height + 2));
+		
 	}
 
 	void Element::EndDraw()
 	{
-		dt_canvas->restore();
+		
 	}
 
 	auto Element::Focus(bool focus) -> Element*
@@ -173,6 +161,22 @@ namespace Drift
 			EndUpdate();
 		}
 
+		if (_zOrderingChanged)
+		{
+			std::sort(Children.begin(), Children.end(),
+					  [](const auto& a, const auto& b) { return a->_zIndex < b->_zIndex; });
+
+			_zOrderingChanged = false;
+		}
+
+		for (auto& style : _styles)
+		{
+			if (style.second->IsDirty())
+			{
+				style.second->RecalculateLayout(this);
+			}
+		}
+
 		if (_parent == nullptr)
 		{
 			_refreshLayout();
@@ -183,6 +187,11 @@ namespace Drift
 	{
 		if (_states.Enabled)
 		{
+			for (auto& style : _styles)
+			{
+				style.second->BeginDrawStyle(this);
+			}
+
 			BeginDraw();
 			Draw();
 
@@ -190,7 +199,13 @@ namespace Drift
 			{
 				child->Render();
 			}
+
 			EndDraw();
+
+			for (auto& style : _styles)
+			{
+				style.second->EndDrawStyle(this);
+			}
 		}
 	}
 
@@ -554,5 +569,20 @@ namespace Drift
 				_parent->EmitSignal(signal, event);
 			}
 		}
+	}
+
+	auto Element::ZIndex(int val) -> Element*
+	{
+		_zIndex = val;
+		if (_parent != nullptr)
+		{
+			_parent->_zOrderingChanged = true;
+		}
+		return this;
+	}
+
+	auto Element::ZIndex() const -> int
+	{
+		return _zIndex;
 	}
 }

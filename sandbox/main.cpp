@@ -1,6 +1,7 @@
 #include "components/Window.h"
 #include "core/Application.h"
 #include "core/LayoutEnums.h"
+#include "styles/Style.h"
 #include "utils/ConfigManager.h"
 
 using namespace Drift;
@@ -16,7 +17,7 @@ auto main(int argc, const char** argv) -> int
 					 ->FlexDirection(FlexDirection::Column)
 					 ->JustifyContent(JustifyContent::SpaceBetween);
 
-	root->AddChild<Element>()
+	auto* result = root->AddChild<Element>()
 					   ->ReceivesInput(false)
 					   ->Padding(4)
 					   ->HeightPercent(30)
@@ -49,7 +50,11 @@ auto main(int argc, const char** argv) -> int
 		}
 	}
 
-	dt_info("{}", ConfigManager::GetGlobalInteger("fonts.size"));
+	result->AddStyle<StyleTest>((unsigned int)0x00FF00);
+
+	result->AddStyle<StyleTest>((unsigned int)0xFF0000);
+
+	dt_info("{}", result->HasStyle<StyleTest>());
 
 	return app->Present();
 }

@@ -2,6 +2,7 @@
 #include "../utils/Demangle.h"
 #include "../core/Macros.h"
 #include "core/LayoutEnums.h"
+#include "styles/Style.h"
 #include "utils/BoundingBox.h"
 #include "utils/Vector2.h"
 #include "yoga/YGConfig.h"
@@ -50,6 +51,38 @@ namespace Drift
             return AddChild(std::make_shared<T>(args...));
         }
 
+		template<typename T, typename... Args> auto AddStyle(Args&& ...args) -> Element*
+		{
+			typeCheck<StyleBase, T>();
+			auto style = std::make_shared<T>(args...);
+
+			if (!_styles.contains(style->StyleName()))
+			{
+				_styles[style->StyleName()] = style;
+
+				if (style->IsInheritable())
+				{
+					for (auto& child : Children)
+					{
+						child->_addStyleIfNotFound<T>(args...);
+					}
+				}
+			}
+			else
+			{
+				(static_cast<T*>(_styles[style->StyleName()].get()))->EditStyle(args...);
+			}
+
+			return this;
+		}
+
+		template<typename T> auto HasStyle() -> bool
+		{
+			typeCheck<StyleBase, T>();
+			auto style = std::make_shared<T>();
+			return _styles.contains(style->StyleName());
+		}
+
 		auto ID(const std::string& newId) -> Element*;
 		[[nodiscard]] auto ID() const -> std::string;
 
@@ -82,6 +115,9 @@ namespace Drift
 		auto WidthPercent(float val) -> Element*;
 		auto HeightPercent(float val) -> Element*;
 		auto FlexBasisPercent(float val) -> Element*;
+
+		auto ZIndex(int val) -> Element*;
+		auto ZIndex() const -> int;
 
 		auto ChildAt(int index) -> std::shared_ptr<Element>;
 
@@ -156,6 +192,8 @@ namespace Drift
 		Element* _parent{nullptr};
 		bool _focusable{true};
 		bool _receivesInput{true};
+		bool _zOrderingChanged{true};
+		int _zIndex;
 		ElementStates _states;
         std::string _id;
         std::vector<std::string> _className;
@@ -164,6 +202,28 @@ namespace Drift
 		void _refreshState(const std::string& eventName);
 
 		std::unordered_map<std::string, std::vector<EventHandler>> _handlers;
+		std::unordered_map<std::string, std::shared_ptr<StyleBase>> _styles;
+
+		template <typename T, typename... Args> auto _addStyleIfNotFound(Args&&... args) -> Element*
+		{
+			typeCheck<StyleBase, T>();
+			auto style = std::make_shared<T>(args...);
+
+			if (!_styles.contains(style->StyleName()))
+			{
+				_styles[style->StyleName()] = style;
+
+				if (style->IsInheritable())
+				{
+					for (auto& child : Children)
+					{
+						child->_addStyleIfNotFound<T>(args...);
+					}
+				}
+			}
+
+			return this;
+		}
 
 #ifdef DEBUG
 		[[nodiscard]] auto _getPaint() const -> unsigned int;
