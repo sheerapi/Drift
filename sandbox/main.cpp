@@ -1,6 +1,7 @@
 #include "components/Window.h"
 #include "core/Application.h"
 #include "core/LayoutEnums.h"
+#include "utils/ConfigManager.h"
 
 using namespace Drift;
 
@@ -47,6 +48,8 @@ auto main(int argc, const char** argv) -> int
 			}
 		}
 	}
+
+	dt_info("{}", ConfigManager::GetGlobalInteger("fonts.size"));
 
 	return app->Present();
 }

@@ -9,7 +9,7 @@ namespace Drift
     public:
         static void Init();
 
-        static auto GetInt(const std::string& name) -> int;
+        static auto GetInteger(const std::string& name) -> long;
         static auto GetDouble(const std::string& name) -> double;
         static auto GetString(const std::string& name) -> std::string;
         static auto GetBoolean(const std::string& name) -> bool;
@@ -17,7 +17,7 @@ namespace Drift
         static auto GetArray(const std::string& name) -> toml::array;
 		static auto GetRootTable() -> toml::table;
 
-		static void SetInt(const std::string& name, int val);
+		static void SetInteger(const std::string& name, long val);
 		static void SetDouble(const std::string& name, double val);
 		static void SetString(const std::string& name, const std::string& val);
 		static void SetBoolean(const std::string& name, bool val);
@@ -26,7 +26,7 @@ namespace Drift
 
 		static auto HasValue(const std::string& name) -> bool;
 
-		static auto GetGlobalInt(const std::string& name) -> int;
+		static auto GetGlobalInteger(const std::string& name) -> long;
 		static auto GetGlobalDouble(const std::string& name) -> double;
 		static auto GetGlobalString(const std::string& name) -> std::string;
 		static auto GetGlobalBoolean(const std::string& name) -> bool;
@@ -40,6 +40,33 @@ namespace Drift
         inline static toml::table globalTable;
 
         static void Write();
+
+        template<typename T>
+        static void Insert(const std::string& name, T val)
+        {
+			size_t pos = 0;
+			toml::table* currentTable = &appTable;
+			std::string token;
+			std::string remainingPath = name;
+
+			while ((pos = remainingPath.find('.')) != std::string::npos)
+			{
+				token =
+					remainingPath.substr(0, pos);
+				remainingPath.erase(0, pos + 1);
+
+				toml::node* node = currentTable->get(token);
+				if ((node == nullptr) || !node->is_table())
+				{
+					currentTable->insert_or_assign(token, toml::table{});
+				}
+
+				currentTable = &*currentTable->get(token)->as_table();
+			}
+
+			currentTable->insert_or_assign(remainingPath, val);
+            Write();
+		}
 
         friend class Application;
     };
