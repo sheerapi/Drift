@@ -25,7 +25,8 @@ sources = [
     'src/events/InputSystem.cpp',
     'src/utils/Time.cpp',
     'src/events/ShortcutManager.cpp',
-    'src/utils/ConfigManager.cpp'
+    'src/utils/ConfigManager.cpp',
+    'src/styles/Style.cpp'
 ]
 
 cmake = import('cmake')

@@ -31,6 +31,8 @@ namespace Drift
 		-> std::shared_ptr<Element>
 	{
 		Root = root;
+		Root->SetContainingActivity(this);
+		
 		if (_containingView != nullptr)
 		{
 			Root->Width(_containingView->GetBoundingBox().Width);
@@ -69,8 +71,15 @@ namespace Drift
 		_containingView = view;
 	}
 
+	auto Activity::GetContainingView() -> View*
+	{
+		return _containingView;
+	}
+
 	void Activity::Update()
 	{
+		Root->SetContainingActivity(this);
+
 		if (Root->GetBoundingBox().Width != _containingView->GetBoundingBox().Width ||
 			Root->GetBoundingBox().Height != _containingView->GetBoundingBox().Height)
 		{

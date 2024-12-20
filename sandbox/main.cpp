@@ -50,11 +50,5 @@ auto main(int argc, const char** argv) -> int
 		}
 	}
 
-	result->AddStyle<StyleTest>((unsigned int)0x00FF00);
-
-	result->AddStyle<StyleTest>((unsigned int)0xFF0000);
-
-	dt_info("{}", result->HasStyle<StyleTest>());
-
 	return app->Present();
 }

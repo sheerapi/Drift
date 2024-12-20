@@ -11,6 +11,8 @@
 
 namespace Drift
 {
+	class Activity;
+
 	struct dt_api Event
 	{
 	public:
@@ -53,7 +55,7 @@ namespace Drift
 
 		template<typename T, typename... Args> auto AddStyle(Args&& ...args) -> Element*
 		{
-			typeCheck<StyleBase, T>();
+			typeCheck<Styling::StyleBase, T>();
 			auto style = std::make_shared<T>(args...);
 
 			if (!_styles.contains(style->StyleName()))
@@ -78,9 +80,23 @@ namespace Drift
 
 		template<typename T> auto HasStyle() -> bool
 		{
-			typeCheck<StyleBase, T>();
+			typeCheck<Styling::StyleBase, T>();
 			auto style = std::make_shared<T>();
 			return _styles.contains(style->StyleName());
+		}
+
+		template<typename T> auto GetStyle() -> std::shared_ptr<T>
+		{
+			typeCheck<Styling::StyleBase, T>();
+			auto style = std::make_shared<T>();
+
+			if (!_styles.contains(style->StyleName()))
+			{
+				dt_coreError("Tried to get a style that doesn't exist! (Style: {})", style->StyleName());
+				return nullptr;
+			}
+
+			return std::static_pointer_cast<T>(_styles[style->StyleName()]);
 		}
 
 		auto ID(const std::string& newId) -> Element*;
@@ -166,8 +182,14 @@ namespace Drift
 		void Remove(std::string signal);
 		void Remove(std::string signal, EventHandler& handler);
 
+		auto GetContainingActivity() -> Activity*;
+		void SetContainingActivity(Activity* activity);
+
 		auto Focus(bool focus = true) -> Element*;
 		auto Focusable() const -> bool;
+
+		auto IsOrphan() const -> bool;
+		auto GetParent() -> Element*;
 
 		inline void RemoveAll()
 		{
@@ -190,6 +212,7 @@ namespace Drift
 	private:
 		YGNodeRef _ygNode;
 		Element* _parent{nullptr};
+		Activity* _activity{nullptr};
 		bool _focusable{true};
 		bool _receivesInput{true};
 		bool _zOrderingChanged{true};
@@ -202,11 +225,11 @@ namespace Drift
 		void _refreshState(const std::string& eventName);
 
 		std::unordered_map<std::string, std::vector<EventHandler>> _handlers;
-		std::unordered_map<std::string, std::shared_ptr<StyleBase>> _styles;
+		std::unordered_map<std::string, std::shared_ptr<Styling::StyleBase>> _styles;
 
 		template <typename T, typename... Args> auto _addStyleIfNotFound(Args&&... args) -> Element*
 		{
-			typeCheck<StyleBase, T>();
+			typeCheck<Styling::StyleBase, T>();
 			auto style = std::make_shared<T>(args...);
 
 			if (!_styles.contains(style->StyleName()))

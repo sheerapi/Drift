@@ -4,7 +4,6 @@
 #include "core/SkPaint.h"
 #include "core/SkRect.h"
 #include "events/InputSystem.h"
-#include "graphics/RendererContext.h"
 #include "utils/Demangle.h"
 #include "utils/StringUtils.h"
 #include "yoga/YGNode.h"
@@ -584,5 +583,30 @@ namespace Drift
 	auto Element::ZIndex() const -> int
 	{
 		return _zIndex;
+	}
+
+	auto Element::GetContainingActivity() -> Activity*
+	{
+		return _activity;
+	}
+
+	void Element::SetContainingActivity(Activity* activity)
+	{
+		_activity = activity;
+
+		for (auto& child : Children)
+		{
+			child->SetContainingActivity(activity);
+		}
+	}
+
+	auto Element::IsOrphan() const -> bool
+	{
+		return _parent != nullptr;
+	}
+
+	auto Element::GetParent() -> Element*
+	{
+		return _parent;
 	}
 }
