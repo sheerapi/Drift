@@ -52,5 +52,13 @@ auto main(int argc, const char** argv) -> int
 
 	result->AddStyle<Styling::BackgroundColor>(Color::FromHex(0x282828));
 
+	result->On("click", [result](auto event){
+		result->AddStyle<Styling::BackgroundColor>(Color::RandomColor());
+	});
+
+	result->On("unclick", [result](auto event){
+		result->AddStyle<Styling::BackgroundColor>(Color::FromHex(0x282828));
+	});
+
 	return app->Present();
 }

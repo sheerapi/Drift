@@ -20,7 +20,6 @@ namespace Drift::Styling
 		{
 			_color = color;
 			Dirty = false;
-			dt_info("{}", (void*)dt_renderContext.get());
 		}
 
 		inline void BeginDrawStyle(Element* element,

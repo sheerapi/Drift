@@ -41,13 +41,24 @@ namespace Drift
 			return new int[4]{R, G, B, A};
 		}
 
+		[[nodiscard]] static inline auto RandomColor() -> Color
+		{
+			return {static_cast<int>(static_cast<float>(rand()) /
+									 static_cast<float>(RAND_MAX) * 255),
+					static_cast<int>(static_cast<float>(rand()) /
+									 static_cast<float>(RAND_MAX) * 255),
+					static_cast<int>(static_cast<float>(rand()) /
+									 static_cast<float>(RAND_MAX) * 255)};
+		}
+
 		[[nodiscard]] static inline auto FromHex(unsigned int hex) -> Color
 		{
 			return {
-				static_cast<int>((hex >> 16) & 0xFF),							  // Red
-				static_cast<int>((hex >> 8) & 0xFF),							  // Green
-				static_cast<int>(hex & 0xFF),									  // Blue
-				static_cast<int>((hex & 0xFF000000) ? ((hex >> 24) & 0xFF) : 255) // Alpha
+				static_cast<int>((hex >> 16) & 0xFF), // Red
+				static_cast<int>((hex >> 8) & 0xFF),  // Green
+				static_cast<int>(hex & 0xFF),		  // Blue
+				static_cast<int>(((hex & 0xFF000000) != 0U) ? ((hex >> 24) & 0xFF)
+															: 255) // Alpha
 			};
 		}
 
