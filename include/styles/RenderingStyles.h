@@ -17,7 +17,10 @@ namespace Drift::Styling
 
 		void ApplyEdits(Element* element, Color color) override
 		{
-			// Internals::animateValue(_color.R, color.R, element);
+			Internals::animateValue(&_color.R, color.R, element);
+			Internals::animateValue(&_color.G, color.B, element);
+			Internals::animateValue(&_color.B, color.B, element);
+			Internals::animateValue(&_color.A, color.A, element);
 			Dirty = false;
 		}
 

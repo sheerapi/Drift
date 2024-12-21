@@ -4,9 +4,10 @@
 #include "styles/AnimationStyles.h"
 #include "styles/RenderingStyles.h"
 #include "styles/Style.h"
-#include "utils/Scheduler.h"
+#include "styles/TransitionFunction.h"
 
 using namespace Drift;
+using namespace Drift::Styling;
 
 auto main(int argc, const char** argv) -> int
 {
@@ -38,8 +39,13 @@ auto main(int argc, const char** argv) -> int
 
 	for (int i = 0; i < 5; i++)
 	{
-		auto* row = panel->AddChild<Element>()->WidthPercent(100)->FlexGrow(1)->FlexDirection(
-			FlexDirection::Row)->ReceivesInput(false)->Gap(5)->JustifyContent(JustifyContent::SpaceBetween);
+		auto* row = panel->AddChild<Element>()
+						->WidthPercent(100)
+						->FlexGrow(1)
+						->FlexDirection(FlexDirection::Row)
+						->ReceivesInput(false)
+						->Gap(5)
+						->JustifyContent(JustifyContent::SpaceBetween);
 
 		for (int idx = 0; idx < (i == 4 ? 3 : 4); idx++)
 		{
@@ -52,16 +58,15 @@ auto main(int argc, const char** argv) -> int
 		}
 	}
 
-	result->AddStyle<Styling::BackgroundColor>(Color::FromHex(0x282828));
-	result->AddStyle<Styling::TransitionDuration>(500, Styling::TimeUnit::Hours);
+	result->AddStyle<BackgroundColor>(Color::FromHex(0x282828));
+	result->AddStyle<TransitionDuration>(500, TimeUnit::Milliseconds);
+	result->AddStyle<TransitionEasingFunction>(new CubicEasingFunction(0.19, 1, 0.22, 1));
 
-	result->On("click", [result](auto event){
-		result->AddStyle<Styling::BackgroundColor>(Color::RandomColor());
-	});
+	result->On("click", [result](auto event)
+			   { result->AddStyle<BackgroundColor>(Color::RandomColor()); });
 
-	result->On("unclick", [result](auto event){
-		result->AddStyle<Styling::BackgroundColor>(Color::FromHex(0x282828));
-	});
+	result->On("unclick", [result](auto event)
+			   { result->AddStyle<BackgroundColor>(Color::FromHex(0x282828)); });
 
 	return app->Present();
 }

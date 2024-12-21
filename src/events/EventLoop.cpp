@@ -1,4 +1,5 @@
 #include "events/EventLoop.h"
+#include "styles/AnimationScheduler.h"
 #include "utils/Demangle.h"
 #include "utils/Scheduler.h"
 #include "utils/Time.h"
@@ -22,6 +23,7 @@ namespace Drift::Events
 	void EventLoop::Update()
 	{
 		Time::Update();
+		Styling::AnimationScheduler::Update();
 		Scheduler::Update();
 		
 		if (Views.empty())

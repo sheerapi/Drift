@@ -106,8 +106,8 @@ namespace Drift
 
 		namespace Internals
 		{
-			void animateValue(float& value, float target, Element* element);
-			void animateValue(int& value, int target, Element* element);
+			void dt_api animateValue(float* value, float target, Element* element);
+			void dt_api animateValue(int* value, int target, Element* element);
 		}
 	}
 }

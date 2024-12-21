@@ -1,6 +1,7 @@
 #pragma once
 #include "Style.h"
 #include "core/Macros.h"
+#include "styles/TransitionFunction.h"
 
 namespace Drift::Styling
 {
@@ -43,6 +44,11 @@ namespace Drift::Styling
 			Dirty = false;
 		}
 
+		[[nodiscard]] auto GetValue() const -> unsigned int
+		{
+			return _duration;
+		}
+
 		[[nodiscard]] auto IsAnimatable() const -> bool override
 		{
 			return false;
@@ -50,5 +56,33 @@ namespace Drift::Styling
 
 	private:
 		unsigned int _duration;
+	};
+
+	class dt_api TransitionEasingFunction : public Style<EasingFunction*>
+	{
+	public:
+		[[nodiscard]] inline auto StyleName() const -> std::string override
+		{
+			return "transition-easing-function";
+		}
+
+		void ApplyEdits(Element* element, EasingFunction* easing) override
+		{
+			_easing = easing;
+			Dirty = false;
+		}
+
+        [[nodiscard]] auto GetValue() const -> EasingFunction*
+        {
+            return _easing;
+        }
+
+		[[nodiscard]] auto IsAnimatable() const -> bool override
+		{
+			return false;
+		}
+
+	private:
+		EasingFunction* _easing;
 	};
 }

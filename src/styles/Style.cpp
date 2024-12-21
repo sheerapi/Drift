@@ -1,7 +1,12 @@
 #include "styles/Style.h"
 #include "core/Activity.h"
 #include "core/Element.h"
+#include "core/Logger.h"
 #include "core/View.h"
+#include "styles/AnimationScheduler.h"
+#include "styles/AnimationStyles.h"
+#include "styles/TransitionFunction.h"
+#include "utils/Demangle.h"
 
 namespace Drift::Styling
 {
@@ -95,5 +100,31 @@ namespace Drift::Styling
 		}
 
 		return Value;
+	}
+
+	namespace Internals
+	{
+		void animateValue(float* value, float target, Element* element)
+		{
+			if (element->HasStyle<TransitionEasingFunction>() &&
+				element->HasStyle<TransitionDuration>())
+			{
+				auto duration = element->GetStyle<TransitionDuration>()->GetValue();
+				auto* easing = element->GetStyle<TransitionEasingFunction>()->GetValue();
+
+				auto animation = Animation();
+				animation.Easing = easing;
+				animation.Value = value;
+				animation.Duration = duration;
+				animation.Start = *value;
+				animation.Target = target;
+
+				AnimationScheduler::Submit(animation);
+			}
+			else
+			{
+				(*value) = target;
+			}
+		}
 	}
 }

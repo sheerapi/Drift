@@ -28,7 +28,10 @@ sources = [
     'src/utils/ConfigManager.cpp',
     'src/styles/Style.cpp',
     'src/styles/RenderingStyles.cpp',
-    'src/utils/Scheduler.cpp'
+    'src/utils/Scheduler.cpp',
+    'src/styles/AnimationScheduler.cpp',
+    'src/styles/TransitionFunction.cpp',
+    'src/utils/CubicBezier.cpp'
 ]
 
 cmake = import('cmake')

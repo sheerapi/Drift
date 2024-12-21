@@ -7,13 +7,13 @@ namespace Drift
 	struct dt_api Color
 	{
 	public:
-		int R{0};
-		int G{0};
-		int B{0};
-		int A{255};
+		float R{0};
+		float G{0};
+		float B{0};
+		float A{255};
 
 		Color() = default;
-		Color(int red, int green, int blue, int alpha = 255)
+		Color(float red, float green, float blue, float alpha = 255)
 			: R(red), G(green), B(blue), A(alpha) {};
 
 		inline auto operator==(const Color& other) const -> bool
@@ -28,7 +28,7 @@ namespace Drift
 
 		[[nodiscard]] inline auto ToHex() const -> unsigned int
 		{
-			return (A << 24) | (R << 16) | (G << 8) | B;
+			return ((int)A << 24) | ((int)R << 16) | ((int)G << 8) | (int)B;
 		}
 
 		[[nodiscard]] inline auto ToFloatArray() const -> float*
@@ -37,39 +37,39 @@ namespace Drift
 								(float)A / 255.0F};
 		}
 
-		[[nodiscard]] inline auto ToIntArray() const -> int*
+		[[nodiscard]] inline auto ToIntArray() const -> float*
 		{
-			return new int[4]{R, G, B, A};
+			return new float[4]{R, G, B, A};
 		}
 
 		[[nodiscard]] static inline auto RandomColor() -> Color
 		{
-			return {static_cast<int>(static_cast<float>(rand()) /
+			return {static_cast<float>(static_cast<float>(rand()) /
 									 static_cast<float>(RAND_MAX) * 255),
-					static_cast<int>(static_cast<float>(rand()) /
+					static_cast<float>(static_cast<float>(rand()) /
 									 static_cast<float>(RAND_MAX) * 255),
-					static_cast<int>(static_cast<float>(rand()) /
+					static_cast<float>(static_cast<float>(rand()) /
 									 static_cast<float>(RAND_MAX) * 255)};
 		}
 
 		[[nodiscard]] static inline auto FromHex(unsigned int hex) -> Color
 		{
 			return {
-				static_cast<int>((hex >> 16) & 0xFF), // Red
-				static_cast<int>((hex >> 8) & 0xFF),  // Green
-				static_cast<int>(hex & 0xFF),		  // Blue
-				static_cast<int>(((hex & 0xFF000000) != 0U) ? ((hex >> 24) & 0xFF)
+				static_cast<float>((hex >> 16) & 0xFF), // Red
+				static_cast<float>((hex >> 8) & 0xFF),  // Green
+				static_cast<float>(hex & 0xFF),		  // Blue
+				static_cast<float>(((hex & 0xFF000000) != 0U) ? ((hex >> 24) & 0xFF)
 															: 255) // Alpha
 			};
 		}
 
 		[[nodiscard]] static inline auto FromFloatArray(const float* arr) -> Color
 		{
-			return {(int)(arr[0] * 255), (int)(arr[1] * 255), (int)(arr[2] * 255),
-					(int)(arr[3] * 255)};
+			return {(float)(arr[0] * 255), (float)(arr[1] * 255), (float)(arr[2] * 255),
+					(float)(arr[3] * 255)};
 		}
 
-		[[nodiscard]] static inline auto FromIntArray(int* arr) -> Color
+		[[nodiscard]] static inline auto FromIntArray(float* arr) -> Color
 		{
 			return {arr[0], arr[1], arr[2], arr[3]};
 		}
@@ -82,8 +82,8 @@ namespace Drift
 			}
 
 			return FromIntArray(
-				new int[4]{std::stoi(str.substr(0, 3)), std::stoi(str.substr(3, 3)),
-						   std::stoi(str.substr(6, 3)), std::stoi(str.substr(9, 3))});
+				new float[4]{static_cast<float>(std::stoi(str.substr(0, 3))), static_cast<float>(std::stoi(str.substr(3, 3))),
+						   static_cast<float>(std::stoi(str.substr(6, 3))), static_cast<float>(std::stoi(str.substr(9, 3)))});
 		}
 	};
 }
