@@ -5,6 +5,7 @@
 #include "styles/RenderingStyles.h"
 #include "styles/Style.h"
 #include "styles/TransitionFunction.h"
+#include "utils/Color.h"
 
 using namespace Drift;
 using namespace Drift::Styling;
@@ -18,55 +19,34 @@ auto main(int argc, const char** argv) -> int
 	auto* root = window->GetCurrentActivity()
 					 ->AttachRoot(std::make_shared<Element>())
 					 ->FlexDirection(FlexDirection::Column)
-					 ->JustifyContent(JustifyContent::SpaceBetween);
+					 ->Gap(10)
+					 ->Padding(10);
 
-	auto* result = root->AddChild<Element>()
-					   ->ReceivesInput(false)
-					   ->Padding(4)
-					   ->HeightPercent(30)
-					   ->FlexGrow(0)
-					   ->FlexShrink(0);
-
-	auto* panel = root->AddChild<Element>()
-					  ->FlexGrow(1)
-					  ->FlexShrink(1)
-					  ->Padding(10)
-					  ->FlexDirection(FlexDirection::Column)
-					  ->FlexBasisPercent(0)
-					  ->ReceivesInput(false)
-					  ->Gap(5)
-					  ->FlexWrap(Drift::Wrap::Wrap);
-
-	for (int i = 0; i < 5; i++)
+	for (size_t i = 0; i < 20; i++)
 	{
-		auto* row = panel->AddChild<Element>()
-						->WidthPercent(100)
-						->FlexGrow(1)
-						->FlexDirection(FlexDirection::Row)
-						->ReceivesInput(false)
-						->Gap(5)
-						->JustifyContent(JustifyContent::SpaceBetween);
+		auto* btn =
+			root->AddChild<Element>()
+				->WidthPercent(100)
+				->Height(50)
+				->AddStyle<Styling::BackgroundColor>(Color::FromHex(0x282828))
+				->AddStyle<Styling::TransitionDuration>(300, TimeUnit::Milliseconds)
+				->AddStyle<Styling::TransitionEasingFunction>(
+					new CubicEasingFunction(0.19, 1, 0.22, 1));
 
-		for (int idx = 0; idx < (i == 4 ? 3 : 4); idx++)
-		{
-			auto* btn = row->AddChild<Element>()->HeightPercent(100)->FlexGrow(1);
+		btn->On("hover",
+				[btn](const Event& e)
+				{
+					btn->GetStyle<Styling::BackgroundColor>()->ApplyEdits(
+						btn, Color::FromHex(0x383838));
+				});
 
-			if (i == 4 && idx == 2)
-			{
-				btn->WidthPercent(25.5);
-			}
-		}
+		btn->On("unhover",
+				[btn](const Event& e)
+				{
+					btn->GetStyle<Styling::BackgroundColor>()->ApplyEdits(
+						btn, Color::FromHex(0x282828));
+				});
 	}
-
-	result->AddStyle<BackgroundColor>(Color::FromHex(0x282828));
-	result->AddStyle<TransitionDuration>(500, TimeUnit::Milliseconds);
-	result->AddStyle<TransitionEasingFunction>(new CubicEasingFunction(0.19, 1, 0.22, 1));
-
-	result->On("click", [result](auto event)
-			   { result->AddStyle<BackgroundColor>(Color::RandomColor()); });
-
-	result->On("unclick", [result](auto event)
-			   { result->AddStyle<BackgroundColor>(Color::FromHex(0x282828)); });
 
 	return app->Present();
 }
