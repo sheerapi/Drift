@@ -5,6 +5,7 @@
 #include "utils/LibraryManager.h"
 #include "utils/PerformanceTimer.h"
 #include "utils/Time.h"
+#include "utils/Scheduler.h"
 
 namespace Drift
 {
@@ -64,6 +65,8 @@ namespace Drift
 						 e.what());
 			return 4;
 		}
+
+		Scheduler::Shutdown();
 
 		delete this; // suicide
 		return 0;

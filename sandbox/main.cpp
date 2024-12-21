@@ -1,8 +1,10 @@
 #include "components/Window.h"
 #include "core/Application.h"
 #include "core/LayoutEnums.h"
+#include "styles/AnimationStyles.h"
 #include "styles/RenderingStyles.h"
 #include "styles/Style.h"
+#include "utils/Scheduler.h"
 
 using namespace Drift;
 
@@ -51,6 +53,7 @@ auto main(int argc, const char** argv) -> int
 	}
 
 	result->AddStyle<Styling::BackgroundColor>(Color::FromHex(0x282828));
+	result->AddStyle<Styling::TransitionDuration>(500, Styling::TimeUnit::Hours);
 
 	result->On("click", [result](auto event){
 		result->AddStyle<Styling::BackgroundColor>(Color::RandomColor());

@@ -1,4 +1,5 @@
 #pragma once
+#include "core/Macros.h"
 #include "core/SkCanvas.h"
 #include <string>
 
@@ -8,7 +9,7 @@ namespace Drift
 
 	namespace Styling
 	{
-		class StyleBase
+		class dt_api StyleBase
 		{
 		public:
 			StyleBase() = default;
@@ -23,6 +24,11 @@ namespace Drift
 			[[nodiscard]] virtual auto IsInheritable() const -> bool
 			{
 				return false;
+			}
+
+			[[nodiscard]] virtual auto IsAnimatable() const -> bool
+			{
+				return true;
 			}
 
 			[[nodiscard]] inline auto IsDirty() const -> bool
@@ -46,7 +52,7 @@ namespace Drift
 			bool Dirty{true};
 		};
 
-		template <typename... Args> class Style : public StyleBase
+		template <typename... Args> class dt_api Style : public StyleBase
 		{
 		public:
 			[[nodiscard]] auto StyleName() const -> std::string override
@@ -63,13 +69,13 @@ namespace Drift
 			virtual void ApplyEdits(Element* element, Args... args) = 0;
 		};
 
-		enum class PreferredDimension
+		enum class dt_api PreferredDimension
 		{
 			Width,
 			Height
 		};
 
-		enum class UnitType
+		enum class dt_api UnitType
 		{
 			Pixels,
 			Em,
@@ -88,7 +94,7 @@ namespace Drift
 			Picas
 		};
 
-		struct Value
+		struct dt_api Value
 		{
 		public:
 			float Value;
@@ -97,5 +103,11 @@ namespace Drift
 			auto Resolve(Element* element, PreferredDimension dimension =
 											   PreferredDimension::Width) const -> float;
 		};
+
+		namespace Internals
+		{
+			void animateValue(float& value, float target, Element* element);
+			void animateValue(int& value, int target, Element* element);
+		}
 	}
 }

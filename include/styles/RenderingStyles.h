@@ -1,14 +1,13 @@
 #pragma once
 #include "Style.h"
 #include "core/Element.h"
-#include "core/Logger.h"
+#include "core/Macros.h"
 #include "core/SkRect.h"
-#include "graphics/RendererContext.h"
 #include "utils/Color.h"
 
 namespace Drift::Styling
 {
-	class BackgroundColor : public Style<Color>
+	class dt_api BackgroundColor : public Style<Color>
 	{
 	public:
 		[[nodiscard]] inline auto StyleName() const -> std::string override
@@ -18,7 +17,7 @@ namespace Drift::Styling
 
 		void ApplyEdits(Element* element, Color color) override
 		{
-			_color = color;
+			// Internals::animateValue(_color.R, color.R, element);
 			Dirty = false;
 		}
 

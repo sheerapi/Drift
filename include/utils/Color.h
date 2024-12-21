@@ -1,9 +1,10 @@
 #pragma once
+#include "core/Macros.h"
 #include <string>
 
 namespace Drift
 {
-	struct Color
+	struct dt_api Color
 	{
 	public:
 		int R{0};
