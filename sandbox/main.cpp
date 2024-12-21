@@ -1,8 +1,8 @@
 #include "components/Window.h"
 #include "core/Application.h"
 #include "core/LayoutEnums.h"
+#include "styles/RenderingStyles.h"
 #include "styles/Style.h"
-#include "utils/ConfigManager.h"
 
 using namespace Drift;
 
@@ -49,6 +49,8 @@ auto main(int argc, const char** argv) -> int
 			}
 		}
 	}
+
+	result->AddStyle<Styling::BackgroundColor>(Color::FromHex(0x282828));
 
 	return app->Present();
 }

@@ -39,6 +39,7 @@ namespace Drift
 			if (_eventLoop == nullptr)
 			{
 				dt_coreError("No event loop attached!");
+				return nullptr;
 			}
 			_eventLoop->PushView(view);
 			return view;

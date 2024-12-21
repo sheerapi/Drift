@@ -56,11 +56,13 @@ namespace Drift
 		template<typename T, typename... Args> auto AddStyle(Args&& ...args) -> Element*
 		{
 			typeCheck<Styling::StyleBase, T>();
-			auto style = std::make_shared<T>(args...);
+			auto style = std::make_shared<T>();
 
 			if (!_styles.contains(style->StyleName()))
 			{
 				_styles[style->StyleName()] = style;
+				(static_cast<T*>(_styles[style->StyleName()].get()))
+					->EditStyle(this, args...);
 
 				if (style->IsInheritable())
 				{
@@ -72,7 +74,7 @@ namespace Drift
 			}
 			else
 			{
-				(static_cast<T*>(_styles[style->StyleName()].get()))->EditStyle(args...);
+				(static_cast<T*>(_styles[style->StyleName()].get()))->EditStyle(this, args...);
 			}
 
 			return this;
@@ -230,11 +232,13 @@ namespace Drift
 		template <typename T, typename... Args> auto _addStyleIfNotFound(Args&&... args) -> Element*
 		{
 			typeCheck<Styling::StyleBase, T>();
-			auto style = std::make_shared<T>(args...);
+			auto style = std::make_shared<T>();
 
 			if (!_styles.contains(style->StyleName()))
 			{
 				_styles[style->StyleName()] = style;
+				(static_cast<T*>(_styles[style->StyleName()].get()))
+					->EditStyle(this, args...);
 
 				if (style->IsInheritable())
 				{

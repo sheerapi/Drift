@@ -1,18 +1,20 @@
 #pragma once
+#include "core/Logger.h"
 #include "core/SkCanvas.h"
 #include "core/SkSurface.h"
 #include "gpu/ganesh/GrBackendSurface.h"
 #include "gpu/ganesh/gl/GrGLInterface.h"
 #include "gpu/ganesh/GrDirectContext.h"
+#include <memory>
 
 namespace Drift::Graphics
 {
     class RendererContext
     {
     public:
-		inline static RendererContext* main;
-		
-        SkCanvas* Canvas;
+		inline static std::shared_ptr<RendererContext> main{nullptr};
+
+		SkCanvas* Canvas;
 		sk_sp<const GrGLInterface> GLInterface;
 		sk_sp<GrDirectContext> GrContext;
 		sk_sp<SkSurface> Surface;

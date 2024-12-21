@@ -25,6 +25,7 @@ namespace Drift::Events
 		if (Views.empty())
 		{
 			Running = false;
+			return;
 		}
 
 		if (Running)

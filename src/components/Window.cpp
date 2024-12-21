@@ -74,7 +74,7 @@ namespace Drift
 
 	void Window::Render()
 	{
-		Graphics::RendererContext::main = RendererContext.get();
+		Graphics::RendererContext::main = RendererContext;
 
 		glfwMakeContextCurrent(_window);
 

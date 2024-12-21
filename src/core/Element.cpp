@@ -4,6 +4,7 @@
 #include "core/SkPaint.h"
 #include "core/SkRect.h"
 #include "events/InputSystem.h"
+#include "graphics/RendererContext.h"
 #include "utils/Demangle.h"
 #include "utils/StringUtils.h"
 #include "yoga/YGNode.h"
@@ -188,7 +189,7 @@ namespace Drift
 		{
 			for (auto& style : _styles)
 			{
-				style.second->BeginDrawStyle(this);
+				style.second->BeginDrawStyle(this, dt_renderContext->Canvas);
 			}
 
 			BeginDraw();
@@ -203,7 +204,7 @@ namespace Drift
 
 			for (auto& style : _styles)
 			{
-				style.second->EndDrawStyle(this);
+				style.second->EndDrawStyle(this, dt_renderContext->Canvas);
 			}
 		}
 	}

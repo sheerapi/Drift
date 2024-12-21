@@ -1,4 +1,5 @@
 #pragma once
+#include "core/SkCanvas.h"
 #include <string>
 
 namespace Drift
@@ -30,10 +31,16 @@ namespace Drift
 			}
 
 			virtual void RecalculateLayout(Element* element) {};
-			virtual void BeginDrawStyle(Element* element) {};
-			virtual void EndDrawStyle(Element* element) {};
 
-			template <typename... Args> void EditStyle(Args... args) {};
+            // since apparently using the global context causes a segfault
+            // because whenever this is called it is magically reset to nullptr
+            // i do NOT understand this shit
+			virtual void BeginDrawStyle(Element* element,
+										SkCanvas* ctx) {};
+			virtual void EndDrawStyle(Element* element, SkCanvas* ctx) {
+			};
+
+			template <typename... Args> void EditStyle(Element* element, Args... args) {};
 
 		protected:
 			bool Dirty{true};
@@ -47,47 +54,48 @@ namespace Drift
 				return "style";
 			}
 
-			void EditStyle(Args... args)
+			void EditStyle(Element* element, Args... args)
 			{
-				ApplyEdits(args...);
+				ApplyEdits(element, args...);
 			}
 
 		protected:
-			virtual void ApplyEdits(Args... args) = 0;
+			virtual void ApplyEdits(Element* element, Args... args) = 0;
 		};
 
-        enum class PreferredDimension
-        {
-            Width,
-            Height
-        };
+		enum class PreferredDimension
+		{
+			Width,
+			Height
+		};
 
-        enum class UnitType
-        {
-            Pixels,
-            Em,
-            Rem,
-            Ex,
-            Ch,
-            Vw,
-            Vh,
-            Vmin,
-            Vmax,
-            Percent,
-            Centimeters,
-            Millimeters,
-            Inches,
-            Points,
-            Picas
-        };
+		enum class UnitType
+		{
+			Pixels,
+			Em,
+			Rem,
+			Ex,
+			Ch,
+			Vw,
+			Vh,
+			Vmin,
+			Vmax,
+			Percent,
+			Centimeters,
+			Millimeters,
+			Inches,
+			Points,
+			Picas
+		};
 
-        struct Value
-        {
-        public:
-            float Value;
-            UnitType Unit;
+		struct Value
+		{
+		public:
+			float Value;
+			UnitType Unit;
 
-            auto Resolve(Element* element, PreferredDimension dimension = PreferredDimension::Width) const -> float;
-        };
+			auto Resolve(Element* element, PreferredDimension dimension =
+											   PreferredDimension::Width) const -> float;
+		};
 	}
 }
