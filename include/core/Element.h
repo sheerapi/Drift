@@ -170,9 +170,9 @@ namespace Drift
 		dt_yogaPropertySimple(MaxHeight);
 
 		dt_yogaPropertySimple(FlexBasis);
-		dt_yogaPropertySimple(FlexGrow);
-		dt_yogaPropertySimple(FlexShrink);
-		dt_yogaPropertySimple(AspectRatio);
+		dt_yogaPropertySimpleNoValue(FlexGrow);
+		dt_yogaPropertySimpleNoValue(FlexShrink);
+		dt_yogaPropertySimpleNoValue(AspectRatio);
 
 		dt_yogaPropertySimple(GapHorizontal);
 		dt_yogaPropertySimple(GapVertical);

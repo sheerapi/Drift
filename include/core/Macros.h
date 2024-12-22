@@ -34,40 +34,44 @@
 // forgive me for what ur abt to see ryt now lolol
 
 #define dt_yogaPropertySimple(name)                                                      \
-	auto name(float val) -> Element*;                                                    \
+	auto name(Styling::Value val) -> Element*;                                           \
+	auto name() -> float;
+
+#define dt_yogaPropertySimpleNoValue(name)                                                      \
+	auto name(float val) -> Element*;                                           \
 	auto name() -> float;
 
 #define dt_yogaPropertyValueDef(name)                                                    \
-	auto Element::name(float val) -> Element*                                            \
+	auto Element::name(Styling::Value val) -> Element*                                   \
 	{                                                                                    \
-		YGNodeStyleSet##name(_ygNode, val);                                              \
+		AddStyle<Styling::name>(val);                                                    \
 		return this;                                                                     \
 	}                                                                                    \
 	auto Element::name() -> float                                                        \
 	{                                                                                    \
-		return YGNodeStyleGet##name(_ygNode).value;                                      \
+		return GetStyle<Styling::name>()->GetValue();                                    \
 	}
 
 #define dt_yogaPropertySimpleDef(name)                                                   \
-	auto Element::name(float val) -> Element*                                            \
+	auto Element::name(float val) -> Element*                                   \
 	{                                                                                    \
-		YGNodeStyleSet##name(_ygNode, val);                                              \
+		AddStyle<Styling::name>(val);                                                    \
 		return this;                                                                     \
 	}                                                                                    \
 	auto Element::name() -> float                                                        \
 	{                                                                                    \
-		return YGNodeStyleGet##name(_ygNode);                                            \
+		return GetStyle<Styling::name>()->GetValue();                                    \
 	}
 
-#define dt_yogaPropertyEnumDef(name, type, ygType)                                                   \
-	auto Element::name(type val) -> Element*                                            \
+#define dt_yogaPropertyEnumDef(name, type, ygType)                                       \
+	auto Element::name(type val) -> Element*                                             \
 	{                                                                                    \
-		YGNodeStyleSet##name(_ygNode, (ygType)((int)val));                                              \
+		YGNodeStyleSet##name(_ygNode, (ygType)((int)val));                               \
 		return this;                                                                     \
 	}                                                                                    \
-	auto Element::name() -> type                                                        \
+	auto Element::name() -> type                                                         \
 	{                                                                                    \
-		return (type)((int)YGNodeStyleGet##name(_ygNode));                                            \
+		return (type)((int)YGNodeStyleGet##name(_ygNode));                               \
 	}
 
 #define dt_yogaPropertyType(name, type)                                                  \
@@ -155,7 +159,7 @@
 		return YGNodeStyleGet##name(_ygNode, YGEdge::YGEdgeAll).value;                   \
 	}
 
-#define dt_yogaPropertyEdgeNoValueDef(name)                                                     \
+#define dt_yogaPropertyEdgeNoValueDef(name)                                              \
 	auto Element::name##Left(float val)->Element*                                        \
 	{                                                                                    \
 		YGNodeStyleSet##name(_ygNode, YGEdge::YGEdgeLeft, val);                          \
@@ -163,7 +167,7 @@
 	}                                                                                    \
 	auto Element::name##Left()->float                                                    \
 	{                                                                                    \
-		return YGNodeLayoutGet##name(_ygNode, YGEdge::YGEdgeLeft);                  \
+		return YGNodeLayoutGet##name(_ygNode, YGEdge::YGEdgeLeft);                       \
 	}                                                                                    \
 	auto Element::name##Right(float val)->Element*                                       \
 	{                                                                                    \
@@ -172,7 +176,7 @@
 	}                                                                                    \
 	auto Element::name##Right()->float                                                   \
 	{                                                                                    \
-		return YGNodeLayoutGet##name(_ygNode, YGEdge::YGEdgeRight);                 \
+		return YGNodeLayoutGet##name(_ygNode, YGEdge::YGEdgeRight);                      \
 	}                                                                                    \
 	auto Element::name##Top(float val)->Element*                                         \
 	{                                                                                    \
@@ -181,7 +185,7 @@
 	}                                                                                    \
 	auto Element::name##Top()->float                                                     \
 	{                                                                                    \
-		return YGNodeLayoutGet##name(_ygNode, YGEdge::YGEdgeLeft);                  \
+		return YGNodeLayoutGet##name(_ygNode, YGEdge::YGEdgeLeft);                       \
 	}                                                                                    \
 	auto Element::name##Bottom(float val)->Element*                                      \
 	{                                                                                    \
@@ -190,7 +194,7 @@
 	}                                                                                    \
 	auto Element::name##Bottom()->float                                                  \
 	{                                                                                    \
-		return YGNodeLayoutGet##name(_ygNode, YGEdge::YGEdgeBottom);                \
+		return YGNodeLayoutGet##name(_ygNode, YGEdge::YGEdgeBottom);                     \
 	}                                                                                    \
 	auto Element::name##Horizontal(float val)->Element*                                  \
 	{                                                                                    \
@@ -199,7 +203,7 @@
 	}                                                                                    \
 	auto Element::name##Horizontal()->float                                              \
 	{                                                                                    \
-		return YGNodeLayoutGet##name(_ygNode, YGEdge::YGEdgeHorizontal);            \
+		return YGNodeLayoutGet##name(_ygNode, YGEdge::YGEdgeHorizontal);                 \
 	}                                                                                    \
 	auto Element::name##Vertical(float val)->Element*                                    \
 	{                                                                                    \
@@ -208,7 +212,7 @@
 	}                                                                                    \
 	auto Element::name##Vertical()->float                                                \
 	{                                                                                    \
-		return YGNodeLayoutGet##name(_ygNode, YGEdge::YGEdgeVertical);              \
+		return YGNodeLayoutGet##name(_ygNode, YGEdge::YGEdgeVertical);                   \
 	}                                                                                    \
 	auto Element::name(float val) -> Element*                                            \
 	{                                                                                    \
@@ -217,5 +221,5 @@
 	}                                                                                    \
 	auto Element::name() -> float                                                        \
 	{                                                                                    \
-		return YGNodeLayoutGet##name(_ygNode, YGEdge::YGEdgeAll);                   \
+		return YGNodeLayoutGet##name(_ygNode, YGEdge::YGEdgeAll);                        \
 	}

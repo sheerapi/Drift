@@ -12,43 +12,52 @@ namespace Drift::Styling
 {
 	auto Value::Resolve(Element* element, PreferredDimension dimension) const -> float
 	{
+		auto result = Val;
+
 		switch (Unit)
 		{
 		case UnitType::Pixels:
-			return Value;
+			result = Val;
+			break;
 
 		case UnitType::Em:
 			// TODO;
-			return Value * 16;
+			result = Val * 16;
+			break;
 
 		case UnitType::Rem:
 			// TODO;
-			return Value * 16;
+			result = Val * 16;
+			break;
 
 		case UnitType::Ex:
 			// TODO;
-			return Value * 8;
+			result = Val * 8;
+			break;
 
 		case UnitType::Ch:
 			// TODO;
-			return Value * 8;
+			result = Val * 8;
+			break;
 
 		case UnitType::Vw:
-			return element->GetContainingActivity()
+			result = element->GetContainingActivity()
 					   ->GetContainingView()
 					   ->GetBoundingBox()
 					   .Width *
-				   (Value / 100);
+				   (Val / 100);
+			break;
 
 		case UnitType::Vh:
-			return element->GetContainingActivity()
+			result = element->GetContainingActivity()
 					   ->GetContainingView()
 					   ->GetBoundingBox()
 					   .Height *
-				   (Value / 100);
+				   (Val / 100);
+			break;
 
 		case UnitType::Vmin:
-			return std::min(element->GetContainingActivity()
+			result = std::min(element->GetContainingActivity()
 								->GetContainingView()
 								->GetBoundingBox()
 								.Width,
@@ -56,10 +65,11 @@ namespace Drift::Styling
 								->GetContainingView()
 								->GetBoundingBox()
 								.Height) *
-				   (Value / 100);
+				   (Val / 100);
+			break;
 
 		case UnitType::Vmax:
-			return std::max(element->GetContainingActivity()
+			result = std::max(element->GetContainingActivity()
 								->GetContainingView()
 								->GetBoundingBox()
 								.Width,
@@ -67,39 +77,68 @@ namespace Drift::Styling
 								->GetContainingView()
 								->GetBoundingBox()
 								.Height) *
-				   (Value / 100);
+				   (Val / 100);
+			break;
 
 		case UnitType::Percent:
 		{
 			if (!element->IsOrphan())
 			{
-				return dimension == PreferredDimension::Width
-						   ? element->GetParent()->GetPercentWidth(Value)
-						   : element->GetParent()->GetPercentHeight(Value);
+				result = dimension == PreferredDimension::Width
+						   ? element->GetParent()->GetPercentWidth(Val)
+						   : element->GetParent()->GetPercentHeight(Val);
+
+				break;
 			}
 
-			return dimension == PreferredDimension::Width
-					   ? element->GetPercentWidth(Value)
-					   : element->GetPercentHeight(Value);
+			result = dimension == PreferredDimension::Width
+					   ? element->GetPercentWidth(Val)
+					   : element->GetPercentHeight(Val);
+			break;
 		}
 
 		case UnitType::Centimeters:
-            return Value * 37.7952755906F;
+			result = Val * 37.7952755906F;
+			break;
 
 		case UnitType::Millimeters:
-            return Value * 3.77952755906F;
+			result = Val * 3.77952755906F;
+			break;
 
 		case UnitType::Inches:
-            return Value * 96;
+			result = Val * 96;
+			break;
 
 		case UnitType::Points:
-            return Value * 1.33333333333F;
+			result = Val * 1.33333333333F;
+			break;
 
 		case UnitType::Picas:
-            return Value * 16;
+			result = Val * 16;
+			break;
 		}
 
-		return Value;
+		return result;
+	}
+
+	auto StyleBase::IsReadyToResolve(Element* element) -> bool
+	{
+		if (element == nullptr)
+		{
+			return false;
+		}
+
+		if (element->GetContainingActivity() == nullptr)
+		{
+			return false;
+		}
+
+		if (element->GetContainingActivity()->GetContainingView() == nullptr)
+		{
+			return false;
+		}
+		
+		return true;
 	}
 
 	namespace Internals

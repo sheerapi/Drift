@@ -5,6 +5,7 @@
 #include "core/SkRect.h"
 #include "events/InputSystem.h"
 #include "graphics/RendererContext.h"
+#include "styles/LayoutStyles.h"
 #include "utils/ConfigManager.h"
 #include "utils/Demangle.h"
 #include "utils/StringUtils.h"
@@ -25,7 +26,7 @@ namespace Drift
 		}
 
 		auto* config = YGConfigNew();
-		YGConfigSetPointScaleFactor(config, 1.0);
+		YGConfigSetPointScaleFactor(config, 1);
 
 		_ygNode = YGNodeNewWithConfig(config);
 		Overflow(Overflow::Visible);
@@ -163,13 +164,13 @@ namespace Drift
 		if (_scrollable.ScrollOffsetX != _scrollable.TargetScrollOffsetX)
 		{
 			_scrollable.ScrollOffsetX = std::lerp(_scrollable.ScrollOffsetX,
-												   _scrollable.TargetScrollOffsetX, 0.2F);
+												  _scrollable.TargetScrollOffsetX, 0.2F);
 		}
 
 		if (_scrollable.ScrollOffsetY != _scrollable.TargetScrollOffsetY)
 		{
 			_scrollable.ScrollOffsetY = std::lerp(_scrollable.ScrollOffsetY,
-												   _scrollable.TargetScrollOffsetY, 0.5F);
+												  _scrollable.TargetScrollOffsetY, 0.5F);
 		}
 
 		if (_states.Enabled)
@@ -196,10 +197,7 @@ namespace Drift
 
 		for (auto& style : _styles)
 		{
-			if (style.second->IsDirty())
-			{
-				style.second->RecalculateLayout(this);
-			}
+			style.second->RecalculateLayout(this);
 		}
 
 		if (_parent == nullptr)
@@ -449,37 +447,47 @@ namespace Drift
 		return (enum NodeType)((int)YGNodeGetNodeType(_ygNode));
 	}
 
-	auto Element::GapHorizontal(float val) -> Element*
+	auto Element::GapHorizontal(Styling::Value val) -> Element*
 	{
-		YGNodeStyleSetGap(_ygNode, YGGutter::YGGutterRow, val);
+		AddStyle<Styling::Gap>(
+			val,
+			HasStyle<Styling::Gap>()
+				? Styling::Value(GetStyle<Styling::Gap>()->GetValue().Y)
+				: Styling::Value(0));
 		return this;
 	}
 
 	auto Element::GapHorizontal() -> float
 	{
-		return YGNodeStyleGetGap(_ygNode, YGGutter::YGGutterRow).value;
+		return HasStyle<Styling::Gap>() ? GetStyle<Styling::Gap>()->GetValue().X : 0;
 	}
 
-	auto Element::GapVertical(float val) -> Element*
+	auto Element::GapVertical(Styling::Value val) -> Element*
 	{
-		YGNodeStyleSetGap(_ygNode, YGGutter::YGGutterColumn, val);
+		AddStyle<Styling::Gap>(
+			HasStyle<Styling::Gap>()
+				? Styling::Value(GetStyle<Styling::Gap>()->GetValue().X)
+				: Styling::Value(0),
+			val);
 		return this;
 	}
 
 	auto Element::GapVertical() -> float
 	{
-		return YGNodeStyleGetGap(_ygNode, YGGutter::YGGutterColumn).value;
+		return HasStyle<Styling::Gap>() ? GetStyle<Styling::Gap>()->GetValue().Y : 0;
 	}
 
-	auto Element::Gap(float val) -> Element*
+	auto Element::Gap(Styling::Value val) -> Element*
 	{
-		YGNodeStyleSetGap(_ygNode, YGGutter::YGGutterAll, val);
+		AddStyle<Styling::Gap>(val, val);
 		return this;
 	}
 
 	auto Element::Gap() -> float
 	{
-		return YGNodeStyleGetGap(_ygNode, YGGutter::YGGutterAll).value;
+		return HasStyle<Styling::Gap>() ? GetStyle<Styling::Gap>()->GetValue().X +
+											  GetStyle<Styling::Gap>()->GetValue().Y
+										: 0;
 	}
 
 #ifdef DEBUG
