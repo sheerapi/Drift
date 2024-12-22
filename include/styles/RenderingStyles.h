@@ -33,7 +33,7 @@ namespace Drift::Styling
 			paint.setColor(_color.ToHex());
 			paint.setAntiAlias(true);
 
-			ctx->drawRect(SkRect::MakeXYWH(bounds.X, bounds.Y, bounds.Width, bounds.Height), paint);
+			ctx->drawRect(SkRect::MakeXYWH(bounds.X + element->GetScrollOffsetX(), bounds.Y + element->GetScrollOffsetY(), bounds.Width, bounds.Height), paint);
 		}
 
 	private:

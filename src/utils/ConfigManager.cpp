@@ -162,8 +162,6 @@ namespace Drift
 
 	auto ConfigManager::GetGlobalInteger(const std::string& name) -> long
 	{
-		dt_info("{} {}", HasGlobalValue(name), globalTable.at_path(name).is_integer());
-		
 		if (HasGlobalValue(name) && globalTable.at_path(name).is_integer())
 		{
 			return globalTable.at_path(name).as_integer()->get();

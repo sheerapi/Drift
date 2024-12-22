@@ -20,9 +20,9 @@ auto main(int argc, const char** argv) -> int
 					 ->AttachRoot(std::make_shared<Element>())
 					 ->FlexDirection(FlexDirection::Column)
 					 ->Gap(10)
-					 ->Padding(10);
+					 ->Padding(10)->Overflow(Overflow::Scroll);
 
-	for (size_t i = 0; i < 20; i++)
+	for (size_t i = 0; i < 40; i++)
 	{
 		auto* btn =
 			root->AddChild<Element>()

@@ -163,7 +163,7 @@
 	}                                                                                    \
 	auto Element::name##Left()->float                                                    \
 	{                                                                                    \
-		return YGNodeStyleGet##name(_ygNode, YGEdge::YGEdgeLeft);                  \
+		return YGNodeLayoutGet##name(_ygNode, YGEdge::YGEdgeLeft);                  \
 	}                                                                                    \
 	auto Element::name##Right(float val)->Element*                                       \
 	{                                                                                    \
@@ -172,7 +172,7 @@
 	}                                                                                    \
 	auto Element::name##Right()->float                                                   \
 	{                                                                                    \
-		return YGNodeStyleGet##name(_ygNode, YGEdge::YGEdgeRight);                 \
+		return YGNodeLayoutGet##name(_ygNode, YGEdge::YGEdgeRight);                 \
 	}                                                                                    \
 	auto Element::name##Top(float val)->Element*                                         \
 	{                                                                                    \
@@ -181,7 +181,7 @@
 	}                                                                                    \
 	auto Element::name##Top()->float                                                     \
 	{                                                                                    \
-		return YGNodeStyleGet##name(_ygNode, YGEdge::YGEdgeLeft);                  \
+		return YGNodeLayoutGet##name(_ygNode, YGEdge::YGEdgeLeft);                  \
 	}                                                                                    \
 	auto Element::name##Bottom(float val)->Element*                                      \
 	{                                                                                    \
@@ -190,7 +190,7 @@
 	}                                                                                    \
 	auto Element::name##Bottom()->float                                                  \
 	{                                                                                    \
-		return YGNodeStyleGet##name(_ygNode, YGEdge::YGEdgeBottom);                \
+		return YGNodeLayoutGet##name(_ygNode, YGEdge::YGEdgeBottom);                \
 	}                                                                                    \
 	auto Element::name##Horizontal(float val)->Element*                                  \
 	{                                                                                    \
@@ -199,7 +199,7 @@
 	}                                                                                    \
 	auto Element::name##Horizontal()->float                                              \
 	{                                                                                    \
-		return YGNodeStyleGet##name(_ygNode, YGEdge::YGEdgeHorizontal);            \
+		return YGNodeLayoutGet##name(_ygNode, YGEdge::YGEdgeHorizontal);            \
 	}                                                                                    \
 	auto Element::name##Vertical(float val)->Element*                                    \
 	{                                                                                    \
@@ -208,7 +208,7 @@
 	}                                                                                    \
 	auto Element::name##Vertical()->float                                                \
 	{                                                                                    \
-		return YGNodeStyleGet##name(_ygNode, YGEdge::YGEdgeVertical);              \
+		return YGNodeLayoutGet##name(_ygNode, YGEdge::YGEdgeVertical);              \
 	}                                                                                    \
 	auto Element::name(float val) -> Element*                                            \
 	{                                                                                    \
@@ -217,5 +217,5 @@
 	}                                                                                    \
 	auto Element::name() -> float                                                        \
 	{                                                                                    \
-		return YGNodeStyleGet##name(_ygNode, YGEdge::YGEdgeAll);                   \
+		return YGNodeLayoutGet##name(_ygNode, YGEdge::YGEdgeAll);                   \
 	}

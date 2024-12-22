@@ -13,6 +13,17 @@ namespace Drift
 {
 	class Activity;
 
+	struct Scrollable
+	{
+	public:
+		float ScrollOffsetX{0};
+		float ScrollOffsetY{0};
+		float TargetScrollOffsetX{0};
+		float TargetScrollOffsetY{0};
+
+		float ScrollMagnitude{30};
+	};
+
 	struct dt_api Event
 	{
 	public:
@@ -144,6 +155,9 @@ namespace Drift
 		auto ReceivesInput(bool receives) -> Element*;
 		auto ReceivesInput() const -> bool;
 
+		auto GetContentWidth() -> float;
+		auto GetContentHeight() -> float;
+
 		static auto FindDeepestMatch(Element* object, Vector2 pos) -> Element*;
 
 		dt_yogaPropertySimple(Width);
@@ -187,6 +201,9 @@ namespace Drift
 		auto GetContainingActivity() -> Activity*;
 		void SetContainingActivity(Activity* activity);
 
+		auto GetScrollOffsetX() const -> float;
+		auto GetScrollOffsetY() const -> float;
+
 		auto Focus(bool focus = true) -> Element*;
 		auto Focusable() const -> bool;
 
@@ -222,9 +239,11 @@ namespace Drift
 		ElementStates _states;
         std::string _id;
         std::vector<std::string> _className;
+		Scrollable _scrollable;
 
 		void _refreshLayout(bool force = false);
 		void _refreshState(const std::string& eventName);
+		void _scroll(Vector2 delta);
 
 		std::unordered_map<std::string, std::vector<EventHandler>> _handlers;
 		std::unordered_map<std::string, std::shared_ptr<Styling::StyleBase>> _styles;

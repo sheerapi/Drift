@@ -5,17 +5,25 @@
 #include "core/SkRect.h"
 #include "events/InputSystem.h"
 #include "graphics/RendererContext.h"
+#include "utils/ConfigManager.h"
 #include "utils/Demangle.h"
 #include "utils/StringUtils.h"
 #include "yoga/YGNode.h"
 #include "yoga/YGNodeLayout.h"
 #include "yoga/YGNodeStyle.h" // IWYU pragma: keep
+#include <cmath>
 #include <format>
 
 namespace Drift
 {
 	Element::Element()
 	{
+		if (ConfigManager::HasGlobalValue("general.scroll"))
+		{
+			_scrollable.ScrollMagnitude =
+				(float)ConfigManager::GetGlobalInteger("general.scroll");
+		}
+
 		auto* config = YGConfigNew();
 		YGConfigSetPointScaleFactor(config, 1.0);
 
@@ -25,6 +33,8 @@ namespace Drift
 		PositionType(PositionType::Static);
 		FlexDirection(FlexDirection::Row);
 		AlignContent(AlignItems::Stretch);
+		Padding(0);
+		Margin(0);
 
 		On("hover", [this](Event data) { _refreshState("hover"); });
 		On("unhover", [this](Event data) { _refreshState("unhover"); });
@@ -33,6 +43,12 @@ namespace Drift
 
 		On("click", [this](Event data) { _refreshState("click"); });
 		On("unclick", [this](Event data) { _refreshState("unclick"); });
+		On("cursor.scroll",
+		   [this](Event data)
+		   {
+			   auto* scrollData = (Vector2*)data.Data;
+			   _scroll(*scrollData);
+		   });
 	}
 
 	Element::~Element()
@@ -104,17 +120,14 @@ namespace Drift
 
 	void Element::Draw()
 	{
-
 	}
 
 	void Element::BeginDraw()
 	{
-		
 	}
 
 	void Element::EndDraw()
 	{
-		
 	}
 
 	auto Element::Focus(bool focus) -> Element*
@@ -147,6 +160,18 @@ namespace Drift
 
 	void Element::Tick()
 	{
+		if (_scrollable.ScrollOffsetX != _scrollable.TargetScrollOffsetX)
+		{
+			_scrollable.ScrollOffsetX = std::lerp(_scrollable.ScrollOffsetX,
+												   _scrollable.TargetScrollOffsetX, 0.2F);
+		}
+
+		if (_scrollable.ScrollOffsetY != _scrollable.TargetScrollOffsetY)
+		{
+			_scrollable.ScrollOffsetY = std::lerp(_scrollable.ScrollOffsetY,
+												   _scrollable.TargetScrollOffsetY, 0.5F);
+		}
+
 		if (_states.Enabled)
 		{
 			BeginUpdate();
@@ -163,8 +188,8 @@ namespace Drift
 
 		if (_zOrderingChanged)
 		{
-			std::sort(Children.begin(), Children.end(),
-					  [](const auto& a, const auto& b) { return a->_zIndex < b->_zIndex; });
+			std::sort(Children.begin(), Children.end(), [](const auto& a, const auto& b)
+					  { return a->_zIndex < b->_zIndex; });
 
 			_zOrderingChanged = false;
 		}
@@ -185,6 +210,39 @@ namespace Drift
 
 	void Element::Render()
 	{
+		auto bounds = GetBoundingBox();
+		auto parentBounds =
+			_parent != nullptr ? _parent->GetBoundingBox() : BoundingBox{0, 0, 0, 0};
+		auto viewportBounds =
+			GetContainingActivity()->GetContainingView()->GetBoundingBox();
+
+		/* if (!SkRect::Intersects(
+				SkRect::MakeXYWH(bounds.X, bounds.Y, bounds.Width, bounds.Height),
+				SkRect::MakeXYWH(viewportBounds.X + GetScrollOffsetX(),
+								 viewportBounds.Y + GetScrollOffsetX(),
+								 viewportBounds.Width, viewportBounds.Height)))
+		{
+			return;
+		}
+
+		if (!IsOrphan())
+		{
+			if ((_parent->Overflow() == Overflow::Hidden ||
+				 _parent->Overflow() == Overflow::Scroll))
+			{
+				if (!SkRect::Intersects(
+						SkRect::MakeXYWH(bounds.X,
+										 bounds.Y, bounds.Width,
+										 bounds.Height),
+						SkRect::MakeXYWH(parentBounds.X,
+										 parentBounds.Y,
+										 parentBounds.Width, parentBounds.Height)))
+				{
+					return;
+				}
+			}
+		} */
+
 		if (_states.Enabled)
 		{
 			for (auto& style : _styles)
@@ -309,7 +367,7 @@ namespace Drift
 
 		if (!SkRect::Intersects(
 				SkRect::MakeXYWH(bounds.X, bounds.Y, bounds.Width, bounds.Height),
-				SkRect::MakeXYWH(pos.X, pos.Y, 1, 1)))
+				SkRect::MakeXYWH(pos.X, pos.Y - object->GetScrollOffsetY(), 1, 1)))
 		{
 			return nullptr;
 		}
@@ -344,7 +402,7 @@ namespace Drift
 			dt_coreError("Tried to access a child out of bounds! (Expected 0 < index < "
 						 "{}, index = {})",
 						 Children.size(), index);
-						
+
 			return nullptr;
 		}
 
@@ -365,9 +423,10 @@ namespace Drift
 	dt_yogaPropertySimpleDef(FlexShrink);
 	dt_yogaPropertySimpleDef(AspectRatio);
 
-	dt_yogaPropertyEdgeDef(Margin);
-	dt_yogaPropertyEdgeDef(Padding);
+	dt_yogaPropertyEdgeNoValueDef(Margin);
+	dt_yogaPropertyEdgeNoValueDef(Padding);
 	dt_yogaPropertyEdgeNoValueDef(Border);
+
 	dt_yogaPropertyEdgeDef(Position);
 
 	dt_yogaPropertyEnumDef(AlignContent, enum AlignItems, YGAlign);
@@ -603,11 +662,84 @@ namespace Drift
 
 	auto Element::IsOrphan() const -> bool
 	{
-		return _parent != nullptr;
+		return _parent == nullptr;
 	}
 
 	auto Element::GetParent() -> Element*
 	{
 		return _parent;
+	}
+
+	auto Element::GetContentWidth() -> float
+	{
+		float contentWidth = GetBoundingBox().Width;
+
+		for (auto& child : Children)
+		{
+			auto bounds = child->GetBoundingBox();
+			contentWidth = std::max(contentWidth, bounds.X + bounds.Width);
+		}
+
+		contentWidth += PaddingRight();
+		contentWidth += MarginRight();
+
+		return contentWidth;
+	}
+
+	auto Element::GetContentHeight() -> float
+	{
+		float contentHeight = GetBoundingBox().Height;
+
+		for (auto& child : Children)
+		{
+			auto bounds = child->GetBoundingBox();
+			contentHeight = std::max(contentHeight, bounds.Y + bounds.Height);
+		}
+
+		contentHeight += PaddingBottom();
+		contentHeight += MarginBottom();
+
+		return contentHeight;
+	}
+
+	void Element::_scroll(Vector2 delta)
+	{
+		if (Overflow() != Overflow::Scroll)
+		{
+			return;
+		}
+
+		if (GetContentWidth() <= GetBoundingBox().Width &&
+			GetContentHeight() <= GetBoundingBox().Height)
+		{
+			return;
+		}
+
+		auto bounds = GetBoundingBox();
+
+		for (auto& child : Children)
+		{
+			child->_scrollable.TargetScrollOffsetX =
+				std::clamp(child->_scrollable.ScrollOffsetX +
+							   (delta.X * _scrollable.ScrollMagnitude),
+						   -(GetContentWidth() - bounds.Width), 0.0F);
+
+			child->_scrollable.TargetScrollOffsetY =
+				std::clamp(child->_scrollable.ScrollOffsetY +
+							   (delta.Y * _scrollable.ScrollMagnitude),
+						   -(GetContentHeight() - bounds.Height), 0.0F);
+		}
+	}
+
+	auto Element::GetScrollOffsetX() const -> float
+	{
+		return _scrollable.ScrollOffsetX +
+			   (_parent != nullptr ? _parent->GetScrollOffsetX() : 0);
+	}
+
+	auto Element::GetScrollOffsetY() const -> float
+	{
+		return _scrollable.ScrollOffsetY +
+			   (_parent != nullptr ? _parent->GetScrollOffsetY() : 0);
 	}
 }

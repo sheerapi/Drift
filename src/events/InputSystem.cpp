@@ -154,6 +154,8 @@ namespace Drift
 
 	void Input::TriggerMouseScroll(Vector2 offsets)
 	{
+		Input::RecalculateState();
+		
 		if (currentView != nullptr)
 		{
 			currentView->EmitSignal("cursor.scroll", &offsets);
