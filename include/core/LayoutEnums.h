@@ -2,7 +2,7 @@
 
 namespace Drift
 {
-    enum class AlignItems
+    enum class Align
     {
 		Auto,
 		FlexStart,
@@ -15,7 +15,7 @@ namespace Drift
 		SpaceEvenly
 	};
 
-    enum class FlexDirection
+    enum class Direction
     {
 		Column,
 		ColumnReverse,
@@ -23,7 +23,7 @@ namespace Drift
 		RowReverse
 	};
 
-    enum class JustifyContent
+    enum class Justify
     {
 		Start,
 		Center,
@@ -40,14 +40,14 @@ namespace Drift
 		Absolute
 	};
 
-    enum class Wrap
+    enum class WrapType
     {
 		NoWrap,
 		Wrap,
 		WrapReverse
 	};
 
-    enum class Overflow
+    enum class OverflowType
     {
 		Visible,
 		Hidden,
@@ -67,7 +67,7 @@ namespace Drift
 		Text
 	};
 
-	enum class BoxSizing
+	enum class BoxSizingType
 	{
 		BorderBox,
 		ContentBox

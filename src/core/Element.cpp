@@ -6,6 +6,7 @@
 #include "events/InputSystem.h"
 #include "graphics/RendererContext.h"
 #include "styles/LayoutStyles.h"
+#include "styles/RenderingStyles.h"
 #include "utils/ConfigManager.h"
 #include "utils/Demangle.h"
 #include "utils/StringUtils.h"
@@ -29,11 +30,11 @@ namespace Drift
 		YGConfigSetPointScaleFactor(config, 1);
 
 		_ygNode = YGNodeNewWithConfig(config);
-		Overflow(Overflow::Visible);
+		Overflow(OverflowType::Visible);
 		FlexShrink(0);
 		PositionType(PositionType::Static);
-		FlexDirection(FlexDirection::Row);
-		AlignContent(AlignItems::Stretch);
+		FlexDirection(Direction::Row);
+		AlignContent(Align::Stretch);
 		Padding(0);
 		Margin(0);
 
@@ -425,17 +426,17 @@ namespace Drift
 	dt_yogaPropertyEdgeNoValueDef(Padding);
 	dt_yogaPropertyEdgeNoValueDef(Border);
 
-	dt_yogaPropertyEdgeDef(Position);
+	dt_yogaPropertyEdgeNoValueDef(Position);
 
-	dt_yogaPropertyEnumDef(AlignContent, enum AlignItems, YGAlign);
-	dt_yogaPropertyEnumDef(AlignItems, enum AlignItems, YGAlign);
-	dt_yogaPropertyEnumDef(JustifyContent, enum JustifyContent, YGJustify);
+	dt_yogaPropertyEnumDef(AlignContent, Align, YGAlign);
+	dt_yogaPropertyEnumDef(AlignItems, Align, YGAlign);
+	dt_yogaPropertyEnumDef(JustifyContent, Justify, YGJustify);
 	dt_yogaPropertyEnumDef(Display, DisplayType, YGDisplay);
-	dt_yogaPropertyEnumDef(Overflow, enum Overflow, YGOverflow);
-	dt_yogaPropertyEnumDef(FlexWrap, enum Wrap, YGWrap);
-	dt_yogaPropertyEnumDef(FlexDirection, enum FlexDirection, YGFlexDirection);
+	dt_yogaPropertyEnumDef(Overflow, OverflowType, YGOverflow);
+	dt_yogaPropertyEnumDef(FlexWrap, WrapType, YGWrap);
+	dt_yogaPropertyEnumDef(FlexDirection, Direction, YGFlexDirection);
 	dt_yogaPropertyEnumDef(PositionType, enum PositionType, YGPositionType);
-	dt_yogaPropertyEnumDef(BoxSizing, enum BoxSizing, YGBoxSizing);
+	dt_yogaPropertyEnumDef(BoxSizing, BoxSizingType, YGBoxSizing);
 
 	auto Element::NodeType(enum NodeType val) -> Element*
 	{
@@ -712,7 +713,7 @@ namespace Drift
 
 	void Element::_scroll(Vector2 delta)
 	{
-		if (Overflow() != Overflow::Scroll)
+		if (Overflow() != OverflowType::Scroll)
 		{
 			return;
 		}

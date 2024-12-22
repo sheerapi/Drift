@@ -21,7 +21,7 @@ auto main(int argc, const char** argv) -> int
 
 	auto* root = window->GetCurrentActivity()
 					 ->AttachRoot(std::make_shared<Element>())
-					 ->FlexDirection(FlexDirection::Row)
+					 ->FlexDirection(Direction::Row)
 					 ->Gap(10)
 					 ->Padding(10)
 					 ->AddStyle<Styling::BackgroundColor>(Color::FromHex(0xFFFFFF));
@@ -29,8 +29,8 @@ auto main(int argc, const char** argv) -> int
 	auto* container1 =
 		root->AddChild<Element>()
 			->FlexGrow(1)
-			->FlexDirection(FlexDirection::Column)
-			->JustifyContent(JustifyContent::SpaceBetween)
+			->FlexDirection(Direction::Column)
+			->JustifyContent(Justify::SpaceBetween)
 			->AddStyle<Styling::TransitionDuration>(500, TimeUnit::Milliseconds)
 			->AddStyle<Styling::TransitionEasingFunction>(easing);
 
@@ -61,13 +61,13 @@ auto main(int argc, const char** argv) -> int
 
 	auto* container2 = root->AddChild<Element>()
 						   ->FlexGrow(2)
-						   ->FlexDirection(FlexDirection::Column)
+						   ->FlexDirection(Direction::Column)
 						   ->Gap(20)
-						   ->JustifyContent(JustifyContent::SpaceBetween);
+						   ->JustifyContent(Justify::SpaceBetween);
 
 	auto* container3 = container2->AddChild<Element>()
-						   ->FlexDirection(FlexDirection::Row)
-						   ->JustifyContent(JustifyContent::SpaceBetween);
+						   ->FlexDirection(Direction::Row)
+						   ->JustifyContent(Justify::SpaceBetween);
 
 	for (size_t i = 0; i < 12; i++)
 	{

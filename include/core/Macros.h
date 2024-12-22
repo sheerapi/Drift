@@ -37,8 +37,8 @@
 	auto name(Styling::Value val) -> Element*;                                           \
 	auto name() -> float;
 
-#define dt_yogaPropertySimpleNoValue(name)                                                      \
-	auto name(float val) -> Element*;                                           \
+#define dt_yogaPropertySimpleNoValue(name)                                               \
+	auto name(float val) -> Element*;                                                    \
 	auto name() -> float;
 
 #define dt_yogaPropertyValueDef(name)                                                    \
@@ -53,7 +53,7 @@
 	}
 
 #define dt_yogaPropertySimpleDef(name)                                                   \
-	auto Element::name(float val) -> Element*                                   \
+	auto Element::name(float val) -> Element*                                            \
 	{                                                                                    \
 		AddStyle<Styling::name>(val);                                                    \
 		return this;                                                                     \
@@ -66,12 +66,12 @@
 #define dt_yogaPropertyEnumDef(name, type, ygType)                                       \
 	auto Element::name(type val) -> Element*                                             \
 	{                                                                                    \
-		YGNodeStyleSet##name(_ygNode, (ygType)((int)val));                               \
+		AddStyle<Styling::name>(val);                                                    \
 		return this;                                                                     \
 	}                                                                                    \
 	auto Element::name() -> type                                                         \
 	{                                                                                    \
-		return (type)((int)YGNodeStyleGet##name(_ygNode));                               \
+		return GetStyle<Styling::name>()->GetValue();                                    \
 	}
 
 #define dt_yogaPropertyType(name, type)                                                  \
@@ -79,147 +79,100 @@
 	auto name() -> type;
 
 #define dt_yogaPropertyEdge(name)                                                        \
-	auto name##Left(float val)->Element*;                                                \
+	auto name##Left(Styling::Value val)->Element*;                                       \
 	auto name##Left()->float;                                                            \
-	auto name##Right(float val)->Element*;                                               \
+	auto name##Right(Styling::Value val)->Element*;                                      \
 	auto name##Right()->float;                                                           \
-	auto name##Top(float val)->Element*;                                                 \
+	auto name##Top(Styling::Value val)->Element*;                                        \
 	auto name##Top()->float;                                                             \
-	auto name##Bottom(float val)->Element*;                                              \
+	auto name##Bottom(Styling::Value val)->Element*;                                     \
 	auto name##Bottom()->float;                                                          \
-	auto name##Horizontal(float val)->Element*;                                          \
+	auto name##Horizontal(Styling::Value val)->Element*;                                 \
 	auto name##Horizontal()->float;                                                      \
-	auto name##Vertical(float val)->Element*;                                            \
+	auto name##Vertical(Styling::Value val)->Element*;                                   \
 	auto name##Vertical()->float;                                                        \
-	auto name(float val) -> Element*;                                                    \
+	auto name(Styling::Value val) -> Element*;                                           \
+	auto name(Styling::Value top, Styling::Value left, Styling::Value bottom,            \
+			  Styling::Value right) -> Element*;                                         \
 	auto name() -> float;
 
-#define dt_yogaPropertyEdgeDef(name)                                                     \
-	auto Element::name##Left(float val)->Element*                                        \
-	{                                                                                    \
-		YGNodeStyleSet##name(_ygNode, YGEdge::YGEdgeLeft, val);                          \
-		return this;                                                                     \
-	}                                                                                    \
-	auto Element::name##Left()->float                                                    \
-	{                                                                                    \
-		return YGNodeStyleGet##name(_ygNode, YGEdge::YGEdgeLeft).value;                  \
-	}                                                                                    \
-	auto Element::name##Right(float val)->Element*                                       \
-	{                                                                                    \
-		YGNodeStyleSet##name(_ygNode, YGEdge::YGEdgeRight, val);                         \
-		return this;                                                                     \
-	}                                                                                    \
-	auto Element::name##Right()->float                                                   \
-	{                                                                                    \
-		return YGNodeStyleGet##name(_ygNode, YGEdge::YGEdgeRight).value;                 \
-	}                                                                                    \
-	auto Element::name##Top(float val)->Element*                                         \
-	{                                                                                    \
-		YGNodeStyleSet##name(_ygNode, YGEdge::YGEdgeTop, val);                           \
-		return this;                                                                     \
-	}                                                                                    \
-	auto Element::name##Top()->float                                                     \
-	{                                                                                    \
-		return YGNodeStyleGet##name(_ygNode, YGEdge::YGEdgeLeft).value;                  \
-	}                                                                                    \
-	auto Element::name##Bottom(float val)->Element*                                      \
-	{                                                                                    \
-		YGNodeStyleSet##name(_ygNode, YGEdge::YGEdgeBottom, val);                        \
-		return this;                                                                     \
-	}                                                                                    \
-	auto Element::name##Bottom()->float                                                  \
-	{                                                                                    \
-		return YGNodeStyleGet##name(_ygNode, YGEdge::YGEdgeBottom).value;                \
-	}                                                                                    \
-	auto Element::name##Horizontal(float val)->Element*                                  \
-	{                                                                                    \
-		YGNodeStyleSet##name(_ygNode, YGEdge::YGEdgeHorizontal, val);                    \
-		return this;                                                                     \
-	}                                                                                    \
-	auto Element::name##Horizontal()->float                                              \
-	{                                                                                    \
-		return YGNodeStyleGet##name(_ygNode, YGEdge::YGEdgeHorizontal).value;            \
-	}                                                                                    \
-	auto Element::name##Vertical(float val)->Element*                                    \
-	{                                                                                    \
-		YGNodeStyleSet##name(_ygNode, YGEdge::YGEdgeVertical, val);                      \
-		return this;                                                                     \
-	}                                                                                    \
-	auto Element::name##Vertical()->float                                                \
-	{                                                                                    \
-		return YGNodeStyleGet##name(_ygNode, YGEdge::YGEdgeVertical).value;              \
-	}                                                                                    \
-	auto Element::name(float val) -> Element*                                            \
-	{                                                                                    \
-		YGNodeStyleSet##name(_ygNode, YGEdge::YGEdgeAll, val);                           \
-		return this;                                                                     \
-	}                                                                                    \
-	auto Element::name() -> float                                                        \
-	{                                                                                    \
-		return YGNodeStyleGet##name(_ygNode, YGEdge::YGEdgeAll).value;                   \
-	}
-
 #define dt_yogaPropertyEdgeNoValueDef(name)                                              \
-	auto Element::name##Left(float val)->Element*                                        \
+	auto Element::name##Left(Styling::Value val)->Element*                               \
 	{                                                                                    \
-		YGNodeStyleSet##name(_ygNode, YGEdge::YGEdgeLeft, val);                          \
+		auto style = GetStyle<Styling::name>()->GetValue();                              \
+		AddStyle<Styling::name>(style.Y, style.Width, style.Height, val);                \
 		return this;                                                                     \
 	}                                                                                    \
 	auto Element::name##Left()->float                                                    \
 	{                                                                                    \
-		return YGNodeLayoutGet##name(_ygNode, YGEdge::YGEdgeLeft);                       \
+		return GetStyle<Styling::name>()->GetValue().X.Resolve(this);                    \
 	}                                                                                    \
-	auto Element::name##Right(float val)->Element*                                       \
+	auto Element::name##Right(Styling::Value val)->Element*                              \
 	{                                                                                    \
-		YGNodeStyleSet##name(_ygNode, YGEdge::YGEdgeRight, val);                         \
+		auto style = GetStyle<Styling::name>()->GetValue();                              \
+		AddStyle<Styling::name>(style.Y, val, style.Height, style.X);                    \
 		return this;                                                                     \
 	}                                                                                    \
 	auto Element::name##Right()->float                                                   \
 	{                                                                                    \
-		return YGNodeLayoutGet##name(_ygNode, YGEdge::YGEdgeRight);                      \
+		return GetStyle<Styling::name>()->GetValue().Width.Resolve(this);                \
 	}                                                                                    \
-	auto Element::name##Top(float val)->Element*                                         \
+	auto Element::name##Top(Styling::Value val)->Element*                                \
 	{                                                                                    \
-		YGNodeStyleSet##name(_ygNode, YGEdge::YGEdgeTop, val);                           \
+		auto style = GetStyle<Styling::name>()->GetValue();                              \
+		AddStyle<Styling::name>(val, style.Width, style.Height, style.X);                \
 		return this;                                                                     \
 	}                                                                                    \
 	auto Element::name##Top()->float                                                     \
 	{                                                                                    \
-		return YGNodeLayoutGet##name(_ygNode, YGEdge::YGEdgeLeft);                       \
+		return GetStyle<Styling::name>()->GetValue().Y.Resolve(this);                    \
 	}                                                                                    \
-	auto Element::name##Bottom(float val)->Element*                                      \
+	auto Element::name##Bottom(Styling::Value val)->Element*                             \
 	{                                                                                    \
-		YGNodeStyleSet##name(_ygNode, YGEdge::YGEdgeBottom, val);                        \
+		auto style = GetStyle<Styling::name>()->GetValue();                              \
+		AddStyle<Styling::name>(style.Y, style.Width, val, style.X);                     \
 		return this;                                                                     \
 	}                                                                                    \
 	auto Element::name##Bottom()->float                                                  \
 	{                                                                                    \
-		return YGNodeLayoutGet##name(_ygNode, YGEdge::YGEdgeBottom);                     \
+		return GetStyle<Styling::name>()->GetValue().Height.Resolve(this);               \
 	}                                                                                    \
-	auto Element::name##Horizontal(float val)->Element*                                  \
+	auto Element::name##Horizontal(Styling::Value val)->Element*                         \
 	{                                                                                    \
-		YGNodeStyleSet##name(_ygNode, YGEdge::YGEdgeHorizontal, val);                    \
+		auto style = GetStyle<Styling::name>()->GetValue();                              \
+		AddStyle<Styling::name>(style.Y, val, style.Height, val);                        \
 		return this;                                                                     \
 	}                                                                                    \
 	auto Element::name##Horizontal()->float                                              \
 	{                                                                                    \
-		return YGNodeLayoutGet##name(_ygNode, YGEdge::YGEdgeHorizontal);                 \
+		auto style = GetStyle<Styling::name>()->GetValue();                              \
+		return style.X.Resolve(this) + style.Width.Resolve(this);                        \
 	}                                                                                    \
-	auto Element::name##Vertical(float val)->Element*                                    \
+	auto Element::name##Vertical(Styling::Value val)->Element*                           \
 	{                                                                                    \
-		YGNodeStyleSet##name(_ygNode, YGEdge::YGEdgeVertical, val);                      \
+		auto style = GetStyle<Styling::name>()->GetValue();                              \
+		AddStyle<Styling::name>(val, style.Width, val, style.X);                         \
 		return this;                                                                     \
 	}                                                                                    \
 	auto Element::name##Vertical()->float                                                \
 	{                                                                                    \
-		return YGNodeLayoutGet##name(_ygNode, YGEdge::YGEdgeVertical);                   \
+		auto style = GetStyle<Styling::name>()->GetValue();                              \
+		return style.Y.Resolve(this) + style.Height.Resolve(this);                       \
 	}                                                                                    \
-	auto Element::name(float val) -> Element*                                            \
+	auto Element::name(Styling::Value val) -> Element*                                   \
 	{                                                                                    \
-		YGNodeStyleSet##name(_ygNode, YGEdge::YGEdgeAll, val);                           \
+		AddStyle<Styling::name>(val, val, val, val);                                     \
+		return this;                                                                     \
+	}                                                                                    \
+	auto Element::name(Styling::Value top, Styling::Value right, Styling::Value bottom,  \
+					   Styling::Value left) -> Element*                                  \
+	{                                                                                    \
+		AddStyle<Styling::name>(top, right, bottom, left);                               \
 		return this;                                                                     \
 	}                                                                                    \
 	auto Element::name() -> float                                                        \
 	{                                                                                    \
-		return YGNodeLayoutGet##name(_ygNode, YGEdge::YGEdgeAll);                        \
+		auto style = GetStyle<Styling::name>()->GetValue();                              \
+		return style.X.Resolve(this) + style.Y.Resolve(this) +                           \
+			   style.Width.Resolve(this) + style.Height.Resolve(this);                   \
 	}

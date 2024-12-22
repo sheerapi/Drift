@@ -106,7 +106,7 @@ namespace Drift
 			if (!_styles.contains(style->StyleName()))
 			{
 				dt_coreError("Tried to get a style that doesn't exist! (Style: {})", style->StyleName());
-				return nullptr;
+				return {};
 			}
 
 			return std::static_pointer_cast<T>(_styles[style->StyleName()]);
@@ -178,16 +178,16 @@ namespace Drift
 		dt_yogaPropertySimple(GapVertical);
 		dt_yogaPropertySimple(Gap);
 
-		dt_yogaPropertyType(AlignContent, AlignItems);
-		dt_yogaPropertyType(AlignItems, enum AlignItems);
-		dt_yogaPropertyType(JustifyContent, enum JustifyContent);
+		dt_yogaPropertyType(AlignContent, Align);
+		dt_yogaPropertyType(AlignItems, Align);
+		dt_yogaPropertyType(JustifyContent, Justify);
 		dt_yogaPropertyType(Display, DisplayType);
-		dt_yogaPropertyType(Overflow, enum Overflow);
-		dt_yogaPropertyType(FlexWrap, enum Wrap);
-		dt_yogaPropertyType(FlexDirection, enum FlexDirection);
+		dt_yogaPropertyType(Overflow, OverflowType);
+		dt_yogaPropertyType(FlexWrap, WrapType);
+		dt_yogaPropertyType(FlexDirection, Direction);
 		dt_yogaPropertyType(PositionType, enum PositionType);
 		dt_yogaPropertyType(NodeType, enum NodeType);
-		dt_yogaPropertyType(BoxSizing, enum BoxSizing);
+		dt_yogaPropertyType(BoxSizing, BoxSizingType);
 
 		dt_yogaPropertyEdge(Margin);
 		dt_yogaPropertyEdge(Padding);

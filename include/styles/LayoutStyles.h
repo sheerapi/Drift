@@ -1,7 +1,8 @@
 #pragma once
 #include "core/Element.h"
-#include "core/Logger.h"
+#include "core/LayoutEnums.h"
 #include "styles/Style.h"
+#include "utils/BoundingBoxV.h"
 #include "utils/Vector2.h"
 #include "yoga/YGNodeStyle.h"
 
@@ -13,6 +14,11 @@ namespace Drift::Styling
 		[[nodiscard]] inline auto StyleName() const -> std::string override
 		{
 			return "width";
+		}
+
+		[[nodiscard]] inline auto StylePriority() const -> int override
+		{
+			return 10;
 		}
 
 		void ApplyEdits(Element* element, Value val) override
@@ -68,6 +74,11 @@ namespace Drift::Styling
 			return "height";
 		}
 
+		[[nodiscard]] inline auto StylePriority() const -> int override
+		{
+			return 10;
+		}
+
 		void ApplyEdits(Element* element, Value val) override
 		{
 			if (StyleBase::IsReadyToResolve(element))
@@ -119,6 +130,11 @@ namespace Drift::Styling
 			return "max-width";
 		}
 
+		[[nodiscard]] inline auto StylePriority() const -> int override
+		{
+			return 10;
+		}
+
 		void ApplyEdits(Element* element, Value val) override
 		{
 			if (StyleBase::IsReadyToResolve(element))
@@ -167,6 +183,11 @@ namespace Drift::Styling
 		[[nodiscard]] inline auto StyleName() const -> std::string override
 		{
 			return "max-height";
+		}
+
+		[[nodiscard]] inline auto StylePriority() const -> int override
+		{
+			return 10;
 		}
 
 		void ApplyEdits(Element* element, Value val) override
@@ -220,6 +241,11 @@ namespace Drift::Styling
 			return "min-width";
 		}
 
+		[[nodiscard]] inline auto StylePriority() const -> int override
+		{
+			return 10;
+		}
+
 		void ApplyEdits(Element* element, Value val) override
 		{
 			if (StyleBase::IsReadyToResolve(element))
@@ -268,6 +294,11 @@ namespace Drift::Styling
 		[[nodiscard]] inline auto StyleName() const -> std::string override
 		{
 			return "min-height";
+		}
+
+		[[nodiscard]] inline auto StylePriority() const -> int override
+		{
+			return 10;
 		}
 
 		void ApplyEdits(Element* element, Value val) override
@@ -321,6 +352,11 @@ namespace Drift::Styling
 			return "flex-basis";
 		}
 
+		[[nodiscard]] inline auto StylePriority() const -> int override
+		{
+			return 10;
+		}
+
 		void ApplyEdits(Element* element, Value val) override
 		{
 			if (StyleBase::IsReadyToResolve(element))
@@ -347,8 +383,8 @@ namespace Drift::Styling
 			if (!element->IsOrphan())
 			{
 				dimension =
-					(element->GetParent()->FlexDirection() == FlexDirection::Row ||
-					 element->GetParent()->FlexDirection() == FlexDirection::RowReverse)
+					(element->GetParent()->FlexDirection() == Direction::Row ||
+					 element->GetParent()->FlexDirection() == Direction::RowReverse)
 						? PreferredDimension::Width
 						: PreferredDimension::Height;
 			}
@@ -382,6 +418,11 @@ namespace Drift::Styling
 		[[nodiscard]] inline auto StyleName() const -> std::string override
 		{
 			return "gap";
+		}
+
+		[[nodiscard]] inline auto StylePriority() const -> int override
+		{
+			return 10;
 		}
 
 		void ApplyEdits(Element* element, Value val, Value val2) override
@@ -453,6 +494,11 @@ namespace Drift::Styling
 			return "flex-grow";
 		}
 
+		[[nodiscard]] inline auto StylePriority() const -> int override
+		{
+			return 10;
+		}
+
 		void ApplyEdits(Element* element, float val) override
 		{
 			Internals::animateValue(&_width, val, element);
@@ -486,6 +532,11 @@ namespace Drift::Styling
 		[[nodiscard]] inline auto StyleName() const -> std::string override
 		{
 			return "flex-shrink";
+		}
+
+		[[nodiscard]] inline auto StylePriority() const -> int override
+		{
+			return 10;
 		}
 
 		void ApplyEdits(Element* element, float val) override
@@ -523,6 +574,11 @@ namespace Drift::Styling
 			return "aspect-ratio";
 		}
 
+		[[nodiscard]] inline auto StylePriority() const -> int override
+		{
+			return 10;
+		}
+
 		void ApplyEdits(Element* element, float val) override
 		{
 			Internals::animateValue(&_width, val, element);
@@ -549,5 +605,715 @@ namespace Drift::Styling
 	private:
 		float _width;
 		float _oldWidth;
+	};
+
+	class Margin : public Style<Value, Value, Value, Value>
+	{
+	public:
+		[[nodiscard]] inline auto StyleName() const -> std::string override
+		{
+			return "margin";
+		}
+
+		[[nodiscard]] inline auto StylePriority() const -> int override
+		{
+			return 10;
+		}
+
+		void ApplyEdits(Element* element, Value top, Value right, Value bottom,
+						Value left) override
+		{
+			if (StyleBase::IsReadyToResolve(element))
+			{
+				Internals::animateValue(&_top.Val, top.Resolve(element), element);
+				Internals::animateValue(&_right.Val, right.Resolve(element), element);
+				Internals::animateValue(&_bottom.Val, bottom.Resolve(element), element);
+				Internals::animateValue(&_left.Val, left.Resolve(element), element);
+			}
+			else
+			{
+				_top.Val = top.Val;
+				_top.Unit = top.Unit;
+
+				_right.Val = right.Val;
+				_right.Unit = right.Unit;
+
+				_bottom.Val = bottom.Val;
+				_bottom.Unit = bottom.Unit;
+
+				_left.Val = left.Val;
+				_left.Unit = left.Unit;
+			}
+			Dirty = false;
+		}
+
+		[[nodiscard]] auto GetValue() const -> BoundingBoxV
+		{
+			return {_right, _bottom, _left, _top};
+		}
+
+		void RecalculateLayout(Element* element) override
+		{
+			auto resolvedT = _top.Resolve(element, PreferredDimension::Height);
+			auto resolvedL = _left.Resolve(element);
+			auto resolvedB = _bottom.Resolve(element, PreferredDimension::Height);
+			auto resolvedR = _right.Resolve(element);
+
+			if (_top.Unit != UnitType::Pixels)
+			{
+				_top.Unit = UnitType::Pixels;
+				_top.Val = resolvedT;
+			}
+
+			if (_left.Unit != UnitType::Pixels)
+			{
+				_left.Unit = UnitType::Pixels;
+				_left.Val = resolvedL;
+			}
+
+			if (_bottom.Unit != UnitType::Pixels)
+			{
+				_bottom.Unit = UnitType::Pixels;
+				_bottom.Val = resolvedB;
+			}
+
+			if (_right.Unit != UnitType::Pixels)
+			{
+				_right.Unit = UnitType::Pixels;
+				_right.Val = resolvedR;
+			}
+
+			if ((resolvedT + resolvedL + resolvedB + resolvedR) == _oldMargin)
+			{
+				return;
+			}
+
+			YGNodeStyleSetMargin((YGNodeRef)element->GetLayoutEngineHandle(), YGEdgeTop,
+								 resolvedT);
+			YGNodeStyleSetMargin((YGNodeRef)element->GetLayoutEngineHandle(), YGEdgeLeft,
+								 resolvedL);
+			YGNodeStyleSetMargin((YGNodeRef)element->GetLayoutEngineHandle(),
+								 YGEdgeBottom, resolvedB);
+			YGNodeStyleSetMargin((YGNodeRef)element->GetLayoutEngineHandle(), YGEdgeRight,
+								 resolvedR);
+		}
+
+	private:
+		Value _top;
+		Value _right;
+		Value _bottom;
+		Value _left;
+		float _oldMargin;
+	};
+
+	class Padding : public Style<Value, Value, Value, Value>
+	{
+	public:
+		[[nodiscard]] inline auto StyleName() const -> std::string override
+		{
+			return "padding";
+		}
+
+		[[nodiscard]] inline auto StylePriority() const -> int override
+		{
+			return 10;
+		}
+
+		void ApplyEdits(Element* element, Value top, Value right, Value bottom,
+						Value left) override
+		{
+			if (StyleBase::IsReadyToResolve(element))
+			{
+				Internals::animateValue(&_top.Val, top.Resolve(element), element);
+				Internals::animateValue(&_right.Val, right.Resolve(element), element);
+				Internals::animateValue(&_bottom.Val, bottom.Resolve(element), element);
+				Internals::animateValue(&_left.Val, left.Resolve(element), element);
+			}
+			else
+			{
+				_top.Val = top.Val;
+				_top.Unit = top.Unit;
+
+				_right.Val = right.Val;
+				_right.Unit = right.Unit;
+
+				_bottom.Val = bottom.Val;
+				_bottom.Unit = bottom.Unit;
+
+				_left.Val = left.Val;
+				_left.Unit = left.Unit;
+			}
+			Dirty = false;
+		}
+
+		[[nodiscard]] auto GetValue() const -> BoundingBoxV
+		{
+			return {_right, _bottom, _left, _top};
+		}
+
+		void RecalculateLayout(Element* element) override
+		{
+			auto resolvedT = _top.Resolve(element, PreferredDimension::Height);
+			auto resolvedL = _left.Resolve(element);
+			auto resolvedB = _bottom.Resolve(element, PreferredDimension::Height);
+			auto resolvedR = _right.Resolve(element);
+
+			if (_top.Unit != UnitType::Pixels)
+			{
+				_top.Unit = UnitType::Pixels;
+				_top.Val = resolvedT;
+			}
+
+			if (_left.Unit != UnitType::Pixels)
+			{
+				_left.Unit = UnitType::Pixels;
+				_left.Val = resolvedL;
+			}
+
+			if (_bottom.Unit != UnitType::Pixels)
+			{
+				_bottom.Unit = UnitType::Pixels;
+				_bottom.Val = resolvedB;
+			}
+
+			if (_right.Unit != UnitType::Pixels)
+			{
+				_right.Unit = UnitType::Pixels;
+				_right.Val = resolvedR;
+			}
+
+			if ((resolvedT + resolvedL + resolvedB + resolvedR) == _oldMargin)
+			{
+				return;
+			}
+
+			YGNodeStyleSetPadding((YGNodeRef)element->GetLayoutEngineHandle(), YGEdgeTop,
+								  resolvedT);
+			YGNodeStyleSetPadding((YGNodeRef)element->GetLayoutEngineHandle(), YGEdgeLeft,
+								  resolvedL);
+			YGNodeStyleSetPadding((YGNodeRef)element->GetLayoutEngineHandle(),
+								  YGEdgeBottom, resolvedB);
+			YGNodeStyleSetPadding((YGNodeRef)element->GetLayoutEngineHandle(),
+								  YGEdgeRight, resolvedR);
+		}
+
+	private:
+		Value _top;
+		Value _right;
+		Value _bottom;
+		Value _left;
+		float _oldMargin;
+	};
+
+	class Position : public Style<Value, Value, Value, Value>
+	{
+	public:
+		[[nodiscard]] inline auto StyleName() const -> std::string override
+		{
+			return "position";
+		}
+
+		[[nodiscard]] inline auto StylePriority() const -> int override
+		{
+			return 10;
+		}
+
+		void ApplyEdits(Element* element, Value top, Value right, Value bottom,
+						Value left) override
+		{
+			if (StyleBase::IsReadyToResolve(element))
+			{
+				Internals::animateValue(&_top.Val, top.Resolve(element), element);
+				Internals::animateValue(&_right.Val, right.Resolve(element), element);
+				Internals::animateValue(&_bottom.Val, bottom.Resolve(element), element);
+				Internals::animateValue(&_left.Val, left.Resolve(element), element);
+			}
+			else
+			{
+				_top.Val = top.Val;
+				_top.Unit = top.Unit;
+
+				_right.Val = right.Val;
+				_right.Unit = right.Unit;
+
+				_bottom.Val = bottom.Val;
+				_bottom.Unit = bottom.Unit;
+
+				_left.Val = left.Val;
+				_left.Unit = left.Unit;
+			}
+			Dirty = false;
+		}
+
+		[[nodiscard]] auto GetValue() const -> BoundingBoxV
+		{
+			return {_right, _bottom, _left, _top};
+		}
+
+		void RecalculateLayout(Element* element) override
+		{
+			auto resolvedT = _top.Resolve(element, PreferredDimension::Height);
+			auto resolvedL = _left.Resolve(element);
+			auto resolvedB = _bottom.Resolve(element, PreferredDimension::Height);
+			auto resolvedR = _right.Resolve(element);
+
+			if (_top.Unit != UnitType::Pixels)
+			{
+				_top.Unit = UnitType::Pixels;
+				_top.Val = resolvedT;
+			}
+
+			if (_left.Unit != UnitType::Pixels)
+			{
+				_left.Unit = UnitType::Pixels;
+				_left.Val = resolvedL;
+			}
+
+			if (_bottom.Unit != UnitType::Pixels)
+			{
+				_bottom.Unit = UnitType::Pixels;
+				_bottom.Val = resolvedB;
+			}
+
+			if (_right.Unit != UnitType::Pixels)
+			{
+				_right.Unit = UnitType::Pixels;
+				_right.Val = resolvedR;
+			}
+
+			if ((resolvedT + resolvedL + resolvedB + resolvedR) == _oldMargin)
+			{
+				return;
+			}
+
+			YGNodeStyleSetPosition((YGNodeRef)element->GetLayoutEngineHandle(), YGEdgeTop,
+								   resolvedT);
+			YGNodeStyleSetPosition((YGNodeRef)element->GetLayoutEngineHandle(),
+								   YGEdgeLeft, resolvedL);
+			YGNodeStyleSetPosition((YGNodeRef)element->GetLayoutEngineHandle(),
+								   YGEdgeBottom, resolvedB);
+			YGNodeStyleSetPosition((YGNodeRef)element->GetLayoutEngineHandle(),
+								   YGEdgeRight, resolvedR);
+		}
+
+	private:
+		Value _top;
+		Value _right;
+		Value _bottom;
+		Value _left;
+		float _oldMargin;
+	};
+
+	class AlignContent : public Style<Drift::Align>
+	{
+	public:
+		[[nodiscard]] inline auto StyleName() const -> std::string override
+		{
+			return "align-content";
+		}
+
+		[[nodiscard]] inline auto StylePriority() const -> int override
+		{
+			return 10;
+		}
+
+		[[nodiscard]] inline auto IsAnimatable() const -> bool override
+		{
+			return false;
+		}
+
+		void ApplyEdits(Element* element, Drift::Align val) override
+		{
+			_val = val;
+			Dirty = false;
+		}
+
+		[[nodiscard]] auto GetValue() const -> Drift::Align
+		{
+			return _val;
+		}
+
+		void RecalculateLayout(Element* element) override
+		{
+			if (_val == _oldVal)
+			{
+				return;
+			}
+
+			YGNodeStyleSetAlignContent((YGNodeRef)element->GetLayoutEngineHandle(), (YGAlign)_val);
+			_oldVal = _val;
+		}
+
+	private:
+		Drift::Align _val;
+		Drift::Align _oldVal;
+	};
+
+	class AlignItems : public Style<Drift::Align>
+	{
+	public:
+		[[nodiscard]] inline auto StyleName() const -> std::string override
+		{
+			return "align-items";
+		}
+
+		[[nodiscard]] inline auto StylePriority() const -> int override
+		{
+			return 10;
+		}
+
+		[[nodiscard]] inline auto IsAnimatable() const -> bool override
+		{
+			return false;
+		}
+
+		void ApplyEdits(Element* element, Drift::Align val) override
+		{
+			_val = val;
+			Dirty = false;
+		}
+
+		[[nodiscard]] auto GetValue() const -> Drift::Align
+		{
+			return _val;
+		}
+
+		void RecalculateLayout(Element* element) override
+		{
+			if (_val == _oldVal)
+			{
+				return;
+			}
+
+			YGNodeStyleSetAlignItems((YGNodeRef)element->GetLayoutEngineHandle(),
+									 (YGAlign)_val);
+			_oldVal = _val;
+		}
+
+	private:
+		Drift::Align _val;
+		Drift::Align _oldVal;
+	};
+
+	class JustifyContent : public Style<Drift::Justify>
+	{
+	public:
+		[[nodiscard]] inline auto StyleName() const -> std::string override
+		{
+			return "justify-content";
+		}
+
+		[[nodiscard]] inline auto StylePriority() const -> int override
+		{
+			return 10;
+		}
+
+		[[nodiscard]] inline auto IsAnimatable() const -> bool override
+		{
+			return false;
+		}
+
+		void ApplyEdits(Element* element, Drift::Justify val) override
+		{
+			_val = val;
+			Dirty = false;
+		}
+
+		[[nodiscard]] auto GetValue() const -> Drift::Justify
+		{
+			return _val;
+		}
+
+		void RecalculateLayout(Element* element) override
+		{
+			if (_val == _oldVal)
+			{
+				return;
+			}
+
+			YGNodeStyleSetJustifyContent((YGNodeRef)element->GetLayoutEngineHandle(),
+									 (YGJustify)_val);
+			_oldVal = _val;
+		}
+
+	private:
+		Drift::Justify _val;
+		Drift::Justify _oldVal;
+	};
+
+	class Display : public Style<Drift::DisplayType>
+	{
+	public:
+		[[nodiscard]] inline auto StyleName() const -> std::string override
+		{
+			return "display";
+		}
+
+		[[nodiscard]] inline auto StylePriority() const -> int override
+		{
+			return 10;
+		}
+
+		[[nodiscard]] inline auto IsAnimatable() const -> bool override
+		{
+			return false;
+		}
+
+		void ApplyEdits(Element* element, Drift::DisplayType val) override
+		{
+			_val = val;
+			Dirty = false;
+		}
+
+		[[nodiscard]] auto GetValue() const -> Drift::DisplayType
+		{
+			return _val;
+		}
+
+		void RecalculateLayout(Element* element) override
+		{
+			if (_val == _oldVal)
+			{
+				return;
+			}
+
+			YGNodeStyleSetDisplay((YGNodeRef)element->GetLayoutEngineHandle(),
+										 (YGDisplay)_val);
+			_oldVal = _val;
+		}
+
+	private:
+		Drift::DisplayType _val;
+		Drift::DisplayType _oldVal;
+	};
+
+	class Overflow : public Style<Drift::OverflowType>
+	{
+	public:
+		[[nodiscard]] inline auto StyleName() const -> std::string override
+		{
+			return "overflow";
+		}
+
+		[[nodiscard]] inline auto StylePriority() const -> int override
+		{
+			return 10;
+		}
+
+		[[nodiscard]] inline auto IsAnimatable() const -> bool override
+		{
+			return false;
+		}
+
+		void ApplyEdits(Element* element, Drift::OverflowType val) override
+		{
+			_val = val;
+			Dirty = false;
+		}
+
+		[[nodiscard]] auto GetValue() const -> Drift::OverflowType
+		{
+			return _val;
+		}
+
+		void RecalculateLayout(Element* element) override
+		{
+			if (_val == _oldVal)
+			{
+				return;
+			}
+
+			YGNodeStyleSetOverflow((YGNodeRef)element->GetLayoutEngineHandle(),
+								  (YGOverflow)_val);
+			_oldVal = _val;
+		}
+
+	private:
+		Drift::OverflowType _val;
+		Drift::OverflowType _oldVal;
+	};
+
+	class FlexWrap : public Style<Drift::WrapType>
+	{
+	public:
+		[[nodiscard]] inline auto StyleName() const -> std::string override
+		{
+			return "flex-wrap";
+		}
+
+		[[nodiscard]] inline auto StylePriority() const -> int override
+		{
+			return 10;
+		}
+
+		[[nodiscard]] inline auto IsAnimatable() const -> bool override
+		{
+			return false;
+		}
+
+		void ApplyEdits(Element* element, Drift::WrapType val) override
+		{
+			_val = val;
+			Dirty = false;
+		}
+
+		[[nodiscard]] auto GetValue() const -> Drift::WrapType
+		{
+			return _val;
+		}
+
+		void RecalculateLayout(Element* element) override
+		{
+			if (_val == _oldVal)
+			{
+				return;
+			}
+
+			YGNodeStyleSetFlexWrap((YGNodeRef)element->GetLayoutEngineHandle(),
+								   (YGWrap)_val);
+			_oldVal = _val;
+		}
+
+	private:
+		Drift::WrapType _val;
+		Drift::WrapType _oldVal;
+	};
+
+	class FlexDirection : public Style<Drift::Direction>
+	{
+	public:
+		[[nodiscard]] inline auto StyleName() const -> std::string override
+		{
+			return "flex-direction";
+		}
+
+		[[nodiscard]] inline auto StylePriority() const -> int override
+		{
+			return 10;
+		}
+
+		[[nodiscard]] inline auto IsAnimatable() const -> bool override
+		{
+			return false;
+		}
+
+		void ApplyEdits(Element* element, Drift::Direction val) override
+		{
+			_val = val;
+			Dirty = false;
+		}
+
+		[[nodiscard]] auto GetValue() const -> Drift::Direction
+		{
+			return _val;
+		}
+
+		void RecalculateLayout(Element* element) override
+		{
+			if (_val == _oldVal)
+			{
+				return;
+			}
+
+			YGNodeStyleSetFlexDirection((YGNodeRef)element->GetLayoutEngineHandle(),
+								   (YGFlexDirection)_val);
+			_oldVal = _val;
+		}
+
+	private:
+		Drift::Direction _val;
+		Drift::Direction _oldVal;
+	};
+
+	class PositionType : public Style<Drift::PositionType>
+	{
+	public:
+		[[nodiscard]] inline auto StyleName() const -> std::string override
+		{
+			return "position-type";
+		}
+
+		[[nodiscard]] inline auto StylePriority() const -> int override
+		{
+			return 10;
+		}
+
+		[[nodiscard]] inline auto IsAnimatable() const -> bool override
+		{
+			return false;
+		}
+
+		void ApplyEdits(Element* element, Drift::PositionType val) override
+		{
+			_val = val;
+			Dirty = false;
+		}
+
+		[[nodiscard]] auto GetValue() const -> Drift::PositionType
+		{
+			return _val;
+		}
+
+		void RecalculateLayout(Element* element) override
+		{
+			if (_val == _oldVal)
+			{
+				return;
+			}
+
+			YGNodeStyleSetPositionType((YGNodeRef)element->GetLayoutEngineHandle(),
+										(YGPositionType)_val);
+			_oldVal = _val;
+		}
+
+	private:
+		Drift::PositionType _val;
+		Drift::PositionType _oldVal;
+	};
+
+	class BoxSizing : public Style<Drift::BoxSizingType>
+	{
+	public:
+		[[nodiscard]] inline auto StyleName() const -> std::string override
+		{
+			return "box-sizing";
+		}
+
+		[[nodiscard]] inline auto StylePriority() const -> int override
+		{
+			return 10;
+		}
+
+		[[nodiscard]] inline auto IsAnimatable() const -> bool override
+		{
+			return false;
+		}
+
+		void ApplyEdits(Element* element, Drift::BoxSizingType val) override
+		{
+			_val = val;
+			Dirty = false;
+		}
+
+		[[nodiscard]] auto GetValue() const -> Drift::BoxSizingType
+		{
+			return _val;
+		}
+
+		void RecalculateLayout(Element* element) override
+		{
+			if (_val == _oldVal)
+			{
+				return;
+			}
+
+			YGNodeStyleSetBoxSizing((YGNodeRef)element->GetLayoutEngineHandle(),
+									   (YGBoxSizing)_val);
+			_oldVal = _val;
+		}
+
+	private:
+		Drift::BoxSizingType _val;
+		Drift::BoxSizingType _oldVal;
 	};
 }
