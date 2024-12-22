@@ -17,7 +17,7 @@ auto main(int argc, const char** argv) -> int
 
 	auto window = app->AttachView<Window>("Sandbox");
 
-	auto* easing = new CubicEasingFunction(0.19, 1, 0.22, 1);
+	auto* easing = new CubicEasingFunction(0.175, 0.885, 0.32, 1.275);
 
 	auto* root = window->GetCurrentActivity()
 					 ->AttachRoot(std::make_shared<Element>())

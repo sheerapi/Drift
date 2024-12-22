@@ -154,7 +154,7 @@ namespace Drift::Styling
 				auto animation = Animation();
 				animation.Easing = easing;
 				animation.Value = value;
-				animation.Duration = duration;
+				animation.Duration = duration + 100;
 				animation.Start = *value;
 				animation.Target = target;
 
