@@ -193,6 +193,7 @@ namespace Drift
 		dt_yogaPropertyEdge(Padding);
 		dt_yogaPropertyEdge(Border);
 		dt_yogaPropertyEdge(Position);
+		dt_yogaPropertyEdge(BorderRadius);
 
 		void On(std::string signal, const EventHandler& handler);
 		void Remove(std::string signal);

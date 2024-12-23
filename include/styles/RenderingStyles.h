@@ -22,10 +22,15 @@ namespace Drift::Styling
 			return 7;
 		}
 
+		auto GetValue() -> Color
+		{
+			return _color;
+		}
+
 		void ApplyEdits(Element* element, Color color) override
 		{
 			Internals::animateValue(&_color.R, color.R, element);
-			Internals::animateValue(&_color.G, color.B, element);
+			Internals::animateValue(&_color.G, color.G, element);
 			Internals::animateValue(&_color.B, color.B, element);
 			Internals::animateValue(&_color.A, color.A, element);
 			Dirty = false;
@@ -87,9 +92,9 @@ namespace Drift::Styling
 			Dirty = false;
 		}
 
-		[[nodiscard]] auto GetValue() const -> BoundingBox
+		[[nodiscard]] auto GetValue() const -> BoundingBoxV
 		{
-			return {_right.Val, _bottom.Val, _left.Val, _top.Val};
+			return {_right, _bottom, _left, _top};
 		}
 
 		void BeginDrawStyle(Element* element, SkCanvas* ctx) override

@@ -2,7 +2,6 @@
 #include "core/Application.h"
 #include "core/LayoutEnums.h"
 #include "styles/AnimationStyles.h"
-#include "styles/LayoutStyles.h"
 #include "styles/RenderingStyles.h"
 #include "styles/Style.h"
 #include "styles/TransitionFunction.h"
@@ -24,7 +23,9 @@ auto main(int argc, const char** argv) -> int
 					 ->FlexDirection(Direction::Row)
 					 ->Gap(10)
 					 ->Padding(10)
-					 ->AddStyle<Styling::BackgroundColor>(Color::FromHex(0xFFFFFF));
+					 ->AddStyle<Styling::BackgroundColor>(Color::FromHex(0xFFFFFF))
+					 ->AddStyle<Styling::TransitionDuration>(500, TimeUnit::Milliseconds)
+					 ->AddStyle<Styling::TransitionEasingFunction>(easing);
 
 	auto* container1 =
 		root->AddChild<Element>()
@@ -92,9 +93,30 @@ auto main(int argc, const char** argv) -> int
 				});
 	}
 
-	auto* container4 = container2->AddChild<Element>()
-						   ->AddStyle<Styling::BackgroundColor>(Color::FromHex(0x000000))
-						   ->FlexGrow(1);
+	auto* container4 =
+		container2->AddChild<Element>()
+			->AddStyle<Styling::BackgroundColor>(Color::FromHex(0x000000))
+			->FlexGrow(1)
+			->FlexDirection(Direction::Column)
+			->Gap(10)
+			->AddStyle<Styling::TransitionDuration>(500, TimeUnit::Milliseconds)
+			->AddStyle<Styling::TransitionEasingFunction>(easing);
+
+	container4->On("hover", [container4](Event event)
+				   { container4->AddStyle<BackgroundColor>(Color::FromHex(0xFF0000)); });
+
+	container4->On("unhover",
+				   [root, container4](Event event)
+				   {
+					   container4->AddStyle<BackgroundColor>(Color::FromHex(0x000000));
+					   root->Padding(10);
+				   });
+
+	auto* btn1 = container4->AddChild<Element>()
+					 ->Width(Value(100, UnitType::Percent))
+					 ->Height(100)
+					 ->AddStyle<BackgroundColor>(Color::FromHex(0x0000FF))
+					 ->BorderRadius(20);
 
 	return app->Present();
 }

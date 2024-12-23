@@ -425,7 +425,7 @@ namespace Drift
 	dt_yogaPropertyEdgeNoValueDef(Margin);
 	dt_yogaPropertyEdgeNoValueDef(Padding);
 	dt_yogaPropertyEdgeNoValueDef(Border);
-
+	dt_yogaPropertyEdgeNoValueDef(BorderRadius);
 	dt_yogaPropertyEdgeNoValueDef(Position);
 
 	dt_yogaPropertyEnumDef(AlignContent, Align, YGAlign);
