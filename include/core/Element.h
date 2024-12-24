@@ -125,6 +125,10 @@ namespace Drift
 		auto ClassName(const std::string& classes) -> Element*;
 		[[nodiscard]] auto ClassName() const -> std::string;
 
+		auto HasClassName(const std::string& name) -> bool;
+		auto AddClassName(const std::string& name) -> Element*;
+		auto RemoveClassName(const std::string& name) -> Element*;
+
 		auto AddChild(Element* element) -> std::shared_ptr<Element>;
 		auto AddChild(const std::shared_ptr<Element>& element) -> std::shared_ptr<Element>;
 

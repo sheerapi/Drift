@@ -85,7 +85,8 @@ dependencies = [
     dependency('magic_enum'),
     dependency('tomlplusplus'),
     dependency('utf8cpp'),
-    dependency('libzstd')
+    dependency('libzstd'),
+    dependency('fontconfig')
 ]
 
 if not get_option('no_wayland') and sys_os == 'linux'

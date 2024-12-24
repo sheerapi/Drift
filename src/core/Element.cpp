@@ -163,6 +163,11 @@ namespace Drift
 
 	void Element::Tick()
 	{
+		if (_parent == nullptr && !HasClassName("root"))
+		{
+			AddClassName("root");
+		}
+
 		if (_scrollable.ScrollOffsetX != _scrollable.TargetScrollOffsetX)
 		{
 			_scrollable.ScrollOffsetX = std::lerp(_scrollable.ScrollOffsetX,
@@ -175,7 +180,8 @@ namespace Drift
 												  _scrollable.TargetScrollOffsetY, 0.5F);
 		}
 
-		if (_states.Enabled && GetContainingActivity()->GetStatus() != Activity::Status::Paused)
+		if (_states.Enabled &&
+			GetContainingActivity()->GetStatus() != Activity::Status::Paused)
 		{
 			BeginUpdate();
 
@@ -738,5 +744,30 @@ namespace Drift
 	{
 		return _scrollable.ScrollOffsetY +
 			   (_parent != nullptr ? _parent->GetScrollOffsetY() : 0);
+	}
+
+	auto Element::HasClassName(const std::string& name) -> bool
+	{
+		return std::find(_className.begin(), _className.end(), name) != _className.end();
+	}
+
+	auto Element::AddClassName(const std::string& name) -> Element*
+	{
+		_className.push_back(name);
+		return this;
+	}
+
+	auto Element::RemoveClassName(const std::string& name) -> Element*
+	{
+		if (!HasClassName(name))
+		{
+			dt_coreWarn("No class by name {} found", name);
+			return this;
+		}
+
+		_className.erase(std::remove(_className.begin(), _className.end(), name),
+						 _className.end());
+
+		return this;
 	}
 }
