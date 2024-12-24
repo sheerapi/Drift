@@ -11,7 +11,14 @@ namespace Drift
 
 	void Activity::Finish()
 	{
-		_containingView->NavigateBack();
+		if (_status != Status::Paused)
+		{
+			_containingView->NavigateBack();
+		}
+		else
+		{
+			_status = Status::Destroyed;
+		}
 	}
 
 	auto Activity::GetActivityID() -> std::string
@@ -62,6 +69,11 @@ namespace Drift
 		}
 	}
 
+	auto Activity::GetStatus() -> Activity::Status
+	{
+		return _status;
+	}
+
 	void Activity::ForceLayoutRefresh()
 	{
 		Root->ForceLayoutRefresh();
@@ -88,12 +100,15 @@ namespace Drift
 			Root->Height(Styling::Value(_containingView->GetBoundingBox().Height));
 		}
 
+		Tick();
 		Root->Tick();
 	}
 
 	void Activity::Render()
 	{
+		BeginDraw();
 		Root->Render();
+		EndDraw();
 	}
 
 	auto Activity::CloneRoot() -> std::shared_ptr<Element>

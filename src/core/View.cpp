@@ -26,8 +26,10 @@ namespace Drift
 		auto old = GetCurrentActivity()->GetActivityID();
 #endif
 
-		GetCurrentActivity()->SetStatus(Activity::Status::Destroyed);
-		Activities.pop();
+		GetCurrentActivity()->SetStatus(Activity::Status::Paused);
+		GetCurrentActivity()->OnDestroy();
+		DestroyedActivities.push_back(GetCurrentActivity());
+		Activities.pop_back();
 
 #ifdef DEBUG
 		auto currentActivity =
@@ -41,7 +43,11 @@ namespace Drift
 		{
 			Running = false;
 			Close();
+			return;
 		}
+
+		GetCurrentActivity()->SetStatus(Activity::Status::Active);
+		GetCurrentActivity()->OnResume();
 	}
 
 	void View::PrintElementTree()
@@ -60,6 +66,7 @@ namespace Drift
 		if (!Activities.empty())
 		{
 			GetCurrentActivity()->SetStatus(Activity::Status::Paused);
+			GetCurrentActivity()->OnPause();
 		}
 
 #ifdef DEBUG
@@ -67,8 +74,9 @@ namespace Drift
 			Activities.empty() ? "No Activity" : GetCurrentActivity()->GetActivityID();
 #endif
 
-		Activities.push(activity);
+		Activities.push_back(activity);
 		GetCurrentActivity()->OnCreate();
+		GetCurrentActivity()->OnResume();
 		GetCurrentActivity()->SetStatus(Activity::Status::Active);
 		GetCurrentActivity()->SetContainingView(this);
 
@@ -95,7 +103,7 @@ namespace Drift
 			Activities.empty() ? "No Activity" : GetCurrentActivity()->GetActivityID();
 #endif
 
-		Activities.top() = activity;
+		Activities[Activities.size() - 1] = activity;
 		GetCurrentActivity()->OnCreate();
 		GetCurrentActivity()->SetStatus(Activity::Status::Active);
 		GetCurrentActivity()->SetContainingView(this);
@@ -122,6 +130,6 @@ namespace Drift
 
 	auto View::GetCurrentActivity() -> std::shared_ptr<Activity>
 	{
-		return Activities.top();
+		return Activities[Activities.size() - 1];
 	}
 }

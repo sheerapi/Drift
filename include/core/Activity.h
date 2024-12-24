@@ -25,7 +25,14 @@ namespace Drift
 		virtual void OnCreate() {};
 		virtual void OnPause() {};
 		virtual void OnResume() {};
-		virtual void OnDestroy() {};
+		virtual void OnDestroy()
+		{
+			Finish();
+		};
+
+		virtual void BeginDraw() {};
+		virtual void EndDraw() {};
+		virtual void Tick() {};
 
 		void Update();
 		void Render();

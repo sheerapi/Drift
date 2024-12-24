@@ -9,7 +9,10 @@ namespace Drift::Styling
     {
     public:
         static void Submit(const Animation& animation);
-        static void Update();
+        static void AnimateValue(float* value, float end, int duration, EasingFunction* function);
+		static void AnimateValue(float* value, float start, float end, int duration,
+								 EasingFunction* function);
+		static void Update();
 
     private:
         inline static std::vector<Animation> animatables;

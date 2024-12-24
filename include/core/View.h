@@ -5,7 +5,7 @@
 #include "graphics/RendererContext.h"
 #include "utils/Demangle.h"
 #include <memory>
-#include <stack>
+#include <vector>
 
 namespace Drift
 {
@@ -76,7 +76,8 @@ namespace Drift
 		auto ReplaceActivity(Activity* activity) -> std::shared_ptr<Activity>;
 
 	protected:
-		std::stack<std::shared_ptr<Activity>> Activities;
+		std::vector<std::shared_ptr<Activity>> Activities;
+		std::vector<std::shared_ptr<Activity>> DestroyedActivities;
 		std::shared_ptr<Graphics::RendererContext> RendererContext;
 		bool Running{true};
 

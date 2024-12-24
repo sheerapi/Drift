@@ -31,9 +31,6 @@ namespace Drift
 		{
 			workerThread = std::thread(WorkerRun);
 		}
-
-		dt_coreVerbose("Scheduled timeout task in {} thread",
-					   taskList == &mainTasks ? "main" : "worker");
 	}
 
 	void Scheduler::Update()

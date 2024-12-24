@@ -1,12 +1,13 @@
 #ifndef DT_NO_DESKTOP
-#include "components/Window.h"
-#include "GLFW/glfw3.h"
-#include "core/Application.h"
-#include "core/Logger.h"
-#include "core/SkColor.h"
-#include "events/DesktopEventLoop.h"
-#include "graphics/RendererContext.h"
-#include "utils/PerformanceTimer.h"
+#	include "components/Window.h"
+#	include "GLFW/glfw3.h"
+#	include "core/Activity.h"
+#	include "core/Application.h"
+#	include "core/Logger.h"
+#	include "core/SkColor.h"
+#	include "events/DesktopEventLoop.h"
+#	include "graphics/RendererContext.h"
+#	include "utils/PerformanceTimer.h"
 
 namespace Drift
 {
@@ -68,8 +69,16 @@ namespace Drift
 
 		glfwGetFramebufferSize(_window, &_width, &_height);
 
-		GetCurrentActivity()->SetContainingView(this);
-		GetCurrentActivity()->Update();
+		for (auto& activity : Activities)
+		{
+			activity->SetContainingView(this);
+			activity->Update();
+		}
+		DestroyedActivities.erase(
+			std::remove_if(
+				DestroyedActivities.begin(), DestroyedActivities.end(), [](auto& activity)
+				{ return activity->GetStatus() == Activity::Status::Destroyed; }),
+			DestroyedActivities.end());
 	}
 
 	void Window::Render()
@@ -82,7 +91,15 @@ namespace Drift
 
 		RendererContext->Canvas->clear(SK_ColorTRANSPARENT);
 
-		GetCurrentActivity()->Render();
+		for (auto& activity : Activities)
+		{
+			activity->Render();
+		}
+
+		for (auto& activity : DestroyedActivities)
+		{
+			activity->Render();
+		}
 
 		RendererContext->GrContext->flushAndSubmit();
 

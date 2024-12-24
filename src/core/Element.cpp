@@ -1,4 +1,5 @@
 #include "core/Element.h"
+#include "core/Activity.h"
 #include "core/Logger.h"
 #include "core/SkColor.h"
 #include "core/SkPaint.h"
@@ -174,7 +175,7 @@ namespace Drift
 												  _scrollable.TargetScrollOffsetY, 0.5F);
 		}
 
-		if (_states.Enabled)
+		if (_states.Enabled && GetContainingActivity()->GetStatus() != Activity::Status::Paused)
 		{
 			BeginUpdate();
 
