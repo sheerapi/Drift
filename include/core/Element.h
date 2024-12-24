@@ -69,11 +69,15 @@ namespace Drift
 			typeCheck<Styling::StyleBase, T>();
 			auto style = std::make_shared<T>();
 
-			if (!_styles.contains(style->StyleName()))
+			if (!_styleKeys.contains(style->StyleName()))
 			{
-				_styles[style->StyleName()] = style;
-				(static_cast<T*>(_styles[style->StyleName()].get()))
+				_styleKeys[style->StyleName()] = style;
+				_styles.push_back(style);
+				(static_cast<T*>(_styleKeys[style->StyleName()].get()))
 					->EditStyle(this, args...);
+
+				std::sort(_styles.begin(), _styles.end(), [](const auto& a, const auto& b)
+						  { return a->StylePriority() > b->StylePriority(); });
 
 				if (style->IsInheritable())
 				{
@@ -85,7 +89,7 @@ namespace Drift
 			}
 			else
 			{
-				(static_cast<T*>(_styles[style->StyleName()].get()))->EditStyle(this, args...);
+				(static_cast<T*>(_styleKeys[style->StyleName()].get()))->EditStyle(this, args...);
 			}
 
 			return this;
@@ -95,7 +99,7 @@ namespace Drift
 		{
 			typeCheck<Styling::StyleBase, T>();
 			auto style = std::make_shared<T>();
-			return _styles.contains(style->StyleName());
+			return _styleKeys.contains(style->StyleName());
 		}
 
 		template<typename T> auto GetStyle() -> std::shared_ptr<T>
@@ -103,13 +107,13 @@ namespace Drift
 			typeCheck<Styling::StyleBase, T>();
 			auto style = std::make_shared<T>();
 
-			if (!_styles.contains(style->StyleName()))
+			if (!_styleKeys.contains(style->StyleName()))
 			{
 				dt_coreError("Tried to get a style that doesn't exist! (Style: {})", style->StyleName());
 				return {};
 			}
 
-			return std::static_pointer_cast<T>(_styles[style->StyleName()]);
+			return std::static_pointer_cast<T>(_styleKeys[style->StyleName()]);
 		}
 
 		auto ID(const std::string& newId) -> Element*;
@@ -246,18 +250,23 @@ namespace Drift
 		void _scroll(Vector2 delta);
 
 		std::unordered_map<std::string, std::vector<EventHandler>> _handlers;
-		std::unordered_map<std::string, std::shared_ptr<Styling::StyleBase>> _styles;
+		std::unordered_map<std::string, std::shared_ptr<Styling::StyleBase>> _styleKeys;
+		std::vector<std::shared_ptr<Styling::StyleBase>> _styles;
 
 		template <typename T, typename... Args> auto _addStyleIfNotFound(Args&&... args) -> Element*
 		{
 			typeCheck<Styling::StyleBase, T>();
 			auto style = std::make_shared<T>();
 
-			if (!_styles.contains(style->StyleName()))
+			if (!_styleKeys.contains(style->StyleName()))
 			{
-				_styles[style->StyleName()] = style;
-				(static_cast<T*>(_styles[style->StyleName()].get()))
+				_styleKeys[style->StyleName()] = style;
+				_styles.push_back(style);
+				(static_cast<T*>(_styleKeys[style->StyleName()].get()))
 					->EditStyle(this, args...);
+
+				std::sort(_styles.begin(), _styles.end(), [](const auto& a, const auto& b)
+						  { return a->StylePriority() > b->StylePriority(); });
 
 				if (style->IsInheritable())
 				{

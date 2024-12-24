@@ -199,7 +199,7 @@ namespace Drift
 
 		for (auto& style : _styles)
 		{
-			style.second->RecalculateLayout(this);
+			style->RecalculateLayout(this);
 		}
 
 		if (_parent == nullptr)
@@ -247,7 +247,7 @@ namespace Drift
 		{
 			for (auto& style : _styles)
 			{
-				style.second->BeginDrawStyle(this, dt_renderContext->Canvas);
+				style->BeginDrawStyle(this, dt_renderContext->Canvas);
 			}
 
 			BeginDraw();
@@ -262,7 +262,7 @@ namespace Drift
 
 			for (auto& style : _styles)
 			{
-				style.second->EndDrawStyle(this, dt_renderContext->Canvas);
+				style->EndDrawStyle(this, dt_renderContext->Canvas);
 			}
 		}
 	}

@@ -2,7 +2,8 @@
 #include "Style.h"
 #include "core/Element.h"
 #include "core/Macros.h"
-#include "core/SkRect.h"
+#include "core/SkCanvas.h"
+#include "core/SkRRect.h"
 #include "utils/BoundingBoxV.h"
 #include "utils/Color.h"
 #include "yoga/YGNodeStyle.h"
@@ -36,8 +37,7 @@ namespace Drift::Styling
 			Dirty = false;
 		}
 
-		inline void BeginDrawStyle(Element* element,
-								   SkCanvas* ctx) override
+		inline void BeginDrawStyle(Element* element, SkCanvas* ctx) override
 		{
 			auto bounds = element->GetBoundingBox();
 
@@ -45,7 +45,10 @@ namespace Drift::Styling
 			paint.setColor(_color.ToHex());
 			paint.setAntiAlias(true);
 
-			ctx->drawRect(SkRect::MakeXYWH(bounds.X + element->GetScrollOffsetX(), bounds.Y + element->GetScrollOffsetY(), bounds.Width, bounds.Height), paint);
+			ctx->drawRect(SkRect::MakeXYWH(bounds.X + element->GetScrollOffsetX(),
+										   bounds.Y + element->GetScrollOffsetY(),
+										   bounds.Width, bounds.Height),
+						  paint);
 		}
 
 	private:
@@ -62,64 +65,81 @@ namespace Drift::Styling
 
 		[[nodiscard]] inline auto StylePriority() const -> int override
 		{
-			return 9;
+			return 10;
 		}
 
-		void ApplyEdits(Element* element, Value top, Value right, Value bottom,
-						Value left) override
+		void ApplyEdits(Element* element, Value topleft, Value topright, Value bottomleft,
+						Value bottomright) override
 		{
 			if (StyleBase::IsReadyToResolve(element))
 			{
-				Internals::animateValue(
-					&_top.Val,
-					_top.Convert(top.Unit, element, PreferredDimension::Height), top.Val,
-					element);
+				Internals::animateValue(&_topLeftX.Val,
+										_topLeftX.Convert(topleft.Unit, element),
+										topleft.Val, element);
 
-				Internals::animateValue(&_right.Val, _right.Convert(right.Unit, element),
-										right.Val, element);
-				Internals::animateValue(
-					&_bottom.Val,
-					_bottom.Convert(bottom.Unit, element, PreferredDimension::Height),
-					bottom.Val, element);
-				Internals::animateValue(&_left.Val, _left.Convert(left.Unit, element),
-										left.Val, element);
+				Internals::animateValue(&_topRightX.Val,
+										_topRightX.Convert(topright.Unit, element),
+										topright.Val, element);
+
+				Internals::animateValue(&_bottomLeftX.Val,
+										_bottomLeftX.Convert(bottomleft.Unit, element),
+										bottomleft.Val, element);
+
+				Internals::animateValue(&_bottomRightX.Val,
+										_bottomRightX.Convert(bottomright.Unit, element),
+										bottomright.Val, element);
 			}
 			else
 			{
-				_top.Val = top.Val;
-				_top.Unit = top.Unit;
-
-				_right.Val = right.Val;
-				_right.Unit = right.Unit;
-
-				_bottom.Val = bottom.Val;
-				_bottom.Unit = bottom.Unit;
-
-				_left.Val = left.Val;
-				_left.Unit = left.Unit;
+				_topLeftX = topleft;
+				_topRightX = topright;
+				_bottomRightX = bottomright;
+				_bottomLeftX = bottomleft;
 			}
 			Dirty = false;
 		}
 
 		[[nodiscard]] auto GetValue(Element* element) const -> BoundingBoxV
 		{
-			return {_right, _bottom, _left, _top};
+			return {_topRightX, _bottomRightX, _topLeftX, _bottomLeftX};
 		}
 
 		void BeginDrawStyle(Element* element, SkCanvas* ctx) override
 		{
-			
+			ctx->save();
+
+			auto tl = _topLeftX.Resolve(element);
+			auto tr = _topRightX.Resolve(element);
+			auto bl = _bottomLeftX.Resolve(element);
+			auto br = _bottomRightX.Resolve(element);
+
+			SkVector radii[4] = {
+				{tl, tl},
+				{tr, tr},
+				{br, br},
+				{bl, bl}
+			};
+
+			auto bounds = element->GetBoundingBox();
+			auto rrect = SkRRect();
+			rrect.setRectRadii(SkRect::MakeXYWH(bounds.X + element->GetScrollOffsetX(),
+												bounds.Y + element->GetScrollOffsetY(),
+												bounds.Width, bounds.Height),
+							   radii);
+
+			ctx->clipRRect(rrect, true);
 		}
 
 		void EndDrawStyle(Element* element, SkCanvas* ctx) override
 		{
+			ctx->restore();
 		}
 
 	private:
-		Value _top;
-		Value _right;
-		Value _bottom;
-		Value _left;
+		Value _topLeftX;
+		Value _topRightX;
+		Value _bottomLeftX;
+		Value _bottomRightX;
 	};
 
 	class Border : public Style<Value, Value, Value, Value>
@@ -132,7 +152,7 @@ namespace Drift::Styling
 
 		[[nodiscard]] inline auto StylePriority() const -> int override
 		{
-			return 8;
+			return 9;
 		}
 
 		void ApplyEdits(Element* element, Value top, Value right, Value bottom,
@@ -189,11 +209,11 @@ namespace Drift::Styling
 			}
 
 			YGNodeStyleSetBorder((YGNodeRef)element->GetLayoutEngineHandle(), YGEdgeTop,
-								   resolvedT);
+								 resolvedT);
+			YGNodeStyleSetBorder((YGNodeRef)element->GetLayoutEngineHandle(), YGEdgeLeft,
+								 resolvedL);
 			YGNodeStyleSetBorder((YGNodeRef)element->GetLayoutEngineHandle(),
-								   YGEdgeLeft, resolvedL);
-			YGNodeStyleSetBorder((YGNodeRef)element->GetLayoutEngineHandle(),
-								   YGEdgeBottom, resolvedB);
+								 YGEdgeBottom, resolvedB);
 			YGNodeStyleSetBorder((YGNodeRef)element->GetLayoutEngineHandle(), YGEdgeRight,
 								 resolvedR);
 		}

@@ -145,7 +145,19 @@ auto main(int argc, const char** argv) -> int
 					 ->Width(Value(100, UnitType::Percent))
 					 ->Height(100)
 					 ->AddStyle<BackgroundColor>(Color::FromHex(0x00ff00))
-					 ->BorderRadius(20);
+					 ->BorderRadius(Value(100, UnitType::Pixels))
+					 ->AddStyle<Styling::TransitionDuration>(500, TimeUnit::Milliseconds)
+					 ->AddStyle<Styling::TransitionEasingFunction>(easing);
+
+	btn2->On("hover",
+			 [btn2](Event event)
+			 {
+				 btn2->BorderRadius(0);
+				 event.StopPropagation();
+			 });
+
+	btn2->On("unhover",
+			 [btn2](Event event) { btn2->BorderRadius(Value(100, UnitType::Pixels)); });
 
 	btn1->On("click",
 			 [root, &clicked1](Event event)

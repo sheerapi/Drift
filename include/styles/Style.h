@@ -43,6 +43,7 @@ namespace Drift
 			// because whenever this is called it is magically reset to nullptr
 			// i do NOT understand this shit
 			virtual void BeginDrawStyle(Element* element, SkCanvas* ctx) {};
+			virtual void EndDrawStyleGroup(Element* element, SkCanvas* ctx) {};
 			virtual void EndDrawStyle(Element* element, SkCanvas* ctx) {};
 
 			static auto IsReadyToResolve(Element* element) -> bool;
