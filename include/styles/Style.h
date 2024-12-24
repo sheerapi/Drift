@@ -106,12 +106,15 @@ namespace Drift
 
 			auto Resolve(Element* element, PreferredDimension dimension =
 											   PreferredDimension::Width) const -> float;
+
+			auto Convert(UnitType unit, Element* element, PreferredDimension dimension =
+											   PreferredDimension::Width) -> float;
 		};
 
 		namespace Internals
 		{
 			void dt_api animateValue(float* value, float target, Element* element);
-			void dt_api animateValue(int* value, int target, Element* element);
+			void dt_api animateValue(float* value, float start, float target, Element* element);
 		}
 	}
 }

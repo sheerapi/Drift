@@ -133,6 +133,9 @@ namespace Drift
 		[[nodiscard]] auto GetPercentWidth(float percent) -> float;
 		[[nodiscard]] auto GetPercentHeight(float percent) -> float;
 
+		[[nodiscard]] auto GetPercentWidthInverse(float pixels) -> float;
+		[[nodiscard]] auto GetPercentHeightInverse(float pixels) -> float;
+
 		void Tick();
 		void Render();
 
@@ -140,10 +143,6 @@ namespace Drift
 
 		virtual auto ToString() -> std::string;
 		void DebugPrint(int depth = 0);
-
-		auto WidthPercent(float val) -> Element*;
-		auto HeightPercent(float val) -> Element*;
-		auto FlexBasisPercent(float val) -> Element*;
 
 		auto ZIndex(int val) -> Element*;
 		auto ZIndex() const -> int;

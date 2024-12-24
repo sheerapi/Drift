@@ -78,7 +78,10 @@ namespace Drift::Styling
 		{
 			if (StyleBase::IsReadyToResolve(element))
 			{
-				Internals::animateValue(&_width.Val, val.Resolve(element), element);
+				Internals::animateValue(
+					&_width.Val,
+					_width.Convert(val.Unit, element, PreferredDimension::Height),
+					val.Val, element);
 			}
 			else
 			{
@@ -96,12 +99,6 @@ namespace Drift::Styling
 		void RecalculateLayout(Element* element) override
 		{
 			auto resolved = _width.Resolve(element, PreferredDimension::Height);
-
-			if (_width.Unit != UnitType::Pixels)
-			{
-				_width.Unit = UnitType::Pixels;
-				_width.Val = resolved;
-			}
 
 			if (resolved == _oldWidth)
 			{
@@ -134,7 +131,8 @@ namespace Drift::Styling
 		{
 			if (StyleBase::IsReadyToResolve(element))
 			{
-				Internals::animateValue(&_width.Val, val.Resolve(element), element);
+				Internals::animateValue(&_width.Val, _width.Convert(val.Unit, element),
+										val.Val, element);
 			}
 			else
 			{
@@ -152,12 +150,6 @@ namespace Drift::Styling
 		void RecalculateLayout(Element* element) override
 		{
 			auto resolved = _width.Resolve(element);
-
-			if (_width.Unit != UnitType::Pixels)
-			{
-				_width.Unit = UnitType::Pixels;
-				_width.Val = resolved;
-			}
 
 			if (resolved == _oldWidth)
 			{
@@ -189,7 +181,10 @@ namespace Drift::Styling
 		{
 			if (StyleBase::IsReadyToResolve(element))
 			{
-				Internals::animateValue(&_width.Val, val.Resolve(element), element);
+				Internals::animateValue(
+					&_width.Val,
+					_width.Convert(val.Unit, element, PreferredDimension::Height),
+					val.Val, element);
 			}
 			else
 			{
@@ -207,12 +202,6 @@ namespace Drift::Styling
 		void RecalculateLayout(Element* element) override
 		{
 			auto resolved = _width.Resolve(element, PreferredDimension::Height);
-
-			if (_width.Unit != UnitType::Pixels)
-			{
-				_width.Unit = UnitType::Pixels;
-				_width.Val = resolved;
-			}
 
 			if (resolved == _oldWidth)
 			{
@@ -245,7 +234,8 @@ namespace Drift::Styling
 		{
 			if (StyleBase::IsReadyToResolve(element))
 			{
-				Internals::animateValue(&_width.Val, val.Resolve(element), element);
+				Internals::animateValue(&_width.Val, _width.Convert(val.Unit, element),
+										val.Val, element);
 			}
 			else
 			{
@@ -263,12 +253,6 @@ namespace Drift::Styling
 		void RecalculateLayout(Element* element) override
 		{
 			auto resolved = _width.Resolve(element);
-
-			if (_width.Unit != UnitType::Pixels)
-			{
-				_width.Unit = UnitType::Pixels;
-				_width.Val = resolved;
-			}
 
 			if (resolved == _oldWidth)
 			{
@@ -300,7 +284,10 @@ namespace Drift::Styling
 		{
 			if (StyleBase::IsReadyToResolve(element))
 			{
-				Internals::animateValue(&_width.Val, val.Resolve(element), element);
+				Internals::animateValue(
+					&_width.Val,
+					_width.Convert(val.Unit, element, PreferredDimension::Height),
+					val.Val, element);
 			}
 			else
 			{
@@ -318,12 +305,6 @@ namespace Drift::Styling
 		void RecalculateLayout(Element* element) override
 		{
 			auto resolved = _width.Resolve(element, PreferredDimension::Height);
-
-			if (_width.Unit != UnitType::Pixels)
-			{
-				_width.Unit = UnitType::Pixels;
-				_width.Val = resolved;
-			}
 
 			if (resolved == _oldWidth)
 			{
@@ -356,7 +337,20 @@ namespace Drift::Styling
 		{
 			if (StyleBase::IsReadyToResolve(element))
 			{
-				Internals::animateValue(&_width.Val, val.Resolve(element), element);
+				auto dimension = PreferredDimension::Width;
+
+				if (!element->IsOrphan())
+				{
+					dimension =
+						(element->GetParent()->FlexDirection() == Direction::Row ||
+						 element->GetParent()->FlexDirection() == Direction::RowReverse)
+							? PreferredDimension::Width
+							: PreferredDimension::Height;
+				}
+
+				Internals::animateValue(&_width.Val,
+										_width.Convert(val.Unit, element, dimension),
+										val.Val, element);
 			}
 			else
 			{
@@ -386,18 +380,12 @@ namespace Drift::Styling
 
 			auto resolved = _width.Resolve(element, dimension);
 
-			if (_width.Unit != UnitType::Pixels)
-			{
-				_width.Unit = UnitType::Pixels;
-				_width.Val = resolved;
-			}
-
 			if (resolved == _oldWidth)
 			{
 				return;
 			}
 
-			YGNodeStyleSetMinHeight((YGNodeRef)element->GetLayoutEngineHandle(),
+			YGNodeStyleSetFlexBasis((YGNodeRef)element->GetLayoutEngineHandle(),
 									resolved);
 			_oldWidth = resolved;
 		}
@@ -424,10 +412,13 @@ namespace Drift::Styling
 		{
 			if (StyleBase::IsReadyToResolve(element))
 			{
-				Internals::animateValue(&_gapHorizontal.Val, val.Resolve(element),
-										element);
-				Internals::animateValue(&_gapVertical.Val, val2.Resolve(element),
-										element);
+				Internals::animateValue(&_gapHorizontal.Val,
+										_gapHorizontal.Convert(val.Unit, element),
+										val.Val, element);
+				Internals::animateValue(
+					&_gapVertical.Val,
+					_gapVertical.Convert(val.Unit, element, PreferredDimension::Height),
+					val2.Val, element);
 			}
 			else
 			{
@@ -449,18 +440,6 @@ namespace Drift::Styling
 		{
 			auto gapH = _gapHorizontal.Resolve(element, PreferredDimension::Width);
 			auto gapV = _gapVertical.Resolve(element, PreferredDimension::Height);
-
-			if (_gapHorizontal.Unit != UnitType::Pixels)
-			{
-				_gapHorizontal.Unit = UnitType::Pixels;
-				_gapHorizontal.Val = gapH;
-			}
-
-			if (_gapVertical.Unit != UnitType::Pixels)
-			{
-				_gapVertical.Unit = UnitType::Pixels;
-				_gapVertical.Val = gapV;
-			}
 
 			if ((gapH + gapV) == _oldGap)
 			{
@@ -620,10 +599,19 @@ namespace Drift::Styling
 		{
 			if (StyleBase::IsReadyToResolve(element))
 			{
-				Internals::animateValue(&_top.Val, top.Resolve(element), element);
-				Internals::animateValue(&_right.Val, right.Resolve(element), element);
-				Internals::animateValue(&_bottom.Val, bottom.Resolve(element), element);
-				Internals::animateValue(&_left.Val, left.Resolve(element), element);
+				Internals::animateValue(
+					&_top.Val,
+					_top.Convert(top.Unit, element, PreferredDimension::Height), top.Val,
+					element);
+
+				Internals::animateValue(&_right.Val, _right.Convert(right.Unit, element),
+										right.Val, element);
+				Internals::animateValue(
+					&_bottom.Val,
+					_bottom.Convert(bottom.Unit, element, PreferredDimension::Height),
+					bottom.Val, element);
+				Internals::animateValue(&_left.Val, _left.Convert(left.Unit, element),
+										left.Val, element);
 			}
 			else
 			{
@@ -653,30 +641,6 @@ namespace Drift::Styling
 			auto resolvedL = _left.Resolve(element);
 			auto resolvedB = _bottom.Resolve(element, PreferredDimension::Height);
 			auto resolvedR = _right.Resolve(element);
-
-			if (_top.Unit != UnitType::Pixels)
-			{
-				_top.Unit = UnitType::Pixels;
-				_top.Val = resolvedT;
-			}
-
-			if (_left.Unit != UnitType::Pixels)
-			{
-				_left.Unit = UnitType::Pixels;
-				_left.Val = resolvedL;
-			}
-
-			if (_bottom.Unit != UnitType::Pixels)
-			{
-				_bottom.Unit = UnitType::Pixels;
-				_bottom.Val = resolvedB;
-			}
-
-			if (_right.Unit != UnitType::Pixels)
-			{
-				_right.Unit = UnitType::Pixels;
-				_right.Val = resolvedR;
-			}
 
 			if ((resolvedT + resolvedL + resolvedB + resolvedR) == _oldMargin)
 			{
@@ -719,10 +683,19 @@ namespace Drift::Styling
 		{
 			if (StyleBase::IsReadyToResolve(element))
 			{
-				Internals::animateValue(&_top.Val, top.Resolve(element), element);
-				Internals::animateValue(&_right.Val, right.Resolve(element), element);
-				Internals::animateValue(&_bottom.Val, bottom.Resolve(element), element);
-				Internals::animateValue(&_left.Val, left.Resolve(element), element);
+				Internals::animateValue(
+					&_top.Val,
+					_top.Convert(top.Unit, element, PreferredDimension::Height), top.Val,
+					element);
+
+				Internals::animateValue(&_right.Val, _right.Convert(right.Unit, element),
+										right.Val, element);
+				Internals::animateValue(
+					&_bottom.Val,
+					_bottom.Convert(bottom.Unit, element, PreferredDimension::Height),
+					bottom.Val, element);
+				Internals::animateValue(&_left.Val, _left.Convert(left.Unit, element),
+										left.Val, element);
 			}
 			else
 			{
@@ -752,30 +725,6 @@ namespace Drift::Styling
 			auto resolvedL = _left.Resolve(element);
 			auto resolvedB = _bottom.Resolve(element, PreferredDimension::Height);
 			auto resolvedR = _right.Resolve(element);
-
-			if (_top.Unit != UnitType::Pixels)
-			{
-				_top.Unit = UnitType::Pixels;
-				_top.Val = resolvedT;
-			}
-
-			if (_left.Unit != UnitType::Pixels)
-			{
-				_left.Unit = UnitType::Pixels;
-				_left.Val = resolvedL;
-			}
-
-			if (_bottom.Unit != UnitType::Pixels)
-			{
-				_bottom.Unit = UnitType::Pixels;
-				_bottom.Val = resolvedB;
-			}
-
-			if (_right.Unit != UnitType::Pixels)
-			{
-				_right.Unit = UnitType::Pixels;
-				_right.Val = resolvedR;
-			}
 
 			if ((resolvedT + resolvedL + resolvedB + resolvedR) == _oldMargin)
 			{
@@ -818,10 +767,19 @@ namespace Drift::Styling
 		{
 			if (StyleBase::IsReadyToResolve(element))
 			{
-				Internals::animateValue(&_top.Val, top.Resolve(element), element);
-				Internals::animateValue(&_right.Val, right.Resolve(element), element);
-				Internals::animateValue(&_bottom.Val, bottom.Resolve(element), element);
-				Internals::animateValue(&_left.Val, left.Resolve(element), element);
+				Internals::animateValue(
+					&_top.Val,
+					_top.Convert(top.Unit, element, PreferredDimension::Height), top.Val,
+					element);
+
+				Internals::animateValue(&_right.Val, _right.Convert(right.Unit, element),
+										right.Val, element);
+				Internals::animateValue(
+					&_bottom.Val,
+					_bottom.Convert(bottom.Unit, element, PreferredDimension::Height),
+					bottom.Val, element);
+				Internals::animateValue(&_left.Val, _left.Convert(left.Unit, element),
+										left.Val, element);
 			}
 			else
 			{
@@ -851,30 +809,6 @@ namespace Drift::Styling
 			auto resolvedL = _left.Resolve(element);
 			auto resolvedB = _bottom.Resolve(element, PreferredDimension::Height);
 			auto resolvedR = _right.Resolve(element);
-
-			if (_top.Unit != UnitType::Pixels)
-			{
-				_top.Unit = UnitType::Pixels;
-				_top.Val = resolvedT;
-			}
-
-			if (_left.Unit != UnitType::Pixels)
-			{
-				_left.Unit = UnitType::Pixels;
-				_left.Val = resolvedL;
-			}
-
-			if (_bottom.Unit != UnitType::Pixels)
-			{
-				_bottom.Unit = UnitType::Pixels;
-				_bottom.Val = resolvedB;
-			}
-
-			if (_right.Unit != UnitType::Pixels)
-			{
-				_right.Unit = UnitType::Pixels;
-				_right.Val = resolvedR;
-			}
 
 			if ((resolvedT + resolvedL + resolvedB + resolvedR) == _oldMargin)
 			{

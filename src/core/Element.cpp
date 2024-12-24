@@ -324,40 +324,48 @@ namespace Drift
 		return GetBoundingBox().Height * (percent / 100);
 	}
 
-	auto Element::WidthPercent(float val) -> Element*
+	auto Element::GetPercentWidthInverse(float pixels) -> float
 	{
-		if (_parent == nullptr)
+		_refreshLayout();
+
+		if (IsOrphan())
 		{
-			dt_coreWarn("Element is orphaned! Percent requires a parent");
-			return this;
+			float selfWidth = GetBoundingBox().Width;
+			if (selfWidth == 0)
+			{
+				return 0.0F;
+			}
+			return (pixels / selfWidth) * 100.0F;
 		}
 
-		YGNodeStyleSetWidthPercent(_ygNode, val);
-		return this;
+		float parentWidth = GetParent()->GetBoundingBox().Width;
+		if (parentWidth == 0)
+		{
+			return 0.0F;
+		}
+		return (pixels / parentWidth) * 100.0F;
 	}
 
-	auto Element::HeightPercent(float val) -> Element*
+	auto Element::GetPercentHeightInverse(float pixels) -> float
 	{
-		if (_parent == nullptr)
+		_refreshLayout();
+
+		if (IsOrphan())
 		{
-			dt_coreWarn("Element is orphaned! Percent requires a parent");
-			return this;
+			float selfHeight = GetBoundingBox().Height;
+			if (selfHeight == 0)
+			{
+				return 0.0F;
+			}
+			return (pixels / selfHeight) * 100.0F;
 		}
 
-		YGNodeStyleSetHeightPercent(_ygNode, val);
-		return this;
-	}
-
-	auto Element::FlexBasisPercent(float val) -> Element*
-	{
-		if (_parent == nullptr)
+		float parentHeight = GetParent()->GetBoundingBox().Height;
+		if (parentHeight == 0)
 		{
-			dt_coreWarn("Element is orphaned! Percent requires a parent");
-			return this;
+			return 0.0F;
 		}
-
-		YGNodeStyleSetFlexBasisPercent(_ygNode, val);
-		return this;
+		return (pixels / parentHeight) * 100.0F;
 	}
 
 	auto Element::FindDeepestMatch(Element* object, Vector2 pos) -> Element*
@@ -451,10 +459,9 @@ namespace Drift
 	auto Element::GapHorizontal(Styling::Value val) -> Element*
 	{
 		AddStyle<Styling::Gap>(
-			val,
-			HasStyle<Styling::Gap>()
-				? Styling::Value(GetStyle<Styling::Gap>()->GetValue().Y)
-				: Styling::Value(0));
+			val, HasStyle<Styling::Gap>()
+					 ? Styling::Value(GetStyle<Styling::Gap>()->GetValue().Y)
+					 : Styling::Value(0));
 		return this;
 	}
 
