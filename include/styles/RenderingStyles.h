@@ -22,7 +22,7 @@ namespace Drift::Styling
 			return 7;
 		}
 
-		auto GetValue() -> Color
+		auto GetValue(Element* element) -> Color
 		{
 			return _color;
 		}
@@ -70,10 +70,19 @@ namespace Drift::Styling
 		{
 			if (StyleBase::IsReadyToResolve(element))
 			{
-				Internals::animateValue(&_top.Val, top.Resolve(element), element);
-				Internals::animateValue(&_right.Val, right.Resolve(element), element);
-				Internals::animateValue(&_bottom.Val, bottom.Resolve(element), element);
-				Internals::animateValue(&_left.Val, left.Resolve(element), element);
+				Internals::animateValue(
+					&_top.Val,
+					_top.Convert(top.Unit, element, PreferredDimension::Height), top.Val,
+					element);
+
+				Internals::animateValue(&_right.Val, _right.Convert(right.Unit, element),
+										right.Val, element);
+				Internals::animateValue(
+					&_bottom.Val,
+					_bottom.Convert(bottom.Unit, element, PreferredDimension::Height),
+					bottom.Val, element);
+				Internals::animateValue(&_left.Val, _left.Convert(left.Unit, element),
+										left.Val, element);
 			}
 			else
 			{
@@ -92,7 +101,7 @@ namespace Drift::Styling
 			Dirty = false;
 		}
 
-		[[nodiscard]] auto GetValue() const -> BoundingBoxV
+		[[nodiscard]] auto GetValue(Element* element) const -> BoundingBoxV
 		{
 			return {_right, _bottom, _left, _top};
 		}
@@ -131,10 +140,19 @@ namespace Drift::Styling
 		{
 			if (StyleBase::IsReadyToResolve(element))
 			{
-				Internals::animateValue(&_top.Val, top.Resolve(element), element);
-				Internals::animateValue(&_right.Val, right.Resolve(element), element);
-				Internals::animateValue(&_bottom.Val, bottom.Resolve(element), element);
-				Internals::animateValue(&_left.Val, left.Resolve(element), element);
+				Internals::animateValue(
+					&_top.Val,
+					_top.Convert(top.Unit, element, PreferredDimension::Height), top.Val,
+					element);
+
+				Internals::animateValue(&_right.Val, _right.Convert(right.Unit, element),
+										right.Val, element);
+				Internals::animateValue(
+					&_bottom.Val,
+					_bottom.Convert(bottom.Unit, element, PreferredDimension::Height),
+					bottom.Val, element);
+				Internals::animateValue(&_left.Val, _left.Convert(left.Unit, element),
+										left.Val, element);
 			}
 			else
 			{
@@ -153,7 +171,7 @@ namespace Drift::Styling
 			Dirty = false;
 		}
 
-		[[nodiscard]] auto GetValue() const -> BoundingBoxV
+		[[nodiscard]] auto GetValue(Element* element) const -> BoundingBoxV
 		{
 			return {_right, _bottom, _left, _top};
 		}
@@ -164,30 +182,6 @@ namespace Drift::Styling
 			auto resolvedL = _left.Resolve(element);
 			auto resolvedB = _bottom.Resolve(element, PreferredDimension::Height);
 			auto resolvedR = _right.Resolve(element);
-
-			if (_top.Unit != UnitType::Pixels)
-			{
-				_top.Unit = UnitType::Pixels;
-				_top.Val = resolvedT;
-			}
-
-			if (_left.Unit != UnitType::Pixels)
-			{
-				_left.Unit = UnitType::Pixels;
-				_left.Val = resolvedL;
-			}
-
-			if (_bottom.Unit != UnitType::Pixels)
-			{
-				_bottom.Unit = UnitType::Pixels;
-				_bottom.Val = resolvedB;
-			}
-
-			if (_right.Unit != UnitType::Pixels)
-			{
-				_right.Unit = UnitType::Pixels;
-				_right.Val = resolvedR;
-			}
 
 			if ((resolvedT + resolvedL + resolvedB + resolvedR) == _oldMargin)
 			{

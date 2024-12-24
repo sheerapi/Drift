@@ -36,7 +36,7 @@ namespace Drift::Styling
 			Dirty = false;
 		}
 
-		[[nodiscard]] auto GetValue() const -> float
+		[[nodiscard]] auto GetValue(Element* element) const -> float
 		{
 			return _width.Val;
 		}
@@ -47,6 +47,13 @@ namespace Drift::Styling
 
 			if (resolved == _oldWidth)
 			{
+				return;
+			}
+
+			if (_width.Unit == UnitType::Percent)
+			{
+				YGNodeStyleSetWidthPercent((YGNodeRef)element->GetLayoutEngineHandle(), _width.Val);
+				_oldWidth = resolved;
 				return;
 			}
 
@@ -78,7 +85,10 @@ namespace Drift::Styling
 		{
 			if (StyleBase::IsReadyToResolve(element))
 			{
-				Internals::animateValue(&_width.Val, val.Resolve(element), element);
+				Internals::animateValue(
+					&_width.Val,
+					_width.Convert(val.Unit, element, PreferredDimension::Height),
+					val.Val, element);
 			}
 			else
 			{
@@ -88,7 +98,7 @@ namespace Drift::Styling
 			Dirty = false;
 		}
 
-		[[nodiscard]] auto GetValue() const -> float
+		[[nodiscard]] auto GetValue(Element* element) const -> float
 		{
 			return _width.Val;
 		}
@@ -97,14 +107,16 @@ namespace Drift::Styling
 		{
 			auto resolved = _width.Resolve(element, PreferredDimension::Height);
 
-			if (_width.Unit != UnitType::Pixels)
-			{
-				_width.Unit = UnitType::Pixels;
-				_width.Val = resolved;
-			}
-
 			if (resolved == _oldWidth)
 			{
+				return;
+			}
+
+			if (_width.Unit == UnitType::Percent)
+			{
+				YGNodeStyleSetHeightPercent((YGNodeRef)element->GetLayoutEngineHandle(),
+										   _width.Val);
+				_oldWidth = resolved;
 				return;
 			}
 
@@ -134,7 +146,8 @@ namespace Drift::Styling
 		{
 			if (StyleBase::IsReadyToResolve(element))
 			{
-				Internals::animateValue(&_width.Val, val.Resolve(element), element);
+				Internals::animateValue(&_width.Val, _width.Convert(val.Unit, element),
+										val.Val, element);
 			}
 			else
 			{
@@ -144,7 +157,7 @@ namespace Drift::Styling
 			Dirty = false;
 		}
 
-		[[nodiscard]] auto GetValue() const -> float
+		[[nodiscard]] auto GetValue(Element* element) const -> float
 		{
 			return _width.Val;
 		}
@@ -153,16 +166,19 @@ namespace Drift::Styling
 		{
 			auto resolved = _width.Resolve(element);
 
-			if (_width.Unit != UnitType::Pixels)
-			{
-				_width.Unit = UnitType::Pixels;
-				_width.Val = resolved;
-			}
-
 			if (resolved == _oldWidth)
 			{
 				return;
 			}
+
+			if (_width.Unit == UnitType::Percent)
+			{
+				YGNodeStyleSetMaxWidthPercent((YGNodeRef)element->GetLayoutEngineHandle(),
+										   _width.Val);
+				_oldWidth = resolved;
+				return;
+			}
+
 			YGNodeStyleSetMaxWidth((YGNodeRef)element->GetLayoutEngineHandle(), resolved);
 			_oldWidth = resolved;
 		}
@@ -189,7 +205,10 @@ namespace Drift::Styling
 		{
 			if (StyleBase::IsReadyToResolve(element))
 			{
-				Internals::animateValue(&_width.Val, val.Resolve(element), element);
+				Internals::animateValue(
+					&_width.Val,
+					_width.Convert(val.Unit, element, PreferredDimension::Height),
+					val.Val, element);
 			}
 			else
 			{
@@ -199,7 +218,7 @@ namespace Drift::Styling
 			Dirty = false;
 		}
 
-		[[nodiscard]] auto GetValue() const -> float
+		[[nodiscard]] auto GetValue(Element* element) const -> float
 		{
 			return _width.Val;
 		}
@@ -208,16 +227,19 @@ namespace Drift::Styling
 		{
 			auto resolved = _width.Resolve(element, PreferredDimension::Height);
 
-			if (_width.Unit != UnitType::Pixels)
-			{
-				_width.Unit = UnitType::Pixels;
-				_width.Val = resolved;
-			}
-
 			if (resolved == _oldWidth)
 			{
 				return;
 			}
+
+			if (_width.Unit == UnitType::Percent)
+			{
+				YGNodeStyleSetMaxHeightPercent((YGNodeRef)element->GetLayoutEngineHandle(),
+										   _width.Val);
+				_oldWidth = resolved;
+				return;
+			}
+
 			YGNodeStyleSetMaxHeight((YGNodeRef)element->GetLayoutEngineHandle(),
 									resolved);
 			_oldWidth = resolved;
@@ -245,7 +267,8 @@ namespace Drift::Styling
 		{
 			if (StyleBase::IsReadyToResolve(element))
 			{
-				Internals::animateValue(&_width.Val, val.Resolve(element), element);
+				Internals::animateValue(&_width.Val, _width.Convert(val.Unit, element),
+										val.Val, element);
 			}
 			else
 			{
@@ -255,7 +278,7 @@ namespace Drift::Styling
 			Dirty = false;
 		}
 
-		[[nodiscard]] auto GetValue() const -> float
+		[[nodiscard]] auto GetValue(Element* element) const -> float
 		{
 			return _width.Val;
 		}
@@ -264,16 +287,19 @@ namespace Drift::Styling
 		{
 			auto resolved = _width.Resolve(element);
 
-			if (_width.Unit != UnitType::Pixels)
-			{
-				_width.Unit = UnitType::Pixels;
-				_width.Val = resolved;
-			}
-
 			if (resolved == _oldWidth)
 			{
 				return;
 			}
+
+			if (_width.Unit == UnitType::Percent)
+			{
+				YGNodeStyleSetMinWidthPercent((YGNodeRef)element->GetLayoutEngineHandle(),
+										   _width.Val);
+				_oldWidth = resolved;
+				return;
+			}
+
 			YGNodeStyleSetMinWidth((YGNodeRef)element->GetLayoutEngineHandle(), resolved);
 			_oldWidth = resolved;
 		}
@@ -300,7 +326,10 @@ namespace Drift::Styling
 		{
 			if (StyleBase::IsReadyToResolve(element))
 			{
-				Internals::animateValue(&_width.Val, val.Resolve(element), element);
+				Internals::animateValue(
+					&_width.Val,
+					_width.Convert(val.Unit, element, PreferredDimension::Height),
+					val.Val, element);
 			}
 			else
 			{
@@ -310,7 +339,7 @@ namespace Drift::Styling
 			Dirty = false;
 		}
 
-		[[nodiscard]] auto GetValue() const -> float
+		[[nodiscard]] auto GetValue(Element* element) const -> float
 		{
 			return _width.Val;
 		}
@@ -319,16 +348,18 @@ namespace Drift::Styling
 		{
 			auto resolved = _width.Resolve(element, PreferredDimension::Height);
 
-			if (_width.Unit != UnitType::Pixels)
-			{
-				_width.Unit = UnitType::Pixels;
-				_width.Val = resolved;
-			}
-
 			if (resolved == _oldWidth)
 			{
 				return;
 			}
+
+			if (_width.Unit == UnitType::Percent)
+			{
+				YGNodeStyleSetMinHeightPercent((YGNodeRef)element->GetLayoutEngineHandle(), _width.Val);
+				_oldWidth = resolved;
+				return;
+			}
+
 			YGNodeStyleSetMinHeight((YGNodeRef)element->GetLayoutEngineHandle(),
 									resolved);
 			_oldWidth = resolved;
@@ -356,7 +387,20 @@ namespace Drift::Styling
 		{
 			if (StyleBase::IsReadyToResolve(element))
 			{
-				Internals::animateValue(&_width.Val, val.Resolve(element), element);
+				auto dimension = PreferredDimension::Width;
+
+				if (!element->IsOrphan())
+				{
+					dimension =
+						(element->GetParent()->FlexDirection() == Direction::Row ||
+						 element->GetParent()->FlexDirection() == Direction::RowReverse)
+							? PreferredDimension::Width
+							: PreferredDimension::Height;
+				}
+
+				Internals::animateValue(&_width.Val,
+										_width.Convert(val.Unit, element, dimension),
+										val.Val, element);
 			}
 			else
 			{
@@ -366,7 +410,7 @@ namespace Drift::Styling
 			Dirty = false;
 		}
 
-		[[nodiscard]] auto GetValue() const -> float
+		[[nodiscard]] auto GetValue(Element* element) const -> float
 		{
 			return _width.Val;
 		}
@@ -386,18 +430,20 @@ namespace Drift::Styling
 
 			auto resolved = _width.Resolve(element, dimension);
 
-			if (_width.Unit != UnitType::Pixels)
-			{
-				_width.Unit = UnitType::Pixels;
-				_width.Val = resolved;
-			}
-
 			if (resolved == _oldWidth)
 			{
 				return;
 			}
 
-			YGNodeStyleSetMinHeight((YGNodeRef)element->GetLayoutEngineHandle(),
+			if (_width.Unit == UnitType::Percent)
+			{
+				YGNodeStyleSetFlexBasisPercent((YGNodeRef)element->GetLayoutEngineHandle(),
+										   _width.Val);
+				_oldWidth = resolved;
+				return;
+			}
+
+			YGNodeStyleSetFlexBasis((YGNodeRef)element->GetLayoutEngineHandle(),
 									resolved);
 			_oldWidth = resolved;
 		}
@@ -424,10 +470,13 @@ namespace Drift::Styling
 		{
 			if (StyleBase::IsReadyToResolve(element))
 			{
-				Internals::animateValue(&_gapHorizontal.Val, val.Resolve(element),
-										element);
-				Internals::animateValue(&_gapVertical.Val, val2.Resolve(element),
-										element);
+				Internals::animateValue(&_gapHorizontal.Val,
+										_gapHorizontal.Convert(val.Unit, element),
+										val.Val, element);
+				Internals::animateValue(
+					&_gapVertical.Val,
+					_gapVertical.Convert(val.Unit, element, PreferredDimension::Height),
+					val2.Val, element);
 			}
 			else
 			{
@@ -440,7 +489,7 @@ namespace Drift::Styling
 			Dirty = false;
 		}
 
-		[[nodiscard]] auto GetValue() const -> Vector2
+		[[nodiscard]] auto GetValue(Element* element) const -> Vector2
 		{
 			return {_gapHorizontal.Val, _gapVertical.Val};
 		}
@@ -450,27 +499,32 @@ namespace Drift::Styling
 			auto gapH = _gapHorizontal.Resolve(element, PreferredDimension::Width);
 			auto gapV = _gapVertical.Resolve(element, PreferredDimension::Height);
 
-			if (_gapHorizontal.Unit != UnitType::Pixels)
-			{
-				_gapHorizontal.Unit = UnitType::Pixels;
-				_gapHorizontal.Val = gapH;
-			}
-
-			if (_gapVertical.Unit != UnitType::Pixels)
-			{
-				_gapVertical.Unit = UnitType::Pixels;
-				_gapVertical.Val = gapV;
-			}
-
 			if ((gapH + gapV) == _oldGap)
 			{
 				return;
 			}
 
-			YGNodeStyleSetGap((YGNodeRef)element->GetLayoutEngineHandle(), YGGutterColumn,
-							  gapH);
-			YGNodeStyleSetGap((YGNodeRef)element->GetLayoutEngineHandle(), YGGutterRow,
-							  gapV);
+			if (_gapHorizontal.Unit == UnitType::Percent)
+			{
+				YGNodeStyleSetGapPercent((YGNodeRef)element->GetLayoutEngineHandle(),
+										 YGGutterColumn, gapH);
+			}
+			else
+			{
+				YGNodeStyleSetGap((YGNodeRef)element->GetLayoutEngineHandle(),
+								  YGGutterColumn, gapH);
+			}
+
+			if (_gapVertical.Unit == UnitType::Percent)
+			{
+				YGNodeStyleSetGapPercent((YGNodeRef)element->GetLayoutEngineHandle(),
+										 YGGutterRow, gapH);
+			}
+			else
+			{
+				YGNodeStyleSetGap((YGNodeRef)element->GetLayoutEngineHandle(),
+								  YGGutterRow, gapV);
+			}
 
 			_oldGap = gapH + gapV;
 		}
@@ -500,7 +554,7 @@ namespace Drift::Styling
 			Dirty = false;
 		}
 
-		[[nodiscard]] auto GetValue() const -> float
+		[[nodiscard]] auto GetValue(Element* element) const -> float
 		{
 			return _width;
 		}
@@ -540,7 +594,7 @@ namespace Drift::Styling
 			Dirty = false;
 		}
 
-		[[nodiscard]] auto GetValue() const -> float
+		[[nodiscard]] auto GetValue(Element* element) const -> float
 		{
 			return _width;
 		}
@@ -580,7 +634,7 @@ namespace Drift::Styling
 			Dirty = false;
 		}
 
-		[[nodiscard]] auto GetValue() const -> float
+		[[nodiscard]] auto GetValue(Element* element) const -> float
 		{
 			return _width;
 		}
@@ -620,10 +674,19 @@ namespace Drift::Styling
 		{
 			if (StyleBase::IsReadyToResolve(element))
 			{
-				Internals::animateValue(&_top.Val, top.Resolve(element), element);
-				Internals::animateValue(&_right.Val, right.Resolve(element), element);
-				Internals::animateValue(&_bottom.Val, bottom.Resolve(element), element);
-				Internals::animateValue(&_left.Val, left.Resolve(element), element);
+				Internals::animateValue(
+					&_top.Val,
+					_top.Convert(top.Unit, element, PreferredDimension::Height), top.Val,
+					element);
+
+				Internals::animateValue(&_right.Val, _right.Convert(right.Unit, element),
+										right.Val, element);
+				Internals::animateValue(
+					&_bottom.Val,
+					_bottom.Convert(bottom.Unit, element, PreferredDimension::Height),
+					bottom.Val, element);
+				Internals::animateValue(&_left.Val, _left.Convert(left.Unit, element),
+										left.Val, element);
 			}
 			else
 			{
@@ -642,7 +705,7 @@ namespace Drift::Styling
 			Dirty = false;
 		}
 
-		[[nodiscard]] auto GetValue() const -> BoundingBoxV
+		[[nodiscard]] auto GetValue(Element* element) const -> BoundingBoxV
 		{
 			return {_right, _bottom, _left, _top};
 		}
@@ -654,43 +717,56 @@ namespace Drift::Styling
 			auto resolvedB = _bottom.Resolve(element, PreferredDimension::Height);
 			auto resolvedR = _right.Resolve(element);
 
-			if (_top.Unit != UnitType::Pixels)
-			{
-				_top.Unit = UnitType::Pixels;
-				_top.Val = resolvedT;
-			}
-
-			if (_left.Unit != UnitType::Pixels)
-			{
-				_left.Unit = UnitType::Pixels;
-				_left.Val = resolvedL;
-			}
-
-			if (_bottom.Unit != UnitType::Pixels)
-			{
-				_bottom.Unit = UnitType::Pixels;
-				_bottom.Val = resolvedB;
-			}
-
-			if (_right.Unit != UnitType::Pixels)
-			{
-				_right.Unit = UnitType::Pixels;
-				_right.Val = resolvedR;
-			}
-
 			if ((resolvedT + resolvedL + resolvedB + resolvedR) == _oldMargin)
 			{
 				return;
 			}
 
-			YGNodeStyleSetMargin((YGNodeRef)element->GetLayoutEngineHandle(), YGEdgeTop,
-								 resolvedT);
-			YGNodeStyleSetMargin((YGNodeRef)element->GetLayoutEngineHandle(), YGEdgeLeft,
-								 resolvedL);
-			YGNodeStyleSetMargin((YGNodeRef)element->GetLayoutEngineHandle(),
-								 YGEdgeBottom, resolvedB);
-			YGNodeStyleSetMargin((YGNodeRef)element->GetLayoutEngineHandle(), YGEdgeRight,
-								 resolvedR);
+			if (_top.Unit == UnitType::Percent)
+			{
+				YGNodeStyleSetMarginPercent((YGNodeRef)element->GetLayoutEngineHandle(),
+											YGEdgeTop, _top.Val);
+			}
+			else
+			{
+				YGNodeStyleSetMargin((YGNodeRef)element->GetLayoutEngineHandle(),
+									 YGEdgeTop, resolvedT);
+			}
+
+			if (_bottom.Unit == UnitType::Percent)
+			{
+				YGNodeStyleSetMarginPercent((YGNodeRef)element->GetLayoutEngineHandle(),
+											YGEdgeBottom, _bottom.Val);
+			}
+			else
+			{
+				YGNodeStyleSetMargin((YGNodeRef)element->GetLayoutEngineHandle(),
+									 YGEdgeBottom, resolvedB);
+			}
+
+			if (_right.Unit == UnitType::Percent)
+			{
+				YGNodeStyleSetMarginPercent((YGNodeRef)element->GetLayoutEngineHandle(),
+											YGEdgeRight, _right.Val);
+			}
+			else
+			{
+				YGNodeStyleSetMargin((YGNodeRef)element->GetLayoutEngineHandle(),
+									 YGEdgeRight, resolvedR);
+			}
+
+			if (_left.Unit == UnitType::Percent)
+			{
+				YGNodeStyleSetMarginPercent((YGNodeRef)element->GetLayoutEngineHandle(),
+											YGEdgeLeft, _left.Val);
+			}
+			else
+			{
+				YGNodeStyleSetMargin((YGNodeRef)element->GetLayoutEngineHandle(),
+									 YGEdgeLeft, resolvedL);
+			}
+
+			_oldMargin = resolvedT + resolvedL + resolvedB + resolvedR;
 		}
 
 	private:
@@ -719,10 +795,19 @@ namespace Drift::Styling
 		{
 			if (StyleBase::IsReadyToResolve(element))
 			{
-				Internals::animateValue(&_top.Val, top.Resolve(element), element);
-				Internals::animateValue(&_right.Val, right.Resolve(element), element);
-				Internals::animateValue(&_bottom.Val, bottom.Resolve(element), element);
-				Internals::animateValue(&_left.Val, left.Resolve(element), element);
+				Internals::animateValue(
+					&_top.Val,
+					_top.Convert(top.Unit, element, PreferredDimension::Height), top.Val,
+					element);
+
+				Internals::animateValue(&_right.Val, _right.Convert(right.Unit, element),
+										right.Val, element);
+				Internals::animateValue(
+					&_bottom.Val,
+					_bottom.Convert(bottom.Unit, element, PreferredDimension::Height),
+					bottom.Val, element);
+				Internals::animateValue(&_left.Val, _left.Convert(left.Unit, element),
+										left.Val, element);
 			}
 			else
 			{
@@ -741,7 +826,7 @@ namespace Drift::Styling
 			Dirty = false;
 		}
 
-		[[nodiscard]] auto GetValue() const -> BoundingBoxV
+		[[nodiscard]] auto GetValue(Element* element) const -> BoundingBoxV
 		{
 			return {_right, _bottom, _left, _top};
 		}
@@ -753,43 +838,56 @@ namespace Drift::Styling
 			auto resolvedB = _bottom.Resolve(element, PreferredDimension::Height);
 			auto resolvedR = _right.Resolve(element);
 
-			if (_top.Unit != UnitType::Pixels)
-			{
-				_top.Unit = UnitType::Pixels;
-				_top.Val = resolvedT;
-			}
-
-			if (_left.Unit != UnitType::Pixels)
-			{
-				_left.Unit = UnitType::Pixels;
-				_left.Val = resolvedL;
-			}
-
-			if (_bottom.Unit != UnitType::Pixels)
-			{
-				_bottom.Unit = UnitType::Pixels;
-				_bottom.Val = resolvedB;
-			}
-
-			if (_right.Unit != UnitType::Pixels)
-			{
-				_right.Unit = UnitType::Pixels;
-				_right.Val = resolvedR;
-			}
-
 			if ((resolvedT + resolvedL + resolvedB + resolvedR) == _oldMargin)
 			{
 				return;
 			}
 
-			YGNodeStyleSetPadding((YGNodeRef)element->GetLayoutEngineHandle(), YGEdgeTop,
-								  resolvedT);
-			YGNodeStyleSetPadding((YGNodeRef)element->GetLayoutEngineHandle(), YGEdgeLeft,
-								  resolvedL);
-			YGNodeStyleSetPadding((YGNodeRef)element->GetLayoutEngineHandle(),
-								  YGEdgeBottom, resolvedB);
-			YGNodeStyleSetPadding((YGNodeRef)element->GetLayoutEngineHandle(),
-								  YGEdgeRight, resolvedR);
+			if (_top.Unit == UnitType::Percent)
+			{
+				YGNodeStyleSetPaddingPercent((YGNodeRef)element->GetLayoutEngineHandle(),
+											YGEdgeTop, _top.Val);
+			}
+			else
+			{
+				YGNodeStyleSetPadding((YGNodeRef)element->GetLayoutEngineHandle(),
+									 YGEdgeTop, resolvedT);
+			}
+
+			if (_bottom.Unit == UnitType::Percent)
+			{
+				YGNodeStyleSetPaddingPercent((YGNodeRef)element->GetLayoutEngineHandle(),
+											YGEdgeBottom, _bottom.Val);
+			}
+			else
+			{
+				YGNodeStyleSetPadding((YGNodeRef)element->GetLayoutEngineHandle(),
+									 YGEdgeBottom, resolvedB);
+			}
+
+			if (_right.Unit == UnitType::Percent)
+			{
+				YGNodeStyleSetPaddingPercent((YGNodeRef)element->GetLayoutEngineHandle(),
+											YGEdgeRight, _right.Val);
+			}
+			else
+			{
+				YGNodeStyleSetPadding((YGNodeRef)element->GetLayoutEngineHandle(),
+									 YGEdgeRight, resolvedR);
+			}
+
+			if (_left.Unit == UnitType::Percent)
+			{
+				YGNodeStyleSetPaddingPercent((YGNodeRef)element->GetLayoutEngineHandle(),
+											YGEdgeLeft, _left.Val);
+			}
+			else
+			{
+				YGNodeStyleSetPadding((YGNodeRef)element->GetLayoutEngineHandle(),
+									 YGEdgeLeft, resolvedL);
+			}
+
+			_oldMargin = resolvedT + resolvedL + resolvedB + resolvedR;
 		}
 
 	private:
@@ -818,10 +916,19 @@ namespace Drift::Styling
 		{
 			if (StyleBase::IsReadyToResolve(element))
 			{
-				Internals::animateValue(&_top.Val, top.Resolve(element), element);
-				Internals::animateValue(&_right.Val, right.Resolve(element), element);
-				Internals::animateValue(&_bottom.Val, bottom.Resolve(element), element);
-				Internals::animateValue(&_left.Val, left.Resolve(element), element);
+				Internals::animateValue(
+					&_top.Val,
+					_top.Convert(top.Unit, element, PreferredDimension::Height), top.Val,
+					element);
+
+				Internals::animateValue(&_right.Val, _right.Convert(right.Unit, element),
+										right.Val, element);
+				Internals::animateValue(
+					&_bottom.Val,
+					_bottom.Convert(bottom.Unit, element, PreferredDimension::Height),
+					bottom.Val, element);
+				Internals::animateValue(&_left.Val, _left.Convert(left.Unit, element),
+										left.Val, element);
 			}
 			else
 			{
@@ -840,7 +947,7 @@ namespace Drift::Styling
 			Dirty = false;
 		}
 
-		[[nodiscard]] auto GetValue() const -> BoundingBoxV
+		[[nodiscard]] auto GetValue(Element* element) const -> BoundingBoxV
 		{
 			return {_right, _bottom, _left, _top};
 		}
@@ -852,43 +959,56 @@ namespace Drift::Styling
 			auto resolvedB = _bottom.Resolve(element, PreferredDimension::Height);
 			auto resolvedR = _right.Resolve(element);
 
-			if (_top.Unit != UnitType::Pixels)
-			{
-				_top.Unit = UnitType::Pixels;
-				_top.Val = resolvedT;
-			}
-
-			if (_left.Unit != UnitType::Pixels)
-			{
-				_left.Unit = UnitType::Pixels;
-				_left.Val = resolvedL;
-			}
-
-			if (_bottom.Unit != UnitType::Pixels)
-			{
-				_bottom.Unit = UnitType::Pixels;
-				_bottom.Val = resolvedB;
-			}
-
-			if (_right.Unit != UnitType::Pixels)
-			{
-				_right.Unit = UnitType::Pixels;
-				_right.Val = resolvedR;
-			}
-
 			if ((resolvedT + resolvedL + resolvedB + resolvedR) == _oldMargin)
 			{
 				return;
 			}
 
-			YGNodeStyleSetPosition((YGNodeRef)element->GetLayoutEngineHandle(), YGEdgeTop,
-								   resolvedT);
-			YGNodeStyleSetPosition((YGNodeRef)element->GetLayoutEngineHandle(),
-								   YGEdgeLeft, resolvedL);
-			YGNodeStyleSetPosition((YGNodeRef)element->GetLayoutEngineHandle(),
-								   YGEdgeBottom, resolvedB);
-			YGNodeStyleSetPosition((YGNodeRef)element->GetLayoutEngineHandle(),
-								   YGEdgeRight, resolvedR);
+			if (_top.Unit == UnitType::Percent)
+			{
+				YGNodeStyleSetPositionPercent((YGNodeRef)element->GetLayoutEngineHandle(),
+											 YGEdgeTop, _top.Val);
+			}
+			else
+			{
+				YGNodeStyleSetPosition((YGNodeRef)element->GetLayoutEngineHandle(),
+									  YGEdgeTop, resolvedT);
+			}
+
+			if (_bottom.Unit == UnitType::Percent)
+			{
+				YGNodeStyleSetPositionPercent((YGNodeRef)element->GetLayoutEngineHandle(),
+											 YGEdgeBottom, _bottom.Val);
+			}
+			else
+			{
+				YGNodeStyleSetPosition((YGNodeRef)element->GetLayoutEngineHandle(),
+									  YGEdgeBottom, resolvedB);
+			}
+
+			if (_right.Unit == UnitType::Percent)
+			{
+				YGNodeStyleSetPositionPercent((YGNodeRef)element->GetLayoutEngineHandle(),
+											 YGEdgeRight, _right.Val);
+			}
+			else
+			{
+				YGNodeStyleSetPosition((YGNodeRef)element->GetLayoutEngineHandle(),
+									  YGEdgeRight, resolvedR);
+			}
+
+			if (_left.Unit == UnitType::Percent)
+			{
+				YGNodeStyleSetPositionPercent((YGNodeRef)element->GetLayoutEngineHandle(),
+											 YGEdgeLeft, _left.Val);
+			}
+			else
+			{
+				YGNodeStyleSetPosition((YGNodeRef)element->GetLayoutEngineHandle(),
+									  YGEdgeLeft, resolvedL);
+			}
+
+			_oldMargin = resolvedT + resolvedL + resolvedB + resolvedR;
 		}
 
 	private:
@@ -923,7 +1043,7 @@ namespace Drift::Styling
 			Dirty = false;
 		}
 
-		[[nodiscard]] auto GetValue() const -> Drift::Align
+		[[nodiscard]] auto GetValue(Element* element) const -> Drift::Align
 		{
 			return _val;
 		}
@@ -969,7 +1089,7 @@ namespace Drift::Styling
 			Dirty = false;
 		}
 
-		[[nodiscard]] auto GetValue() const -> Drift::Align
+		[[nodiscard]] auto GetValue(Element* element) const -> Drift::Align
 		{
 			return _val;
 		}
@@ -1015,7 +1135,7 @@ namespace Drift::Styling
 			Dirty = false;
 		}
 
-		[[nodiscard]] auto GetValue() const -> Drift::Justify
+		[[nodiscard]] auto GetValue(Element* element) const -> Drift::Justify
 		{
 			return _val;
 		}
@@ -1061,7 +1181,7 @@ namespace Drift::Styling
 			Dirty = false;
 		}
 
-		[[nodiscard]] auto GetValue() const -> Drift::DisplayType
+		[[nodiscard]] auto GetValue(Element* element) const -> Drift::DisplayType
 		{
 			return _val;
 		}
@@ -1107,7 +1227,7 @@ namespace Drift::Styling
 			Dirty = false;
 		}
 
-		[[nodiscard]] auto GetValue() const -> Drift::OverflowType
+		[[nodiscard]] auto GetValue(Element* element) const -> Drift::OverflowType
 		{
 			return _val;
 		}
@@ -1153,7 +1273,7 @@ namespace Drift::Styling
 			Dirty = false;
 		}
 
-		[[nodiscard]] auto GetValue() const -> Drift::WrapType
+		[[nodiscard]] auto GetValue(Element* element) const -> Drift::WrapType
 		{
 			return _val;
 		}
@@ -1199,7 +1319,7 @@ namespace Drift::Styling
 			Dirty = false;
 		}
 
-		[[nodiscard]] auto GetValue() const -> Drift::Direction
+		[[nodiscard]] auto GetValue(Element* element) const -> Drift::Direction
 		{
 			return _val;
 		}
@@ -1245,7 +1365,7 @@ namespace Drift::Styling
 			Dirty = false;
 		}
 
-		[[nodiscard]] auto GetValue() const -> Drift::PositionType
+		[[nodiscard]] auto GetValue(Element* element) const -> Drift::PositionType
 		{
 			return _val;
 		}
@@ -1291,7 +1411,7 @@ namespace Drift::Styling
 			Dirty = false;
 		}
 
-		[[nodiscard]] auto GetValue() const -> Drift::BoxSizingType
+		[[nodiscard]] auto GetValue(Element* element) const -> Drift::BoxSizingType
 		{
 			return _val;
 		}

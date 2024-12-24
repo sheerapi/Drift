@@ -241,6 +241,7 @@ namespace Drift::Styling
 		}
 
 		Unit = unit;
+		Val = result;
 
 		return result;
 	}

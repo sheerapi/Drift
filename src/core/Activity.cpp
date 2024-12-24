@@ -1,5 +1,6 @@
 #include "core/Activity.h"
 #include "core/Application.h"
+#include "styles/Style.h"
 
 namespace Drift
 {
@@ -35,8 +36,8 @@ namespace Drift
 		
 		if (_containingView != nullptr)
 		{
-			Root->Width(_containingView->GetBoundingBox().Width);
-			Root->Height(_containingView->GetBoundingBox().Height);
+			Root->Width(Styling::Value(_containingView->GetBoundingBox().Width));
+			Root->Height(Styling::Value(_containingView->GetBoundingBox().Height));
 		}
 		return root;
 	}
@@ -83,8 +84,8 @@ namespace Drift
 		if (Root->GetBoundingBox().Width != _containingView->GetBoundingBox().Width ||
 			Root->GetBoundingBox().Height != _containingView->GetBoundingBox().Height)
 		{
-			Root->Width(_containingView->GetBoundingBox().Width);
-			Root->Height(_containingView->GetBoundingBox().Height);
+			Root->Width(Styling::Value(_containingView->GetBoundingBox().Width));
+			Root->Height(Styling::Value(_containingView->GetBoundingBox().Height));
 		}
 
 		Root->Tick();

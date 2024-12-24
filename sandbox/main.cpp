@@ -16,7 +16,7 @@ auto main(int argc, const char** argv) -> int
 
 	auto window = app->AttachView<Window>("Sandbox");
 
-	auto* easing = new CubicEasingFunction(0.175, 0.885, 0.32, 1.275);
+	auto* easing = new CubicEasingFunction(0.175, 0.885, 0.32, 1.1);
 
 	auto* root = window->GetCurrentActivity()
 					 ->AttachRoot(std::make_shared<Element>())
@@ -25,7 +25,7 @@ auto main(int argc, const char** argv) -> int
 					 ->Padding(10)
 					 ->AddStyle<Styling::BackgroundColor>(Color::FromHex(0xFFFFFF))
 					 ->AddStyle<Styling::TransitionDuration>(500, TimeUnit::Milliseconds)
-					 ->AddStyle<Styling::TransitionEasingFunction>(easing);
+					 ->AddStyle<Styling::TransitionEasingFunction>(easing)->ID("root");
 
 	auto* container1 =
 		root->AddChild<Element>()
@@ -33,7 +33,7 @@ auto main(int argc, const char** argv) -> int
 			->FlexDirection(Direction::Column)
 			->JustifyContent(Justify::SpaceBetween)
 			->AddStyle<Styling::TransitionDuration>(500, TimeUnit::Milliseconds)
-			->AddStyle<Styling::TransitionEasingFunction>(easing);
+			->AddStyle<Styling::TransitionEasingFunction>(easing)->ID("panel");
 
 	for (int i = 0; i < 5; i++)
 	{
@@ -78,7 +78,8 @@ auto main(int argc, const char** argv) -> int
 				->AddStyle<Styling::BackgroundColor>(Color::FromHex(0x000000))
 				->Height(50)
 				->AddStyle<Styling::TransitionDuration>(500, TimeUnit::Milliseconds)
-				->AddStyle<Styling::TransitionEasingFunction>(easing);
+				->AddStyle<Styling::TransitionEasingFunction>(easing)
+				->ID("panel");
 
 		btn->On("hover",
 				[btn](Event event) {
@@ -115,8 +116,7 @@ auto main(int argc, const char** argv) -> int
 	auto* btn1 = container4->AddChild<Element>()
 					 ->Width(Value(100, UnitType::Percent))
 					 ->Height(100)
-					 ->AddStyle<BackgroundColor>(Color::FromHex(0x0000FF))
-					 ->BorderRadius(20);
+					 ->AddStyle<BackgroundColor>(Color::FromHex(0x0000FF));
 
 	return app->Present();
 }

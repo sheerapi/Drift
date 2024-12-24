@@ -328,44 +328,24 @@ namespace Drift
 	{
 		_refreshLayout();
 
-		if (IsOrphan())
-		{
-			float selfWidth = GetBoundingBox().Width;
-			if (selfWidth == 0)
-			{
-				return 0.0F;
-			}
-			return (pixels / selfWidth) * 100.0F;
-		}
-
-		float parentWidth = GetParent()->GetBoundingBox().Width;
-		if (parentWidth == 0)
+		float selfWidth = GetBoundingBox().Width;
+		if (selfWidth == 0)
 		{
 			return 0.0F;
 		}
-		return (pixels / parentWidth) * 100.0F;
+		return (pixels / selfWidth) * 100.0F;
 	}
 
 	auto Element::GetPercentHeightInverse(float pixels) -> float
 	{
 		_refreshLayout();
 
-		if (IsOrphan())
-		{
-			float selfHeight = GetBoundingBox().Height;
-			if (selfHeight == 0)
-			{
-				return 0.0F;
-			}
-			return (pixels / selfHeight) * 100.0F;
-		}
-
-		float parentHeight = GetParent()->GetBoundingBox().Height;
-		if (parentHeight == 0)
+		float selfHeight = GetBoundingBox().Height;
+		if (selfHeight == 0)
 		{
 			return 0.0F;
 		}
-		return (pixels / parentHeight) * 100.0F;
+		return (pixels / selfHeight) * 100.0F;
 	}
 
 	auto Element::FindDeepestMatch(Element* object, Vector2 pos) -> Element*
@@ -460,21 +440,21 @@ namespace Drift
 	{
 		AddStyle<Styling::Gap>(
 			val, HasStyle<Styling::Gap>()
-					 ? Styling::Value(GetStyle<Styling::Gap>()->GetValue().Y)
+					 ? Styling::Value(GetStyle<Styling::Gap>()->GetValue(this).Y)
 					 : Styling::Value(0));
 		return this;
 	}
 
 	auto Element::GapHorizontal() -> float
 	{
-		return HasStyle<Styling::Gap>() ? GetStyle<Styling::Gap>()->GetValue().X : 0;
+		return HasStyle<Styling::Gap>() ? GetStyle<Styling::Gap>()->GetValue(this).X : 0;
 	}
 
 	auto Element::GapVertical(Styling::Value val) -> Element*
 	{
 		AddStyle<Styling::Gap>(
 			HasStyle<Styling::Gap>()
-				? Styling::Value(GetStyle<Styling::Gap>()->GetValue().X)
+				? Styling::Value(GetStyle<Styling::Gap>()->GetValue(this).X)
 				: Styling::Value(0),
 			val);
 		return this;
@@ -482,7 +462,7 @@ namespace Drift
 
 	auto Element::GapVertical() -> float
 	{
-		return HasStyle<Styling::Gap>() ? GetStyle<Styling::Gap>()->GetValue().Y : 0;
+		return HasStyle<Styling::Gap>() ? GetStyle<Styling::Gap>()->GetValue(this).Y : 0;
 	}
 
 	auto Element::Gap(Styling::Value val) -> Element*
@@ -493,8 +473,8 @@ namespace Drift
 
 	auto Element::Gap() -> float
 	{
-		return HasStyle<Styling::Gap>() ? GetStyle<Styling::Gap>()->GetValue().X +
-											  GetStyle<Styling::Gap>()->GetValue().Y
+		return HasStyle<Styling::Gap>() ? GetStyle<Styling::Gap>()->GetValue(this).X +
+											  GetStyle<Styling::Gap>()->GetValue(this).Y
 										: 0;
 	}
 

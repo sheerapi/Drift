@@ -49,7 +49,7 @@
 	}                                                                                    \
 	auto Element::name() -> float                                                        \
 	{                                                                                    \
-		return GetStyle<Styling::name>()->GetValue();                                    \
+		return GetStyle<Styling::name>()->GetValue(this);                                    \
 	}
 
 #define dt_yogaPropertySimpleDef(name)                                                   \
@@ -60,7 +60,7 @@
 	}                                                                                    \
 	auto Element::name() -> float                                                        \
 	{                                                                                    \
-		return GetStyle<Styling::name>()->GetValue();                                    \
+		return GetStyle<Styling::name>()->GetValue(this);                                    \
 	}
 
 #define dt_yogaPropertyEnumDef(name, type, ygType)                                       \
@@ -71,7 +71,7 @@
 	}                                                                                    \
 	auto Element::name() -> type                                                         \
 	{                                                                                    \
-		return GetStyle<Styling::name>()->GetValue();                                    \
+		return GetStyle<Styling::name>()->GetValue(this);                                    \
 	}
 
 #define dt_yogaPropertyType(name, type)                                                  \
@@ -99,64 +99,64 @@
 #define dt_yogaPropertyEdgeNoValueDef(name)                                              \
 	auto Element::name##Left(Styling::Value val)->Element*                               \
 	{                                                                                    \
-		auto style = GetStyle<Styling::name>()->GetValue();                              \
+		auto style = GetStyle<Styling::name>()->GetValue(this);                              \
 		AddStyle<Styling::name>(style.Y, style.Width, style.Height, val);                \
 		return this;                                                                     \
 	}                                                                                    \
 	auto Element::name##Left()->float                                                    \
 	{                                                                                    \
-		return GetStyle<Styling::name>()->GetValue().X.Resolve(this);                    \
+		return GetStyle<Styling::name>()->GetValue(this).X.Resolve(this);                    \
 	}                                                                                    \
 	auto Element::name##Right(Styling::Value val)->Element*                              \
 	{                                                                                    \
-		auto style = GetStyle<Styling::name>()->GetValue();                              \
+		auto style = GetStyle<Styling::name>()->GetValue(this);                              \
 		AddStyle<Styling::name>(style.Y, val, style.Height, style.X);                    \
 		return this;                                                                     \
 	}                                                                                    \
 	auto Element::name##Right()->float                                                   \
 	{                                                                                    \
-		return GetStyle<Styling::name>()->GetValue().Width.Resolve(this);                \
+		return GetStyle<Styling::name>()->GetValue(this).Width.Resolve(this);                \
 	}                                                                                    \
 	auto Element::name##Top(Styling::Value val)->Element*                                \
 	{                                                                                    \
-		auto style = GetStyle<Styling::name>()->GetValue();                              \
+		auto style = GetStyle<Styling::name>()->GetValue(this);                              \
 		AddStyle<Styling::name>(val, style.Width, style.Height, style.X);                \
 		return this;                                                                     \
 	}                                                                                    \
 	auto Element::name##Top()->float                                                     \
 	{                                                                                    \
-		return GetStyle<Styling::name>()->GetValue().Y.Resolve(this);                    \
+		return GetStyle<Styling::name>()->GetValue(this).Y.Resolve(this);                    \
 	}                                                                                    \
 	auto Element::name##Bottom(Styling::Value val)->Element*                             \
 	{                                                                                    \
-		auto style = GetStyle<Styling::name>()->GetValue();                              \
+		auto style = GetStyle<Styling::name>()->GetValue(this);                              \
 		AddStyle<Styling::name>(style.Y, style.Width, val, style.X);                     \
 		return this;                                                                     \
 	}                                                                                    \
 	auto Element::name##Bottom()->float                                                  \
 	{                                                                                    \
-		return GetStyle<Styling::name>()->GetValue().Height.Resolve(this);               \
+		return GetStyle<Styling::name>()->GetValue(this).Height.Resolve(this);               \
 	}                                                                                    \
 	auto Element::name##Horizontal(Styling::Value val)->Element*                         \
 	{                                                                                    \
-		auto style = GetStyle<Styling::name>()->GetValue();                              \
+		auto style = GetStyle<Styling::name>()->GetValue(this);                              \
 		AddStyle<Styling::name>(style.Y, val, style.Height, val);                        \
 		return this;                                                                     \
 	}                                                                                    \
 	auto Element::name##Horizontal()->float                                              \
 	{                                                                                    \
-		auto style = GetStyle<Styling::name>()->GetValue();                              \
+		auto style = GetStyle<Styling::name>()->GetValue(this);                              \
 		return style.X.Resolve(this) + style.Width.Resolve(this);                        \
 	}                                                                                    \
 	auto Element::name##Vertical(Styling::Value val)->Element*                           \
 	{                                                                                    \
-		auto style = GetStyle<Styling::name>()->GetValue();                              \
+		auto style = GetStyle<Styling::name>()->GetValue(this);                              \
 		AddStyle<Styling::name>(val, style.Width, val, style.X);                         \
 		return this;                                                                     \
 	}                                                                                    \
 	auto Element::name##Vertical()->float                                                \
 	{                                                                                    \
-		auto style = GetStyle<Styling::name>()->GetValue();                              \
+		auto style = GetStyle<Styling::name>()->GetValue(this);                              \
 		return style.Y.Resolve(this) + style.Height.Resolve(this);                       \
 	}                                                                                    \
 	auto Element::name(Styling::Value val) -> Element*                                   \
@@ -172,7 +172,7 @@
 	}                                                                                    \
 	auto Element::name() -> float                                                        \
 	{                                                                                    \
-		auto style = GetStyle<Styling::name>()->GetValue();                              \
+		auto style = GetStyle<Styling::name>()->GetValue(this);                              \
 		return style.X.Resolve(this) + style.Y.Resolve(this) +                           \
 			   style.Width.Resolve(this) + style.Height.Resolve(this);                   \
 	}
