@@ -8,6 +8,7 @@
 #include "graphics/RendererContext.h"
 #include "styles/LayoutStyles.h"
 #include "styles/RenderingStyles.h"
+#include "styles/TypographyStyles.h"
 #include "utils/ConfigManager.h"
 #include "utils/Demangle.h"
 #include "utils/StringUtils.h"
@@ -25,6 +26,15 @@ namespace Drift
 		{
 			_scrollable.ScrollMagnitude =
 				(float)ConfigManager::GetGlobalInteger("general.scroll");
+		}
+
+		if (ConfigManager::HasGlobalValue("fonts.size"))
+		{
+			AddStyle<Styling::FontSize>((float)ConfigManager::GetGlobalInteger("fonts.size"));
+		}
+		else
+		{
+			AddStyle<Styling::FontSize>(16);
 		}
 
 		auto* config = YGConfigNew();
@@ -76,6 +86,14 @@ namespace Drift
 		element->_parent = this;
 		Children.push_back(element);
 		YGNodeInsertChild(_ygNode, element->_ygNode, YGNodeGetChildCount(_ygNode));
+
+		for (auto& style : _styles)
+		{
+			if (style->IsInheritable())
+			{
+				element->_addExistingStyle(style);
+			}
+		}
 
 		std::sort(Children.begin(), Children.end(),
 				  [](const auto& a, const auto& b) { return a->_zIndex < b->_zIndex; });
@@ -216,11 +234,11 @@ namespace Drift
 
 	void Element::Render()
 	{
-		auto bounds = GetBoundingBox();
-		auto parentBounds =
-			_parent != nullptr ? _parent->GetBoundingBox() : BoundingBox{0, 0, 0, 0};
-		auto viewportBounds =
-			GetContainingActivity()->GetContainingView()->GetBoundingBox();
+		// auto bounds = GetBoundingBox();
+		// auto parentBounds =
+			// _parent != nullptr ? _parent->GetBoundingBox() : BoundingBox{0, 0, 0, 0};
+		// auto viewportBounds =
+			// GetContainingActivity()->GetContainingView()->GetBoundingBox();
 
 		/* if (!SkRect::Intersects(
 				SkRect::MakeXYWH(bounds.X, bounds.Y, bounds.Width, bounds.Height),
@@ -769,5 +787,25 @@ namespace Drift
 						 _className.end());
 
 		return this;
+	}
+
+	void Element::_addExistingStyle(const std::shared_ptr<Styling::StyleBase>& style)
+	{
+		if (!_styleKeys.contains(style->StyleName()))
+		{
+			_styleKeys[style->StyleName()] = style;
+			_styles.push_back(style);
+
+			std::sort(_styles.begin(), _styles.end(), [](const auto& a, const auto& b)
+					  { return a->StylePriority() > b->StylePriority(); });
+
+			if (style->IsInheritable())
+			{
+				for (auto& child : Children)
+				{
+					child->_addExistingStyle(style);
+				}
+			}
+		}
 	}
 }

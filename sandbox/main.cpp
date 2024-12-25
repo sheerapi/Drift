@@ -1,4 +1,5 @@
 #include "components/FadeActivity.h"
+#include "components/Text.h"
 #include "components/Window.h"
 #include "core/Application.h"
 #include "core/LayoutEnums.h"
@@ -6,6 +7,7 @@
 #include "styles/RenderingStyles.h"
 #include "styles/Style.h"
 #include "styles/TransitionFunction.h"
+#include "styles/TypographyStyles.h"
 #include "utils/Color.h"
 
 using namespace Drift;
@@ -24,9 +26,12 @@ auto main(int argc, const char** argv) -> int
 					 ->FlexDirection(Direction::Row)
 					 ->Gap(10)
 					 ->Padding(10)
-					 ->AddStyle<Styling::BackgroundColor>(Color::FromHex(0xFFFFFF))
-					 ->AddStyle<Styling::TransitionDuration>(500, TimeUnit::Milliseconds)
-					 ->AddStyle<Styling::TransitionEasingFunction>(easing);
+					 ->AddStyle<BackgroundColor>(Color::FromHex(0xFFFFFF))
+					 ->AddStyle<TransitionDuration>(500, TimeUnit::Milliseconds)
+					 ->AddStyle<TransitionEasingFunction>(easing)
+					 ->AddStyle<FontSize>(32);
+
+	root->AddStyle<Text>("Hello");
 
 	return app->Present();
 }

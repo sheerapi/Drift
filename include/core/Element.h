@@ -284,6 +284,8 @@ namespace Drift
 			return this;
 		}
 
+		void _addExistingStyle(const std::shared_ptr<Styling::StyleBase>& style);
+
 #ifdef DEBUG
 		[[nodiscard]] auto _getPaint() const -> unsigned int;
 #endif
