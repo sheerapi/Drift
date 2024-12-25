@@ -5,7 +5,7 @@
 
 namespace Drift
 {
-	class Text : public Element
+	class dt_api Text : public Element
 	{
 	public:
 		std::string Content;

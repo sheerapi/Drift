@@ -4,18 +4,21 @@
 
 namespace Drift::Styling
 {
-    class FontSize : public Style<float>
-    {
+	class dt_api FontSize : public Style<Value>
+	{
     public:
-        void ApplyEdits(Element *element, float val) override
+        void ApplyEdits(Element *element, Value val) override
         {
-			Internals::animateValue(&_size, val, element);
+			if (IsReadyToResolve(element))
+			{
+				Internals::animateValue(&_size.Val, _size.Convert(val.Unit, element), val.Val, element);
+			}
             Dirty = false;
 		}
 
 		[[nodiscard]] auto GetValue(Element* element) const -> float
 		{
-			return _size;
+			return _size.Resolve(element);
 		}
 
 		[[nodiscard]] inline auto StyleName() const -> std::string override
@@ -34,10 +37,10 @@ namespace Drift::Styling
 		}
 
 	private:
-        float _size;
+        Value _size;
     };
 
-    class FontFamily : public Style<std::vector<std::string>>
+    class dt_api FontFamily : public Style<std::vector<std::string>>
     {
     public:
 		[[nodiscard]] inline auto StyleName() const -> std::string override
@@ -50,6 +53,11 @@ namespace Drift::Styling
 			return 5;
 		}
 
+		[[nodiscard]] auto GetValue(Element* element) const -> std::vector<std::string>
+		{
+			return _fonts;
+		}
+
 		[[nodiscard]] inline auto IsAnimatable() const -> bool override
 		{
 			return false;
@@ -59,5 +67,14 @@ namespace Drift::Styling
 		{
 			return true;
 		}
+
+		void ApplyEdits(Element* element, std::vector<std::string> val) override
+		{
+			_fonts = val;
+			Dirty = false;
+		}
+
+	private:
+		std::vector<std::string> _fonts;
 	};
 }

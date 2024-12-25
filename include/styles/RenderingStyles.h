@@ -55,7 +55,7 @@ namespace Drift::Styling
 		Color _color;
 	};
 
-	class BorderRadius : public Style<Value, Value, Value, Value>
+	class dt_api BorderRadius : public Style<Value, Value, Value, Value>
 	{
 	public:
 		[[nodiscard]] inline auto StyleName() const -> std::string override
@@ -142,7 +142,7 @@ namespace Drift::Styling
 		Value _bottomRightX;
 	};
 
-	class Border : public Style<Value, Value, Value, Value>
+	class dt_api Border : public Style<Value, Value, Value, Value>
 	{
 	public:
 		[[nodiscard]] inline auto StyleName() const -> std::string override

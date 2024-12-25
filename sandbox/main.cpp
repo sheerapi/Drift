@@ -31,7 +31,7 @@ auto main(int argc, const char** argv) -> int
 					 ->AddStyle<TransitionEasingFunction>(easing)
 					 ->AddStyle<FontSize>(32);
 
-	root->AddStyle<Text>("Hello");
+	root->AddChild<Text>("Hello");
 
 	return app->Present();
 }

@@ -8,7 +8,7 @@
 
 namespace Drift::Styling
 {
-	class Width : public Style<Value>
+	class dt_api Width : public Style<Value>
 	{
 	public:
 		[[nodiscard]] inline auto StyleName() const -> std::string override
@@ -68,7 +68,7 @@ namespace Drift::Styling
 
 	// no i will not bother to change the names
 	// there are too much properties i have to replace leave me alone
-	class Height : public Style<Value>
+	class dt_api Height : public Style<Value>
 	{
 	public:
 		[[nodiscard]] inline auto StyleName() const -> std::string override
@@ -129,7 +129,7 @@ namespace Drift::Styling
 		float _oldWidth;
 	};
 
-	class MaxWidth : public Style<Value>
+	class dt_api MaxWidth : public Style<Value>
 	{
 	public:
 		[[nodiscard]] inline auto StyleName() const -> std::string override
@@ -188,7 +188,7 @@ namespace Drift::Styling
 		float _oldWidth;
 	};
 
-	class MaxHeight : public Style<Value>
+	class dt_api MaxHeight : public Style<Value>
 	{
 	public:
 		[[nodiscard]] inline auto StyleName() const -> std::string override
@@ -250,7 +250,7 @@ namespace Drift::Styling
 		float _oldWidth;
 	};
 
-	class MinWidth : public Style<Value>
+	class dt_api MinWidth : public Style<Value>
 	{
 	public:
 		[[nodiscard]] inline auto StyleName() const -> std::string override
@@ -309,7 +309,7 @@ namespace Drift::Styling
 		float _oldWidth;
 	};
 
-	class MinHeight : public Style<Value>
+	class dt_api MinHeight : public Style<Value>
 	{
 	public:
 		[[nodiscard]] inline auto StyleName() const -> std::string override
@@ -370,7 +370,7 @@ namespace Drift::Styling
 		float _oldWidth;
 	};
 
-	class FlexBasis : public Style<Value>
+	class dt_api FlexBasis : public Style<Value>
 	{
 	public:
 		[[nodiscard]] inline auto StyleName() const -> std::string override
@@ -453,7 +453,7 @@ namespace Drift::Styling
 		float _oldWidth;
 	};
 
-	class Gap : public Style<Value, Value>
+	class dt_api Gap : public Style<Value, Value>
 	{
 	public:
 		[[nodiscard]] inline auto StyleName() const -> std::string override
@@ -535,7 +535,7 @@ namespace Drift::Styling
 		float _oldGap;
 	};
 
-	class FlexGrow : public Style<float>
+	class dt_api FlexGrow : public Style<float>
 	{
 	public:
 		[[nodiscard]] inline auto StyleName() const -> std::string override
@@ -575,7 +575,7 @@ namespace Drift::Styling
 		float _oldWidth;
 	};
 
-	class FlexShrink : public Style<float>
+	class dt_api FlexShrink : public Style<float>
 	{
 	public:
 		[[nodiscard]] inline auto StyleName() const -> std::string override
@@ -615,7 +615,7 @@ namespace Drift::Styling
 		float _oldWidth;
 	};
 
-	class AspectRatio : public Style<float>
+	class dt_api AspectRatio : public Style<float>
 	{
 	public:
 		[[nodiscard]] inline auto StyleName() const -> std::string override
@@ -656,7 +656,7 @@ namespace Drift::Styling
 		float _oldWidth;
 	};
 
-	class Margin : public Style<Value, Value, Value, Value>
+	class dt_api Margin : public Style<Value, Value, Value, Value>
 	{
 	public:
 		[[nodiscard]] inline auto StyleName() const -> std::string override
@@ -777,7 +777,7 @@ namespace Drift::Styling
 		float _oldMargin;
 	};
 
-	class Padding : public Style<Value, Value, Value, Value>
+	class dt_api Padding : public Style<Value, Value, Value, Value>
 	{
 	public:
 		[[nodiscard]] inline auto StyleName() const -> std::string override
@@ -898,7 +898,7 @@ namespace Drift::Styling
 		float _oldMargin;
 	};
 
-	class Position : public Style<Value, Value, Value, Value>
+	class dt_api Position : public Style<Value, Value, Value, Value>
 	{
 	public:
 		[[nodiscard]] inline auto StyleName() const -> std::string override
@@ -1019,7 +1019,7 @@ namespace Drift::Styling
 		float _oldMargin;
 	};
 
-	class AlignContent : public Style<Drift::Align>
+	class dt_api AlignContent : public Style<Drift::Align>
 	{
 	public:
 		[[nodiscard]] inline auto StyleName() const -> std::string override
@@ -1065,7 +1065,7 @@ namespace Drift::Styling
 		Drift::Align _oldVal;
 	};
 
-	class AlignItems : public Style<Drift::Align>
+	class dt_api AlignItems : public Style<Drift::Align>
 	{
 	public:
 		[[nodiscard]] inline auto StyleName() const -> std::string override
@@ -1111,7 +1111,7 @@ namespace Drift::Styling
 		Drift::Align _oldVal;
 	};
 
-	class JustifyContent : public Style<Drift::Justify>
+	class dt_api JustifyContent : public Style<Drift::Justify>
 	{
 	public:
 		[[nodiscard]] inline auto StyleName() const -> std::string override
@@ -1157,7 +1157,7 @@ namespace Drift::Styling
 		Drift::Justify _oldVal;
 	};
 
-	class Display : public Style<Drift::DisplayType>
+	class dt_api Display : public Style<Drift::DisplayType>
 	{
 	public:
 		[[nodiscard]] inline auto StyleName() const -> std::string override
@@ -1203,7 +1203,7 @@ namespace Drift::Styling
 		Drift::DisplayType _oldVal;
 	};
 
-	class Overflow : public Style<Drift::OverflowType>
+	class dt_api Overflow : public Style<Drift::OverflowType>
 	{
 	public:
 		[[nodiscard]] inline auto StyleName() const -> std::string override
@@ -1249,7 +1249,7 @@ namespace Drift::Styling
 		Drift::OverflowType _oldVal;
 	};
 
-	class FlexWrap : public Style<Drift::WrapType>
+	class dt_api FlexWrap : public Style<Drift::WrapType>
 	{
 	public:
 		[[nodiscard]] inline auto StyleName() const -> std::string override
@@ -1295,7 +1295,7 @@ namespace Drift::Styling
 		Drift::WrapType _oldVal;
 	};
 
-	class FlexDirection : public Style<Drift::Direction>
+	class dt_api FlexDirection : public Style<Drift::Direction>
 	{
 	public:
 		[[nodiscard]] inline auto StyleName() const -> std::string override
@@ -1341,7 +1341,7 @@ namespace Drift::Styling
 		Drift::Direction _oldVal;
 	};
 
-	class PositionType : public Style<Drift::PositionType>
+	class dt_api PositionType : public Style<Drift::PositionType>
 	{
 	public:
 		[[nodiscard]] inline auto StyleName() const -> std::string override
@@ -1387,7 +1387,7 @@ namespace Drift::Styling
 		Drift::PositionType _oldVal;
 	};
 
-	class BoxSizing : public Style<Drift::BoxSizingType>
+	class dt_api BoxSizing : public Style<Drift::BoxSizingType>
 	{
 	public:
 		[[nodiscard]] inline auto StyleName() const -> std::string override

@@ -37,6 +37,8 @@ namespace Drift
 			AddStyle<Styling::FontSize>(16);
 		}
 
+		AddStyle<Styling::FontFamily>(std::vector<std::string>({"sans-serif"}));
+
 		auto* config = YGConfigNew();
 		YGConfigSetPointScaleFactor(config, 1);
 

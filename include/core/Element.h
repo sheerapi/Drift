@@ -61,7 +61,7 @@ namespace Drift
         template<typename T, typename... Args> auto AddChild(Args&& ...args) -> std::shared_ptr<T>
         {
             typeCheck<Element, T>();
-            return AddChild(std::make_shared<T>(args...));
+            return std::dynamic_pointer_cast<T>(AddChild(std::make_shared<T>(args...)));
         }
 
 		template<typename T, typename... Args> auto AddStyle(Args&& ...args) -> Element*
