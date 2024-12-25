@@ -28,17 +28,6 @@ namespace Drift
 				(float)ConfigManager::GetGlobalInteger("general.scroll");
 		}
 
-		if (ConfigManager::HasGlobalValue("fonts.size"))
-		{
-			AddStyle<Styling::FontSize>((float)ConfigManager::GetGlobalInteger("fonts.size"));
-		}
-		else
-		{
-			AddStyle<Styling::FontSize>(16);
-		}
-
-		AddStyle<Styling::FontFamily>(std::vector<std::string>({"sans-serif"}));
-
 		auto* config = YGConfigNew();
 		YGConfigSetPointScaleFactor(config, 1);
 
@@ -183,9 +172,32 @@ namespace Drift
 
 	void Element::Tick()
 	{
-		if (_parent == nullptr && !HasClassName("root"))
+		if (IsOrphan() && !HasClassName("root"))
 		{
 			AddClassName("root");
+		}
+
+		if (IsOrphan() && !_init)
+		{
+			if (!HasStyle<Styling::FontSize>())
+			{
+				if (ConfigManager::HasGlobalValue("fonts.size"))
+				{
+					AddStyle<Styling::FontSize>(
+						(float)ConfigManager::GetGlobalInteger("fonts.size"));
+				}
+				else
+				{
+					AddStyle<Styling::FontSize>(16);
+				}
+			}
+
+			if (!HasStyle<Styling::FontFamily>())
+			{
+				AddStyle<Styling::FontFamily>(std::vector<std::string>({"sans-serif"}));
+			}
+
+			_init = true;
 		}
 
 		if (_scrollable.ScrollOffsetX != _scrollable.TargetScrollOffsetX)

@@ -90,6 +90,14 @@ namespace Drift
 			else
 			{
 				(static_cast<T*>(_styleKeys[style->StyleName()].get()))->EditStyle(this, args...);
+
+				if (style->IsInheritable())
+				{
+					for (auto& child : Children)
+					{
+						child->_addStyleIfNotFound<T>(args...);
+					}
+				}
 			}
 
 			return this;
@@ -243,6 +251,7 @@ namespace Drift
 		bool _focusable{true};
 		bool _receivesInput{true};
 		bool _zOrderingChanged{true};
+		bool _init{false};
 		int _zIndex;
 		ElementStates _states;
         std::string _id;
