@@ -32,7 +32,8 @@ sources = [
     'src/styles/AnimationScheduler.cpp',
     'src/styles/TransitionFunction.cpp',
     'src/utils/CubicBezier.cpp',
-    'src/components/Text.cpp'
+    'src/components/Text.cpp',
+    'src/core/FontManager.cpp'
 ]
 
 cmake = import('cmake')

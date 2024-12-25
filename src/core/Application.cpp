@@ -6,6 +6,7 @@
 #include "utils/PerformanceTimer.h"
 #include "utils/Time.h"
 #include "utils/Scheduler.h"
+#include "core/FontManager.h"
 
 namespace Drift
 {
@@ -27,6 +28,7 @@ namespace Drift
 
 		ConfigManager::Init();
 		LibraryManager::Init();
+		FontManager::Init();
 
 		dt_coreInfo("Initialized \"{}\"", _id.GetCompoundID());
 		Time::Update();
