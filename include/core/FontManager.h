@@ -20,7 +20,6 @@ namespace Drift
 
     private:
 		inline static std::unordered_map<std::string, SkTypeface*> fonts;
-        inline static FcConfig* config{nullptr};
         inline static sk_sp<SkFontMgr> fontMgr;
 	};
 }

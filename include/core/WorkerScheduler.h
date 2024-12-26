@@ -22,7 +22,7 @@ namespace Drift::Internals
         std::mutex Mutex;
         std::condition_variable Condition;
         std::vector<WorkerTask> Tasks;
-        std::atomic<bool> Running;
+        std::atomic<bool> Running{true};
         std::atomic<bool> Busy;
 
         void Run();

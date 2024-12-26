@@ -5,7 +5,7 @@
 #include "core/SkFontMgr.h"
 #include "core/WorkerScheduler.h"
 #include "fontconfig/fontconfig.h"
-#include "ports/SkFontMgr_fontconfig.h"
+#include "ports/SkFontMgr_empty.h"
 #include "utils/ConfigManager.h"
 #include "utils/PerformanceTimer.h"
 
@@ -15,20 +15,7 @@ namespace Drift
 	{
 		dt_stopwatch();
 
-		Internals::WorkerScheduler::AddTask(
-			[]()
-			{
-				config = FcInitLoadConfigAndFonts();
-
-				if (config == nullptr)
-				{
-					dt_coreFatal("Failed to initialize FontConfig!");
-				}
-
-				fontMgr = SkFontMgr_New_FontConfig(config);
-
-				dt_coreVerbose("Initialized FontConfig {}", FcGetVersion());
-			});
+		fontMgr = SkFontMgr_New_Custom_Empty();
 
 		fonts["sans-serif"] = GetFont(
 			ResolveFontStack({ConfigManager::HasGlobalValue("fonts.sans_serif")
@@ -93,34 +80,13 @@ namespace Drift
 		fonts[std::string(reinterpret_cast<char*>(family))] =
 			SkTypeface::MakeEmpty().get();
 
-		if (config != nullptr)
-		{
-			Internals::WorkerScheduler::AddTask(
-				[family, filePath]()
-				{
-					fonts[std::string(reinterpret_cast<char*>(family))] =
-						fontMgr->makeFromFile(reinterpret_cast<char*>(filePath)).get();
-					dt_coreVerbose("Loaded font {}", reinterpret_cast<char*>(family));
-				});
-		}
-		else
-		{
-			dt_setChecker(
-				[family, filePath]()
-				{
-					Internals::WorkerScheduler::AddTask(
-						[family, filePath]()
-						{
-							fonts[std::string(reinterpret_cast<char*>(family))] =
-								fontMgr->makeFromFile(reinterpret_cast<char*>(filePath))
-									.get();
-
-							dt_coreVerbose("Loaded font {}",
-										   reinterpret_cast<char*>(family));
-						});
-				},
-				[]() { return config == nullptr; });
-		}
+		Internals::WorkerScheduler::AddTask(
+			[family, filePath]()
+			{
+				fonts[std::string(reinterpret_cast<char*>(family))] =
+					fontMgr->makeFromFile(reinterpret_cast<char*>(filePath)).get();
+				dt_coreVerbose("Loaded font {}", reinterpret_cast<char*>(family));
+			});
 
 		FcPatternDestroy(pattern);
 		return fonts[std::string(reinterpret_cast<char*>(family))];
