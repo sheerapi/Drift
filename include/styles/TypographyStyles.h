@@ -1,4 +1,5 @@
 #pragma once
+#include "core/FontManager.h"
 #include "styles/Style.h"
 #include <vector>
 
@@ -53,9 +54,9 @@ namespace Drift::Styling
 			return 5;
 		}
 
-		[[nodiscard]] auto GetValue(Element* element) const -> std::vector<std::string>
+		[[nodiscard]] auto GetValue(Element* element) const -> std::string
 		{
-			return _fonts;
+			return _font;
 		}
 
 		[[nodiscard]] inline auto IsAnimatable() const -> bool override
@@ -70,11 +71,11 @@ namespace Drift::Styling
 
 		void ApplyEdits(Element* element, std::vector<std::string> val) override
 		{
-			_fonts = val;
+			_font = FontManager::ResolveFontStack(val);
 			Dirty = false;
 		}
 
 	private:
-		std::vector<std::string> _fonts;
+		std::string _font;
 	};
 }
