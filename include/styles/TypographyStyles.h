@@ -1,6 +1,8 @@
 #pragma once
 #include "core/FontManager.h"
+#include "core/SkTypeface.h"
 #include "styles/Style.h"
+#include "core/Element.h"
 #include <vector>
 
 namespace Drift::Styling
@@ -14,7 +16,13 @@ namespace Drift::Styling
 			{
 				Internals::animateValue(&_size.Val, _size.Convert(val.Unit, element), val.Val, element);
 			}
-            Dirty = false;
+			else
+			{
+				_size.Val = val.Val;
+				_size.Unit = val.Unit;
+			}
+			element->EmitSignal("typography.changed");
+			Dirty = false;
 		}
 
 		[[nodiscard]] auto GetValue(Element* element) const -> float
@@ -54,7 +62,7 @@ namespace Drift::Styling
 			return 5;
 		}
 
-		[[nodiscard]] auto GetValue(Element* element) const -> std::string
+		[[nodiscard]] auto GetValue(Element* element) const -> SkTypeface*
 		{
 			return _font;
 		}
@@ -71,11 +79,12 @@ namespace Drift::Styling
 
 		void ApplyEdits(Element* element, std::vector<std::string> val) override
 		{
-			_font = FontManager::ResolveFontStack(val);
+			_font = FontManager::GetFont(FontManager::ResolveFontStack(val));
+			element->EmitSignal("typography.changed");
 			Dirty = false;
 		}
 
 	private:
-		std::string _font;
+		SkTypeface* _font;
 	};
 }
