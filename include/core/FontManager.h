@@ -1,6 +1,8 @@
 #pragma once
 #include "core/Macros.h"
-#include "core/SkFont.h"
+#include "core/SkTypeface.h"
+#include "core/SkFontMgr.h"
+#include <fontconfig/fontconfig.h>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -13,10 +15,12 @@ namespace Drift
         static void Init();
         static auto HasFont(const std::string& name) -> bool;
         static auto ResolveFontStack(const std::vector<std::string>& stack) -> std::string;
-        static auto GetFont(const std::string& name) -> std::shared_ptr<SkFont>;
-        static void Shutdown();
+		static auto GetFont(const std::string& name) -> SkTypeface*;
+		static void Shutdown();
 
     private:
-		inline static std::unordered_map<std::string, std::shared_ptr<SkFont>> fonts;
+		inline static std::unordered_map<std::string, SkTypeface*> fonts;
+        inline static FcConfig* config;
+        inline static sk_sp<SkFontMgr> fontMgr;
 	};
 }
