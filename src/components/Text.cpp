@@ -7,9 +7,11 @@ namespace Drift
 {
 	void Text::Draw()
 	{
-		float size = GetStyle<Styling::FontSize>()->GetValue(this);
-		auto* font = GetStyle<Styling::FontFamily>()->GetValue(this);
-
-		dt_canvas->drawSimpleText()
+		
 	}
+
+    void Text::Start()
+    {
+        _font = SkFont()
+    }
 }

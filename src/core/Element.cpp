@@ -86,6 +86,8 @@ namespace Drift
 			}
 		}
 
+		element->Start();
+
 		std::sort(Children.begin(), Children.end(),
 				  [](const auto& a, const auto& b) { return a->_zIndex < b->_zIndex; });
 

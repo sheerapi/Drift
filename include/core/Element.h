@@ -243,6 +243,7 @@ namespace Drift
 
 		virtual void BeginUpdate() {};
 		virtual void EndUpdate() {};
+		virtual void Start() {};
 
 	private:
 		YGNodeRef _ygNode;
@@ -298,5 +299,7 @@ namespace Drift
 #ifdef DEBUG
 		[[nodiscard]] auto _getPaint() const -> unsigned int;
 #endif
+
+		friend class Activity;
 	};
 }

@@ -46,6 +46,8 @@ namespace Drift
 			Root->Width(Styling::Value(_containingView->GetBoundingBox().Width));
 			Root->Height(Styling::Value(_containingView->GetBoundingBox().Height));
 		}
+
+		Root->Start();
 		return root;
 	}
 

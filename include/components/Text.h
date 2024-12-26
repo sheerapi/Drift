@@ -1,5 +1,6 @@
 #pragma once
 #include "core/Element.h"
+#include "core/SkFont.h"
 #include <string>
 #include <utility>
 
@@ -11,7 +12,10 @@ namespace Drift
 		std::string Content;
 
 		Text(std::string content = "") : Content(std::move(content)) {};
-
 		void Draw() override;
+		void Start() override;
+
+	private:
+		SkFont _font;
 	};
 }
