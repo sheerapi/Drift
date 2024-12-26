@@ -1,23 +1,23 @@
-#include "utils/Scheduler.h"
-#include "core/Application.h"
-#include "core/Logger.h"
+#include "core/Scheduler.h"
 #include "utils/Time.h"
 
 namespace Drift
 {
-	void Scheduler::AddInterval(const Task& task, long longerval,
+	void Scheduler::AddInterval(const Task& task, long interval,
 									TaskPriority priority)
 	{
 		std::lock_guard<std::mutex> lock(taskMutex);
 		auto* taskList = ChooseTaskList(priority);
-		taskList->push_back({task, longerval, longerval});
+		auto stask = ScheduledTask();
+		stask.Callback = task;
+		stask.Interval = interval;
+		stask.Remaining = interval;
+		taskList->push_back(stask);
 
         if (taskList == &workerThreadTasks)
         {
             workerThread = std::thread(WorkerRun);
         }
-
-        dt_coreVerbose("Scheduled timeout task in {} thread", taskList == &mainTasks ? "main" : "worker");
 	}
 
 	void Scheduler::AddTimeout(const Task& task, long timeout,
@@ -25,7 +25,27 @@ namespace Drift
 	{
 		std::lock_guard<std::mutex> lock(taskMutex);
 		auto* taskList = ChooseTaskList(priority);
-		taskList->push_back({task, timeout, 0});
+		auto stask = ScheduledTask();
+		stask.Callback = task;
+		stask.Remaining = timeout;
+		taskList->push_back(stask);
+
+		if (taskList == &workerThreadTasks)
+		{
+			workerThread = std::thread(WorkerRun);
+		}
+	}
+
+	void Scheduler::AddCustomChecked(const Task& task, const TaskCheck& check,
+									 TaskPriority priority)
+	{
+		std::lock_guard<std::mutex> lock(taskMutex);
+		auto* taskList = ChooseTaskList(priority);
+		auto stask = ScheduledTask();
+		stask.Check = check;
+		stask.Callback = task;
+		stask.Remaining = LONG_MAX;
+		stask.Interval = LONG_MAX;
 
 		if (taskList == &workerThreadTasks)
 		{
@@ -41,7 +61,7 @@ namespace Drift
 		{
 			task.Remaining -= static_cast<long>(Time::GetDeltaTime() * 1000);
             
-			if (task.Remaining <= 0)
+			if (task.Remaining <= 0 || task.Check())
 			{
 				task.Callback();
 				task.Remaining = task.Interval;
@@ -50,7 +70,7 @@ namespace Drift
 
 		mainTasks.erase(std::remove_if(mainTasks.begin(), mainTasks.end(),
 									   [](const ScheduledTask& task)
-									   { return task.Remaining <= 0; }),
+									   { return task.Remaining <= 0 || task.Check(); }),
 						mainTasks.end());
 	}
 

@@ -5,7 +5,7 @@
 #include "utils/LibraryManager.h"
 #include "utils/PerformanceTimer.h"
 #include "utils/Time.h"
-#include "utils/Scheduler.h"
+#include "core/Scheduler.h"
 #include "core/FontManager.h"
 
 namespace Drift

@@ -2,7 +2,8 @@
 #include "events/InputSystem.h"
 #include "styles/AnimationScheduler.h"
 #include "utils/Demangle.h"
-#include "utils/Scheduler.h"
+#include "core/Scheduler.h"
+#include "core/WorkerScheduler.h"
 #include "utils/Time.h"
 
 namespace Drift::Events
@@ -26,6 +27,7 @@ namespace Drift::Events
 		Time::Update();
 		Styling::AnimationScheduler::Update();
 		Scheduler::Update();
+		Internals::WorkerScheduler::Update();
 		Input::RecalculateState();
 		
 		if (Views.empty())

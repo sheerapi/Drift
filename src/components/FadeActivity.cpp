@@ -1,7 +1,7 @@
 #include "components/FadeActivity.h"
 #include "graphics/RendererContext.h"
 #include "styles/AnimationScheduler.h"
-#include "utils/Scheduler.h"
+#include "core/Scheduler.h"
 
 namespace Drift::Components
 {

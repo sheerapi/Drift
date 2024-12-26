@@ -28,12 +28,13 @@ sources = [
     'src/utils/ConfigManager.cpp',
     'src/styles/Style.cpp',
     'src/components/FadeActivity.cpp',
-    'src/utils/Scheduler.cpp',
+    'src/core/Scheduler.cpp',
     'src/styles/AnimationScheduler.cpp',
     'src/styles/TransitionFunction.cpp',
     'src/utils/CubicBezier.cpp',
     'src/components/Text.cpp',
-    'src/core/FontManager.cpp'
+    'src/core/FontManager.cpp',
+    'src/core/WorkerScheduler.cpp'
 ]
 
 cmake = import('cmake')
