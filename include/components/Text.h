@@ -2,7 +2,6 @@
 #include "core/Element.h"
 #include "core/SkFont.h"
 #include <string>
-#include <utility>
 
 namespace Drift
 {
@@ -11,9 +10,9 @@ namespace Drift
 	public:
 		std::string Content;
 
-		Text(std::string content = "") : Content(std::move(content)) {};
+		Text(const std::string& content = "");
+		void Update() override;
 		void Draw() override;
-		void Start() override;
 
 	private:
 		SkFont _font;

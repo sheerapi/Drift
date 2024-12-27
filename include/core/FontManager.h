@@ -1,4 +1,5 @@
 #pragma once
+#include "core/Element.h"
 #include "core/Macros.h"
 #include "core/SkFontMgr.h"
 #include "core/SkTypeface.h"
@@ -9,6 +10,14 @@
 
 namespace Drift
 {
+	struct Font
+	{
+	public:
+		std::shared_ptr<sk_sp<SkTypeface>> Typeface;
+
+		Font(const std::shared_ptr<sk_sp<SkTypeface>>& typeface) : Typeface(typeface){};
+	};
+
 	class dt_api FontManager
 	{
 	public:
@@ -16,11 +25,11 @@ namespace Drift
 		static auto HasFont(const std::string& name) -> bool;
 		static auto ResolveFontStack(const std::vector<std::string>& stack)
 			-> std::string;
-		static auto GetFont(const std::string& name) -> SkTypeface*;
+		static auto GetFont(const std::string& name, Element* element) -> Font*;
 		static void Shutdown();
 
 	private:
-		inline static std::unordered_map<std::string, SkTypeface*> fonts;
+		inline static std::unordered_map<std::string, Font*> fonts;
 		inline static sk_sp<SkFontMgr> fontMgr;
 	};
 }

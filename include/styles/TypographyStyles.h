@@ -62,9 +62,9 @@ namespace Drift::Styling
 			return 5;
 		}
 
-		[[nodiscard]] auto GetValue(Element* element) const -> SkTypeface*
+		[[nodiscard]] auto GetValue(Element* element) const -> sk_sp<SkTypeface>
 		{
-			return _font;
+			return *_font->Typeface;
 		}
 
 		[[nodiscard]] inline auto IsAnimatable() const -> bool override
@@ -79,12 +79,12 @@ namespace Drift::Styling
 
 		void ApplyEdits(Element* element, std::vector<std::string> val) override
 		{
-			_font = FontManager::GetFont(FontManager::ResolveFontStack(val));
+			_font = FontManager::GetFont(FontManager::ResolveFontStack(val), element);
 			element->EmitSignal("typography.changed");
 			Dirty = false;
 		}
 
 	private:
-		SkTypeface* _font;
+		Font* _font;
 	};
 }

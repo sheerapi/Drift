@@ -1,7 +1,6 @@
 #include "core/FontManager.h"
 #include "core/Application.h" // IWYU pragma: keep
 #include "core/Logger.h"
-#include "core/Scheduler.h"
 #include "core/SkFontMgr.h"
 #include "core/WorkerScheduler.h"
 #include "fontconfig/fontconfig.h"
@@ -21,19 +20,19 @@ namespace Drift
 			ResolveFontStack({ConfigManager::HasGlobalValue("fonts.sans_serif")
 								  ? ConfigManager::GetGlobalString("fonts.sans_serif")
 								  : "Inter",
-							  "sans"}));
+							  "sans"}), nullptr);
 
 		fonts["serif"] =
 			GetFont(ResolveFontStack({ConfigManager::HasGlobalValue("fonts.serif")
 										  ? ConfigManager::GetGlobalString("fonts.serif")
 										  : "Playfair Display",
-									  "serif"}));
+									  "serif"}), nullptr);
 
 		fonts["monospaced"] =
 			GetFont(ResolveFontStack({ConfigManager::HasGlobalValue("fonts.serif")
 										  ? ConfigManager::GetGlobalString("fonts.serif")
 										  : "Roboto Mono",
-									  "monospaced"}));
+									  "monospaced"}), nullptr);
 
 		dt_coreVerbose("Loaded {} fonts", fonts.size());
 	}
@@ -52,7 +51,7 @@ namespace Drift
 		return "sans-serif";
 	}
 
-	auto FontManager::GetFont(const std::string& name) -> SkTypeface*
+	auto FontManager::GetFont(const std::string& name, Element* element) -> Font*
 	{
 		if (fonts.contains(name))
 		{
@@ -62,7 +61,7 @@ namespace Drift
 		if (!HasFont(name))
 		{
 			dt_coreError("Font {} was not found in the system!", name);
-			return SkTypeface::MakeEmpty().get();
+			fonts[name] = new Font(std::make_shared<sk_sp<SkTypeface>>(SkTypeface::MakeEmpty()));
 		}
 
 		auto* pattern = FcNameParse((const FcChar8*)name.c_str());
@@ -78,14 +77,19 @@ namespace Drift
 		FcPatternGetString(match, FC_FAMILY, 0, &family);
 
 		fonts[std::string(reinterpret_cast<char*>(family))] =
-			SkTypeface::MakeEmpty().get();
+			new Font(std::make_shared<sk_sp<SkTypeface>>(SkTypeface::MakeEmpty()));
 
 		Internals::WorkerScheduler::AddTask(
-			[family, filePath]()
+			[family, filePath, element]()
 			{
-				fonts[std::string(reinterpret_cast<char*>(family))] =
-					fontMgr->makeFromFile(reinterpret_cast<char*>(filePath)).get();
+				*fonts[std::string(reinterpret_cast<char*>(family))] =
+					*new Font(std::make_shared<sk_sp<SkTypeface>>(fontMgr->makeFromFile(reinterpret_cast<char*>(filePath))));
 				dt_coreVerbose("Loaded font {}", reinterpret_cast<char*>(family));
+				
+				if (element != nullptr)
+				{
+					element->EmitSignal("asset.loaded");
+				}
 			});
 
 		FcPatternDestroy(pattern);
