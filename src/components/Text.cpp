@@ -1,5 +1,5 @@
 #include "components/Text.h"
-#include "core/SkFontTypes.h"
+#include "core/SkFont.h"
 #include "graphics/RendererContext.h"
 #include "styles/TypographyStyles.h"
 
