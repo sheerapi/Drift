@@ -32,6 +32,8 @@ namespace Drift
 		static auto GetGlobalBoolean(const std::string& name) -> bool;
 		static auto GetGlobalTable(const std::string& name) -> toml::table;
 		static auto GetGlobalArray(const std::string& name) -> toml::array;
+		static auto GetGlobalStringArray(const std::string& name)
+			-> std::vector<std::string>;
 
 		static auto HasGlobalValue(const std::string& name) -> bool;
 

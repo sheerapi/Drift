@@ -271,4 +271,23 @@ namespace Drift
 
 		return true;
 	}
+
+	auto ConfigManager::GetGlobalStringArray(const std::string& name) -> std::vector<std::string>
+	{
+		if (HasGlobalValue(name) && globalTable.at_path(name).is_array())
+		{
+			const auto& array = globalTable.at_path(name).as_array();
+			std::vector<std::string> result;
+			for (const auto& item : *array)
+			{
+				result.push_back(item.as_string()->get());
+			}
+
+			return result;
+		}
+
+		dt_coreError("Value at {} is either not found or does not match type (string array)",
+					 name);
+		return {};
+	}
 }

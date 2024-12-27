@@ -118,4 +118,73 @@ namespace Drift
 
 		return found;
 	}
+
+	auto FontManager::FindFallbackFont(int32_t codepoint) -> Font*
+	{
+		std::vector<std::string> fallbackFonts;
+
+		if (ConfigManager::HasGlobalValue("fonts.fallback"))
+		{
+			fallbackFonts = ConfigManager::GetGlobalStringArray("fonts.fallback");
+		}
+
+		for (const auto& fontName : fallbackFonts)
+		{
+			FcPattern* pattern = FcNameParse((const FcChar8*)fontName.c_str());
+			FcConfigSubstitute(nullptr, pattern, FcMatchPattern);
+			FcDefaultSubstitute(pattern);
+
+			FcCharSet* charSet = FcCharSetCreate();
+			FcCharSetAddChar(charSet, codepoint);
+			FcPatternAddCharSet(pattern, FC_CHARSET, charSet);
+			FcPatternAddBool(pattern, FC_SCALABLE, FcTrue);
+
+			FcResult result;
+			FcPattern* matchedPattern = FcFontMatch(nullptr, pattern, &result);
+			std::string fontFamily;
+
+			if (matchedPattern != nullptr)
+			{
+				FcChar8* family = nullptr;
+				if (FcPatternGetString(matchedPattern, FC_FAMILY, 0, &family) ==
+					FcResultMatch)
+				{
+					fontFamily = reinterpret_cast<const char*>(family);
+					FcPatternDestroy(matchedPattern);
+					FcCharSetDestroy(charSet);
+					FcPatternDestroy(pattern);
+					return GetFont(fontFamily, nullptr);
+				}
+				FcPatternDestroy(matchedPattern);
+			}
+
+			FcCharSetDestroy(charSet);
+			FcPatternDestroy(pattern);
+		}
+
+		FcPattern* pattern = FcPatternCreate();
+		FcCharSet* charSet = FcCharSetCreate();
+		FcCharSetAddChar(charSet, codepoint);
+		FcPatternAddCharSet(pattern, FC_CHARSET, charSet);
+		FcPatternAddBool(pattern, FC_SCALABLE, FcTrue);
+
+		FcResult result;
+		FcPattern* matchedPattern = FcFontMatch(nullptr, pattern, &result);
+		std::string fontFamily;
+
+		if (matchedPattern != nullptr)
+		{
+			FcChar8* family = nullptr;
+			if (FcPatternGetString(matchedPattern, FC_FAMILY, 0, &family) == FcResultMatch)
+			{
+				fontFamily = reinterpret_cast<const char*>(family);
+			}
+			FcPatternDestroy(matchedPattern);
+		}
+
+		FcCharSetDestroy(charSet);
+		FcPatternDestroy(pattern);
+
+		return GetFont(fontFamily, nullptr);
+	}
 }

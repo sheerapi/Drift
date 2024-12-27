@@ -3,6 +3,7 @@
 #include "core/Macros.h"
 #include "core/SkFontMgr.h"
 #include "core/SkTypeface.h"
+#include <cstdint>
 #include <fontconfig/fontconfig.h>
 #include <string>
 #include <unordered_map>
@@ -26,6 +27,7 @@ namespace Drift
 		static auto ResolveFontStack(const std::vector<std::string>& stack)
 			-> std::string;
 		static auto GetFont(const std::string& name, Element* element) -> Font*;
+		static auto FindFallbackFont(int32_t codepoint) -> Font*;
 		static void Shutdown();
 
 	private:
