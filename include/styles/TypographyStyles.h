@@ -87,4 +87,37 @@ namespace Drift::Styling
 	private:
 		Font* _font;
 	};
+
+	class dt_api LineHeight : public Style<float>
+	{
+	public:
+		void ApplyEdits(Element* element, float val) override
+		{
+			_height  = val;
+			Dirty = false;
+		}
+
+		[[nodiscard]] auto GetValue(Element* element) const -> float
+		{
+			return _height;
+		}
+
+		[[nodiscard]] inline auto StyleName() const -> std::string override
+		{
+			return "line-height";
+		}
+
+		[[nodiscard]] inline auto StylePriority() const -> int override
+		{
+			return 5;
+		}
+
+		[[nodiscard]] inline auto IsInheritable() const -> bool override
+		{
+			return true;
+		}
+
+	private:
+		float _height;
+	};
 }

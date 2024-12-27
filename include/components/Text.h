@@ -1,6 +1,9 @@
 #pragma once
 #include "core/Element.h"
 #include "core/SkFont.h"
+#include "modules/skshaper/include/SkShaper.h"
+#include "yoga/YGNode.h"
+#include <memory>
 #include <string>
 
 namespace Drift
@@ -16,5 +19,9 @@ namespace Drift
 
 	private:
 		SkFont _font;
+		std::unique_ptr<SkShaper> _shaper{SkShaper::Make()};
+
+		static auto MeasureText(const YGNode* node, float width, YGMeasureMode widthMode,
+								  float height, YGMeasureMode heightMode) -> YGSize;
 	};
 }

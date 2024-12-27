@@ -19,19 +19,16 @@ auto main(int argc, const char** argv) -> int
 
 	auto window = app->AttachView<Window>("Sandbox");
 
-	auto* easing = new CubicEasingFunction(0.175, 0.885, 0.32, 1.1);
-
 	auto* root = window->GetCurrentActivity()
 					 ->AttachRoot(std::make_shared<Element>())
 					 ->FlexDirection(Direction::Row)
 					 ->Gap(10)
 					 ->Padding(10)
 					 ->AddStyle<BackgroundColor>(Color::FromHex(0xFFFFFF))
-					 ->AddStyle<TransitionDuration>(500, TimeUnit::Milliseconds)
-					 ->AddStyle<TransitionEasingFunction>(easing)
 					 ->AddStyle<FontSize>(32);
 
-	root->AddChild<Text>("Hello");
+	root->AddChild<Text>("Hello ❤️❤️🐸")
+		->AddStyle<BackgroundColor>(Color::FromHex(0xFF0000));
 
 	return app->Present();
 }

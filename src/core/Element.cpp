@@ -199,6 +199,11 @@ namespace Drift
 				AddStyle<Styling::FontFamily>(std::vector<std::string>({"sans-serif"}));
 			}
 
+			if (!HasStyle<Styling::LineHeight>())
+			{
+				AddStyle<Styling::LineHeight>(1);
+			}
+
 			_init = true;
 		}
 
