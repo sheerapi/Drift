@@ -195,6 +195,7 @@ namespace Drift
 
 		dt_yogaPropertyType(AlignContent, Align);
 		dt_yogaPropertyType(AlignItems, Align);
+		dt_yogaPropertyType(AlignSelf, Align);
 		dt_yogaPropertyType(JustifyContent, Justify);
 		dt_yogaPropertyType(Display, DisplayType);
 		dt_yogaPropertyType(Overflow, OverflowType);

@@ -20,13 +20,15 @@ namespace Drift
 			ResolveFontStack({ConfigManager::HasGlobalValue("fonts.sans_serif")
 								  ? ConfigManager::GetGlobalString("fonts.sans_serif")
 								  : "Inter",
-							  "sans"}), nullptr);
+							  "sans"}),
+			nullptr);
 
 		fonts["serif"] =
 			GetFont(ResolveFontStack({ConfigManager::HasGlobalValue("fonts.serif")
 										  ? ConfigManager::GetGlobalString("fonts.serif")
 										  : "Playfair Display",
-									  "serif"}), nullptr);
+									  "serif"}),
+					nullptr);
 
 		fonts["monospaced"] = GetFont(
 			ResolveFontStack({ConfigManager::HasGlobalValue("fonts.monospaced")
@@ -62,7 +64,8 @@ namespace Drift
 		if (!HasFont(name))
 		{
 			dt_coreError("Font {} was not found in the system!", name);
-			fonts[name] = new Font(std::make_shared<sk_sp<SkTypeface>>(SkTypeface::MakeEmpty()));
+			fonts[name] =
+				new Font(std::make_shared<sk_sp<SkTypeface>>(SkTypeface::MakeEmpty()));
 		}
 
 		auto* pattern = FcNameParse((const FcChar8*)name.c_str());
@@ -84,9 +87,10 @@ namespace Drift
 			[family, filePath, element]()
 			{
 				*fonts[std::string(reinterpret_cast<char*>(family))] =
-					*new Font(std::make_shared<sk_sp<SkTypeface>>(fontMgr->makeFromFile(reinterpret_cast<char*>(filePath))));
+					*new Font(std::make_shared<sk_sp<SkTypeface>>(
+						fontMgr->makeFromFile(reinterpret_cast<char*>(filePath))));
 				dt_coreVerbose("Loaded font {}", reinterpret_cast<char*>(family));
-				
+
 				if (element != nullptr)
 				{
 					element->EmitSignal("asset.loaded");
@@ -176,7 +180,8 @@ namespace Drift
 		if (matchedPattern != nullptr)
 		{
 			FcChar8* family = nullptr;
-			if (FcPatternGetString(matchedPattern, FC_FAMILY, 0, &family) == FcResultMatch)
+			if (FcPatternGetString(matchedPattern, FC_FAMILY, 0, &family) ==
+				FcResultMatch)
 			{
 				fontFamily = reinterpret_cast<const char*>(family);
 			}

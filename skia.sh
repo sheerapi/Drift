@@ -9,6 +9,12 @@ unzip -qo include.zip
 
 cd ..
 
+mkdir -p src && cd src
+wget -q https://github.com/EclipseLinux/Skia/releases/latest/download/skia-src.zip -O src.zip
+unzip -qo src.zip
+
+cd ..
+
 mkdir -p modules && cd modules
 wget -q https://github.com/EclipseLinux/Skia/releases/latest/download/skia-modules.zip -O modules.zip
 unzip -qo modules.zip

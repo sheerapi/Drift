@@ -1111,6 +1111,52 @@ namespace Drift::Styling
 		Drift::Align _oldVal;
 	};
 
+	class dt_api AlignSelf : public Style<Drift::Align>
+	{
+	public:
+		[[nodiscard]] inline auto StyleName() const -> std::string override
+		{
+			return "align-self";
+		}
+
+		[[nodiscard]] inline auto StylePriority() const -> int override
+		{
+			return 10;
+		}
+
+		[[nodiscard]] inline auto IsAnimatable() const -> bool override
+		{
+			return false;
+		}
+
+		void ApplyEdits(Element* element, Drift::Align val) override
+		{
+			_val = val;
+			Dirty = false;
+		}
+
+		[[nodiscard]] auto GetValue(Element* element) const -> Drift::Align
+		{
+			return _val;
+		}
+
+		void RecalculateLayout(Element* element) override
+		{
+			if (_val == _oldVal)
+			{
+				return;
+			}
+
+			YGNodeStyleSetAlignSelf((YGNodeRef)element->GetLayoutEngineHandle(),
+									 (YGAlign)_val);
+			_oldVal = _val;
+		}
+
+	private:
+		Drift::Align _val;
+		Drift::Align _oldVal;
+	};
+
 	class dt_api JustifyContent : public Style<Drift::Justify>
 	{
 	public:

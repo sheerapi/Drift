@@ -5,7 +5,6 @@
 #include "graphics/RendererContext.h"
 #include "styles/LayoutStyles.h"
 #include "styles/TypographyStyles.h"
-#include "utils/TextRunHandler.h"
 #include "yoga/YGConfig.h"
 #include "yoga/YGNode.h"
 #include <cfloat>
@@ -16,7 +15,7 @@ namespace Drift
 	{
 		Content = content;
 		YGNodeSetContext((YGNodeRef)GetLayoutEngineHandle(), this);
-		YGNodeSetMeasureFunc((YGNodeRef)GetLayoutEngineHandle(), MeasureText);
+		// YGNodeSetMeasureFunc((YGNodeRef)GetLayoutEngineHandle(), MeasureText);
 		YGNodeSetBaselineFunc((YGNodeRef)GetLayoutEngineHandle(), BaselineText);
 	}
 
@@ -54,7 +53,7 @@ namespace Drift
 		SkFontMetrics metrics;
 		component->_font.getMetrics(&metrics);
 
-		float lineHeight = component->_font.getSize();
+		float lineHeight = component->_font.getSize() * 1.125F;
 		float letterSpacing = 0;
 
 		if (component->HasStyle<Styling::LineHeight>() &&
@@ -74,20 +73,17 @@ namespace Drift
 							 ? std::numeric_limits<float>::infinity()
 							 : width;
 
-		Internals::TextRunLayoutHandler handler(maxWidth, lineHeight, letterSpacing);
+		float cursorX = 0.F;
+		float cursorY = 0.F;
+		float lineWidth = 0.F;
 
-		component->_shaper->shape(component->Content.c_str(), component->Content.size(),
-								  component->_font, true, maxWidth, &handler);
-
-		float totalWidth = 0;
-		for (const auto& line : handler.Lines)
+		for (size_t i = 0; component->Content.size() < text.size();)
 		{
-			totalWidth = std::max(totalWidth, line.Width);
+			
 		}
 
 		return YGSize{
-			widthMode == YGMeasureModeExactly ? width : totalWidth,
-			heightMode == YGMeasureModeExactly ? height : handler.TotalHeight,
+			0, 0
 		};
 	}
 

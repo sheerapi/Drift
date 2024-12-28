@@ -3,6 +3,7 @@
 #include "core/Macros.h"
 #include "core/SkFontMgr.h"
 #include "core/SkTypeface.h"
+#include "src/ports/SkFontMgr_custom.h"
 #include <cstdint>
 #include <fontconfig/fontconfig.h>
 #include <string>
@@ -16,7 +17,7 @@ namespace Drift
 	public:
 		std::shared_ptr<sk_sp<SkTypeface>> Typeface;
 
-		Font(const std::shared_ptr<sk_sp<SkTypeface>>& typeface) : Typeface(typeface){};
+		Font(const std::shared_ptr<sk_sp<SkTypeface>>& typeface) : Typeface(typeface) {};
 	};
 
 	class dt_api FontManager
@@ -29,6 +30,11 @@ namespace Drift
 		static auto GetFont(const std::string& name, Element* element) -> Font*;
 		static auto FindFallbackFont(int32_t codepoint) -> Font*;
 		static void Shutdown();
+
+		static inline auto GetFontMgr() -> sk_sp<SkFontMgr>
+		{
+			return fontMgr;
+		}
 
 	private:
 		inline static std::unordered_map<std::string, Font*> fonts;

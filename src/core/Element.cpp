@@ -32,11 +32,10 @@ namespace Drift
 		YGConfigSetPointScaleFactor(config, 1);
 
 		_ygNode = YGNodeNewWithConfig(config);
-		Overflow(OverflowType::Visible);
+		Overflow(OverflowType::Hidden);
 		FlexShrink(0);
 		PositionType(PositionType::Static);
 		FlexDirection(Direction::Row);
-		AlignContent(Align::Stretch);
 		Padding(0);
 		Margin(0);
 
@@ -464,6 +463,7 @@ namespace Drift
 
 	dt_yogaPropertyEnumDef(AlignContent, Align, YGAlign);
 	dt_yogaPropertyEnumDef(AlignItems, Align, YGAlign);
+	dt_yogaPropertyEnumDef(AlignSelf, Align, YGAlign);
 	dt_yogaPropertyEnumDef(JustifyContent, Justify, YGJustify);
 	dt_yogaPropertyEnumDef(Display, DisplayType, YGDisplay);
 	dt_yogaPropertyEnumDef(Overflow, OverflowType, YGOverflow);
