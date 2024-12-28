@@ -201,7 +201,7 @@ namespace Drift
 
 			if (!HasStyle<Styling::LineHeight>())
 			{
-				AddStyle<Styling::LineHeight>(1);
+				AddStyle<Styling::LineHeight>(-1);
 			}
 
 			_init = true;

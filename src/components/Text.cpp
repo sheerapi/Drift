@@ -3,9 +3,12 @@
 #include "core/SkFontMetrics.h"
 #include "core/SkTextBlob.h"
 #include "graphics/RendererContext.h"
+#include "styles/LayoutStyles.h"
 #include "styles/TypographyStyles.h"
+#include "utils/TextRunHandler.h"
 #include "yoga/YGConfig.h"
 #include "yoga/YGNode.h"
+#include <cfloat>
 
 namespace Drift
 {
@@ -13,7 +16,8 @@ namespace Drift
 	{
 		Content = content;
 		YGNodeSetContext((YGNodeRef)GetLayoutEngineHandle(), this);
-		// YGNodeSetMeasureFunc((YGNodeRef)GetLayoutEngineHandle(), MeasureText);
+		YGNodeSetMeasureFunc((YGNodeRef)GetLayoutEngineHandle(), MeasureText);
+		YGNodeSetBaselineFunc((YGNodeRef)GetLayoutEngineHandle(), BaselineText);
 	}
 
 	void Text::Update()
@@ -34,11 +38,13 @@ namespace Drift
 		auto bounds = GetBoundingBox();
 		dt_canvas->drawSimpleText(Content.c_str(), Content.size(), SkTextEncoding::kUTF8,
 								  bounds.X + GetScrollOffsetX(),
-								  bounds.Y + GetScrollOffsetY() - metrics.fAscent, _font, paint);
+								  bounds.Y + GetScrollOffsetY() +
+									  GetStyle<Styling::FontSize>()->GetValue(this),
+								  _font, paint);
 	}
 
 	auto Text::MeasureText(const YGNode* node, float width, YGMeasureMode widthMode,
-					 float height, YGMeasureMode heightMode) -> YGSize
+						   float height, YGMeasureMode heightMode) -> YGSize
 	{
 		auto* component = static_cast<Text*>(YGNodeGetContext(node));
 
@@ -48,14 +54,67 @@ namespace Drift
 		SkFontMetrics metrics;
 		component->_font.getMetrics(&metrics);
 
-		float lineHeight = metrics.fDescent - metrics.fAscent;
-		float totalHeight = 0.0F;
-		float maxWidth = 0.0F;
+		float lineHeight = component->_font.getSize();
+		float letterSpacing = 0;
 
-		auto addLine = [&](const char* start, size_t length, float width)
+		if (component->HasStyle<Styling::LineHeight>() &&
+			component->GetStyle<Styling::LineHeight>()->GetValue(component) != -1)
 		{
-			totalHeight += lineHeight;
-			maxWidth = std::max(maxWidth, width);
+			lineHeight = component->_font.getSize() *
+						 component->GetStyle<Styling::LineHeight>()->GetValue(component);
+		}
+
+		if (component->HasStyle<Styling::LetterSpacing>())
+		{
+			letterSpacing =
+				component->GetStyle<Styling::LetterSpacing>()->GetValue(component);
+		}
+
+		float maxWidth = (widthMode == YGMeasureModeUndefined)
+							 ? std::numeric_limits<float>::infinity()
+							 : width;
+
+		Internals::TextRunLayoutHandler handler(maxWidth, lineHeight, letterSpacing);
+
+		component->_shaper->shape(component->Content.c_str(), component->Content.size(),
+								  component->_font, true, maxWidth, &handler);
+
+		float totalWidth = 0;
+		for (const auto& line : handler.Lines)
+		{
+			totalWidth = std::max(totalWidth, line.Width);
+		}
+
+		return YGSize{
+			widthMode == YGMeasureModeExactly ? width : totalWidth,
+			heightMode == YGMeasureModeExactly ? height : handler.TotalHeight,
 		};
+	}
+
+	auto Text::BaselineText(const YGNode* node, float width, float height) -> float
+	{
+		auto* component = static_cast<Text*>(YGNodeGetContext(node));
+
+		SkFontMetrics metrics;
+		component->_font.getMetrics(&metrics);
+
+		float baseline = -metrics.fAscent;
+		Align alignment = Align::FlexStart;
+
+		if (component->HasStyle<Styling::AlignItems>())
+		{
+			alignment = component->GetStyle<Styling::AlignItems>()->GetValue(component);
+		}
+
+		if (alignment == Align::Center)
+		{
+			baseline = height / 2.0F - (metrics.fAscent + metrics.fDescent) / 2.0F;
+		}
+		else if (alignment == Align::FlexEnd)
+		{
+			baseline = height + metrics.fDescent;
+		}
+
+		return baseline;
 	}
 }

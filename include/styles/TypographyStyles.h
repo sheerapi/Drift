@@ -3,6 +3,7 @@
 #include "core/SkTypeface.h"
 #include "styles/Style.h"
 #include "core/Element.h"
+#include "yoga/YGNode.h"
 #include <vector>
 
 namespace Drift::Styling
@@ -21,7 +22,6 @@ namespace Drift::Styling
 				_size.Val = val.Val;
 				_size.Unit = val.Unit;
 			}
-			element->EmitSignal("typography.changed");
 			Dirty = false;
 		}
 
@@ -80,7 +80,6 @@ namespace Drift::Styling
 		void ApplyEdits(Element* element, std::vector<std::string> val) override
 		{
 			_font = FontManager::GetFont(FontManager::ResolveFontStack(val), element);
-			element->EmitSignal("typography.changed");
 			Dirty = false;
 		}
 
@@ -93,7 +92,7 @@ namespace Drift::Styling
 	public:
 		void ApplyEdits(Element* element, float val) override
 		{
-			_height  = val;
+			Internals::animateValue(&_height, _height, val, element);
 			Dirty = false;
 		}
 
@@ -117,7 +116,81 @@ namespace Drift::Styling
 			return true;
 		}
 
+		void RecalculateLayout(Element* element) override
+		{
+			if (_height == _oldHeight)
+			{
+				return;
+			}
+
+			if (YGNodeHasMeasureFunc((YGNodeRef)element->GetLayoutEngineHandle()))
+			{
+				YGNodeMarkDirty((YGNodeRef)element->GetLayoutEngineHandle());
+			}
+			_oldHeight = _height;
+		}
+
 	private:
 		float _height;
+		float _oldHeight;
+	};
+
+	class dt_api LetterSpacing : public Style<Value>
+	{
+	public:
+		void ApplyEdits(Element* element, Value val) override
+		{
+			if (IsReadyToResolve(element))
+			{
+				Internals::animateValue(&_size.Val, _size.Convert(val.Unit, element),
+										val.Val, element);
+			}
+			else
+			{
+				_size.Val = val.Val;
+				_size.Unit = val.Unit;
+			}
+			Dirty = false;
+		}
+
+		[[nodiscard]] auto GetValue(Element* element) const -> float
+		{
+			return _size.Resolve(element);
+		}
+
+		[[nodiscard]] inline auto StyleName() const -> std::string override
+		{
+			return "letter-spacing";
+		}
+
+		[[nodiscard]] inline auto StylePriority() const -> int override
+		{
+			return 5;
+		}
+
+		[[nodiscard]] inline auto IsInheritable() const -> bool override
+		{
+			return true;
+		}
+
+		void RecalculateLayout(Element* element) override
+		{
+			auto resolved = _size.Resolve(element);
+
+			if (resolved == _oldSize)
+			{
+				return;
+			}
+
+			if (YGNodeHasMeasureFunc((YGNodeRef)element->GetLayoutEngineHandle()))
+			{
+				YGNodeMarkDirty((YGNodeRef)element->GetLayoutEngineHandle());
+			}
+			_oldSize = resolved;
+		}
+
+	private:
+		Value _size;
+		float _oldSize;
 	};
 }

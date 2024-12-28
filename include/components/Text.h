@@ -23,5 +23,7 @@ namespace Drift
 
 		static auto MeasureText(const YGNode* node, float width, YGMeasureMode widthMode,
 								  float height, YGMeasureMode heightMode) -> YGSize;
+
+		static auto BaselineText(const YGNode* node, float width, float height) -> float;
 	};
 }

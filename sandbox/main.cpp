@@ -18,15 +18,12 @@ auto main(int argc, const char** argv) -> int
 
 	auto* root = window->GetCurrentActivity()
 					 ->AttachRoot(std::make_shared<Element>())
-					 ->FlexDirection(Direction::Row)
+					 ->FlexDirection(Direction::Column)
 					 ->Gap(10)
 					 ->Padding(10)
-					 ->AddStyle<BackgroundColor>(Color::FromHex(0xFFFFFF))
-					 ->AddStyle<FontSize>(32)
-					 ->AddStyle<FontFamily>(std::vector<std::string>({"monospaced"}));
+					 ->AddStyle<BackgroundColor>(Color::FromHex(0xFFFFFF));
 
-	root->AddChild<Text>("Hello ❤️❤️🐸")
-		->AddStyle<BackgroundColor>(Color::FromHex(0xFF0000));
+	root->AddChild<Text>("Hello 🐸")->AddStyle<BackgroundColor>(Color::FromHex(0xFF0000));
 
 	return app->Present();
 }
