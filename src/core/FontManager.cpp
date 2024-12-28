@@ -28,11 +28,12 @@ namespace Drift
 										  : "Playfair Display",
 									  "serif"}), nullptr);
 
-		fonts["monospaced"] =
-			GetFont(ResolveFontStack({ConfigManager::HasGlobalValue("fonts.serif")
-										  ? ConfigManager::GetGlobalString("fonts.serif")
-										  : "Roboto Mono",
-									  "monospaced"}), nullptr);
+		fonts["monospaced"] = GetFont(
+			ResolveFontStack({ConfigManager::HasGlobalValue("fonts.monospaced")
+								  ? ConfigManager::GetGlobalString("fonts.monospaced")
+								  : "Roboto Mono",
+							  "monospaced"}),
+			nullptr);
 
 		dt_coreVerbose("Loaded {} fonts", fonts.size());
 	}

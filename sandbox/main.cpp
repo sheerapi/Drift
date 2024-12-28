@@ -1,12 +1,9 @@
-#include "components/FadeActivity.h"
 #include "components/Text.h"
 #include "components/Window.h"
 #include "core/Application.h"
 #include "core/LayoutEnums.h"
-#include "styles/AnimationStyles.h"
 #include "styles/RenderingStyles.h"
 #include "styles/Style.h"
-#include "styles/TransitionFunction.h"
 #include "styles/TypographyStyles.h"
 #include "utils/Color.h"
 
@@ -25,7 +22,8 @@ auto main(int argc, const char** argv) -> int
 					 ->Gap(10)
 					 ->Padding(10)
 					 ->AddStyle<BackgroundColor>(Color::FromHex(0xFFFFFF))
-					 ->AddStyle<FontSize>(32);
+					 ->AddStyle<FontSize>(32)
+					 ->AddStyle<FontFamily>(std::vector<std::string>({"monospaced"}));
 
 	root->AddChild<Text>("Hello ❤️❤️🐸")
 		->AddStyle<BackgroundColor>(Color::FromHex(0xFF0000));
