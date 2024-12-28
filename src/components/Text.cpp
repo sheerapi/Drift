@@ -5,6 +5,8 @@
 #include "graphics/RendererContext.h"
 #include "styles/LayoutStyles.h"
 #include "styles/TypographyStyles.h"
+#include "utf8.h"
+#include "utils/PerformanceTimer.h"
 #include "yoga/YGConfig.h"
 #include "yoga/YGNode.h"
 #include <cfloat>
@@ -15,13 +17,13 @@ namespace Drift
 	{
 		Content = content;
 		YGNodeSetContext((YGNodeRef)GetLayoutEngineHandle(), this);
-		// YGNodeSetMeasureFunc((YGNodeRef)GetLayoutEngineHandle(), MeasureText);
+		YGNodeSetMeasureFunc((YGNodeRef)GetLayoutEngineHandle(), MeasureText);
 		YGNodeSetBaselineFunc((YGNodeRef)GetLayoutEngineHandle(), BaselineText);
 	}
 
 	void Text::Update()
 	{
-		_font.setTypeface(GetStyle<Styling::FontFamily>()->GetValue(this));
+		_font.setTypeface(*GetStyle<Styling::FontFamily>()->GetValue(this)->Typeface);
 		_font.setSize(GetStyle<Styling::FontSize>()->GetValue(this));
 	}
 
@@ -45,6 +47,8 @@ namespace Drift
 	auto Text::MeasureText(const YGNode* node, float width, YGMeasureMode widthMode,
 						   float height, YGMeasureMode heightMode) -> YGSize
 	{
+		dt_stopwatch();
+
 		auto* component = static_cast<Text*>(YGNodeGetContext(node));
 
 		SkString text(component->Content.c_str());
@@ -77,14 +81,42 @@ namespace Drift
 		float cursorY = 0.F;
 		float lineWidth = 0.F;
 
-		for (size_t i = 0; component->Content.size() < text.size();)
+		auto* font = component->GetStyle<Styling::FontFamily>()->GetValue(component);
+		auto skfont = component->_font;
+
+		for (auto i = component->Content.begin(); i < component->Content.end();)
 		{
-			
+			auto character = (uint32_t)utf8::next(i, component->Content.end());
+
+			if (FontManager::CanGlyphRender(*i) &&
+				(FontManager::RequiresFallback(character) ||
+				 !FontManager::HasGlyph(font, character)))
+			{
+				dt_info("Requires {}", *i);
+				skfont.setTypeface(*FontManager::FindFallbackFont(character)->Typeface);
+			}
+
+			float charWidth = 0.F;
+			charWidth +=
+				skfont.measureText(&*i, sizeof(char), SkTextEncoding::kUTF8, nullptr);
+
+			if (cursorX + (charWidth) > maxWidth || *i == '\n')
+			{
+				cursorX = 0.0F;
+				cursorY += lineHeight;
+			}
+			else
+			{
+				charWidth += letterSpacing;
+			}
+
+			cursorX += charWidth;
+			lineWidth = std::max(lineWidth, cursorX);
 		}
 
-		return YGSize{
-			0, 0
-		};
+		cursorY += lineHeight;
+
+		return YGSize{lineWidth, cursorY};
 	}
 
 	auto Text::BaselineText(const YGNode* node, float width, float height) -> float

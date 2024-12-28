@@ -62,9 +62,9 @@ namespace Drift::Styling
 			return 5;
 		}
 
-		[[nodiscard]] auto GetValue(Element* element) const -> sk_sp<SkTypeface>
+		[[nodiscard]] auto GetValue(Element* element) const -> Font*
 		{
-			return *_font->Typeface;
+			return _font;
 		}
 
 		[[nodiscard]] inline auto IsAnimatable() const -> bool override
@@ -80,6 +80,10 @@ namespace Drift::Styling
 		void ApplyEdits(Element* element, std::vector<std::string> val) override
 		{
 			_font = FontManager::GetFont(FontManager::ResolveFontStack(val), element);
+			if (YGNodeHasMeasureFunc((YGNodeRef)element->GetLayoutEngineHandle()))
+			{
+				YGNodeMarkDirty((YGNodeRef)element->GetLayoutEngineHandle());
+			}
 			Dirty = false;
 		}
 

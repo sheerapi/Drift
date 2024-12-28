@@ -7,6 +7,7 @@
 #include "ports/SkFontMgr_empty.h"
 #include "utils/ConfigManager.h"
 #include "utils/PerformanceTimer.h"
+#include <cctype>
 
 namespace Drift
 {
@@ -37,6 +38,16 @@ namespace Drift
 							  "monospaced"}),
 			nullptr);
 
+		if (ConfigManager::HasGlobalValue("fonts.fallback"))
+		{
+			auto fallbackFonts = ConfigManager::GetGlobalStringArray("fonts.fallback");
+
+			for (auto& font : fallbackFonts)
+			{
+				GetFont(font, nullptr);
+			}
+		}
+
 		dt_coreVerbose("Loaded {} fonts", fonts.size());
 	}
 
@@ -66,6 +77,7 @@ namespace Drift
 			dt_coreError("Font {} was not found in the system!", name);
 			fonts[name] =
 				new Font(std::make_shared<sk_sp<SkTypeface>>(SkTypeface::MakeEmpty()));
+			return fonts[name];
 		}
 
 		auto* pattern = FcNameParse((const FcChar8*)name.c_str());
@@ -124,7 +136,7 @@ namespace Drift
 		return found;
 	}
 
-	auto FontManager::FindFallbackFont(int32_t codepoint) -> Font*
+	auto FontManager::FindFallbackFont(uint32_t codepoint) -> Font*
 	{
 		std::vector<std::string> fallbackFonts;
 
@@ -135,62 +147,39 @@ namespace Drift
 
 		for (const auto& fontName : fallbackFonts)
 		{
-			FcPattern* pattern = FcNameParse((const FcChar8*)fontName.c_str());
-			FcConfigSubstitute(nullptr, pattern, FcMatchPattern);
-			FcDefaultSubstitute(pattern);
+			auto* font = GetFont(fontName, nullptr);
 
-			FcCharSet* charSet = FcCharSetCreate();
-			FcCharSetAddChar(charSet, codepoint);
-			FcPatternAddCharSet(pattern, FC_CHARSET, charSet);
-			FcPatternAddBool(pattern, FC_SCALABLE, FcTrue);
-
-			FcResult result;
-			FcPattern* matchedPattern = FcFontMatch(nullptr, pattern, &result);
-			std::string fontFamily;
-
-			if (matchedPattern != nullptr)
+			if (HasGlyph(font, codepoint))
 			{
-				FcChar8* family = nullptr;
-				if (FcPatternGetString(matchedPattern, FC_FAMILY, 0, &family) ==
-					FcResultMatch)
-				{
-					fontFamily = reinterpret_cast<const char*>(family);
-					FcPatternDestroy(matchedPattern);
-					FcCharSetDestroy(charSet);
-					FcPatternDestroy(pattern);
-					return GetFont(fontFamily, nullptr);
-				}
-				FcPatternDestroy(matchedPattern);
+				return font;
 			}
-
-			FcCharSetDestroy(charSet);
-			FcPatternDestroy(pattern);
 		}
 
-		FcPattern* pattern = FcPatternCreate();
-		FcCharSet* charSet = FcCharSetCreate();
-		FcCharSetAddChar(charSet, codepoint);
-		FcPatternAddCharSet(pattern, FC_CHARSET, charSet);
-		FcPatternAddBool(pattern, FC_SCALABLE, FcTrue);
+		return GetFont("sans-serif", nullptr);
+	}
 
-		FcResult result;
-		FcPattern* matchedPattern = FcFontMatch(nullptr, pattern, &result);
-		std::string fontFamily;
+	auto FontManager::RequiresFallback(uint32_t codepoint) -> bool
+	{
+		return (codepoint >= 0x1F300 &&
+				codepoint <= 0x1F5FF) || // Misc Symbols and Pictographs
+			   (codepoint >= 0x1F600 && codepoint <= 0x1F64F) || // Emoticons
+			   (codepoint >= 0x1F680 && codepoint <= 0x1F6FF);
+	}
 
-		if (matchedPattern != nullptr)
+	auto FontManager::HasGlyph(Font* typeface, uint32_t codepoint) -> bool
+	{
+		if (typeface->GlyphCache.find(codepoint) != typeface->GlyphCache.end())
 		{
-			FcChar8* family = nullptr;
-			if (FcPatternGetString(matchedPattern, FC_FAMILY, 0, &family) ==
-				FcResultMatch)
-			{
-				fontFamily = reinterpret_cast<const char*>(family);
-			}
-			FcPatternDestroy(matchedPattern);
+			return typeface->GlyphCache[codepoint];
 		}
+		bool hasGlyph = typeface->Typeface->get()->unicharToGlyph(codepoint) != 0;
+		typeface->GlyphCache[codepoint] = hasGlyph;
+		return hasGlyph;
+	}
 
-		FcCharSetDestroy(charSet);
-		FcPatternDestroy(pattern);
-
-		return GetFont(fontFamily, nullptr);
+	auto FontManager::CanGlyphRender(char character) -> bool
+	{
+		return character != '\n' && character != '\t' && character != '\r' &&
+			   character != '\0';
 	}
 }
