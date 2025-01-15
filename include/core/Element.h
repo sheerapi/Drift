@@ -1,6 +1,6 @@
 #pragma once
-#include "../utils/Demangle.h"
 #include "../core/Macros.h"
+#include "../utils/Demangle.h"
 #include "core/LayoutEnums.h"
 #include "styles/Style.h"
 #include "utils/BoundingBox.h"
@@ -42,7 +42,7 @@ namespace Drift
 	};
 
 	using EventHandler = std::function<void(Event)>;
-	
+
 	struct dt_api ElementStates
 	{
 	public:
@@ -58,13 +58,14 @@ namespace Drift
 		Element();
 		virtual ~Element();
 
-        template<typename T, typename... Args> auto AddChild(Args&& ...args) -> std::shared_ptr<T>
-        {
-            typeCheck<Element, T>();
-            return std::dynamic_pointer_cast<T>(AddChild(std::make_shared<T>(args...)));
-        }
+		template <typename T, typename... Args>
+		auto AddChild(Args&&... args) -> std::shared_ptr<T>
+		{
+			typeCheck<Element, T>();
+			return std::dynamic_pointer_cast<T>(AddChild(std::make_shared<T>(args...)));
+		}
 
-		template<typename T, typename... Args> auto AddStyle(Args&& ...args) -> Element*
+		template <typename T, typename... Args> auto AddStyle(Args&&... args) -> Element*
 		{
 			typeCheck<Styling::StyleBase, T>();
 			auto style = std::make_shared<T>();
@@ -89,27 +90,37 @@ namespace Drift
 			}
 			else
 			{
-				(static_cast<T*>(_styleKeys[style->StyleName()].get()))->EditStyle(this, args...);
+				(static_cast<T*>(_styleKeys[style->StyleName()].get()))
+					->EditStyle(this, args...);
+
+				if (style->IsInheritable())
+				{
+					for (auto& child : Children)
+					{
+						child->_addStyleIfNotFound<T>(args...);
+					}
+				}
 			}
 
 			return this;
 		}
 
-		template<typename T> auto HasStyle() -> bool
+		template <typename T> auto HasStyle() -> bool
 		{
 			typeCheck<Styling::StyleBase, T>();
 			auto style = std::make_shared<T>();
 			return _styleKeys.contains(style->StyleName());
 		}
 
-		template<typename T> auto GetStyle() -> std::shared_ptr<T>
+		template <typename T> auto GetStyle() -> std::shared_ptr<T>
 		{
 			typeCheck<Styling::StyleBase, T>();
 			auto style = std::make_shared<T>();
 
 			if (!_styleKeys.contains(style->StyleName()))
 			{
-				dt_coreError("Tried to get a style that doesn't exist! (Style: {})", style->StyleName());
+				dt_coreError("Tried to get a style that doesn't exist! (Style: {})",
+							 style->StyleName());
 				return {};
 			}
 
@@ -130,7 +141,8 @@ namespace Drift
 		auto RemoveClassName(const std::string& name) -> Element*;
 
 		auto AddChild(Element* element) -> std::shared_ptr<Element>;
-		auto AddChild(const std::shared_ptr<Element>& element) -> std::shared_ptr<Element>;
+		auto AddChild(const std::shared_ptr<Element>& element)
+			-> std::shared_ptr<Element>;
 
 		auto GetBoundingBox() -> BoundingBox;
 
@@ -187,7 +199,6 @@ namespace Drift
 
 		dt_yogaPropertyType(AlignContent, Align);
 		dt_yogaPropertyType(AlignItems, Align);
-		dt_yogaPropertyType(AlignSelf, Align);
 		dt_yogaPropertyType(JustifyContent, Justify);
 		dt_yogaPropertyType(Display, DisplayType);
 		dt_yogaPropertyType(Overflow, OverflowType);
@@ -236,7 +247,6 @@ namespace Drift
 
 		virtual void BeginUpdate() {};
 		virtual void EndUpdate() {};
-		virtual void Start() {};
 
 	private:
 		YGNodeRef _ygNode;
@@ -245,10 +255,11 @@ namespace Drift
 		bool _focusable{true};
 		bool _receivesInput{true};
 		bool _zOrderingChanged{true};
+		bool _init{false};
 		int _zIndex;
 		ElementStates _states;
-        std::string _id;
-        std::vector<std::string> _className;
+		std::string _id;
+		std::vector<std::string> _className;
 		Scrollable _scrollable;
 
 		void _refreshLayout(bool force = false);
@@ -259,7 +270,8 @@ namespace Drift
 		std::unordered_map<std::string, std::shared_ptr<Styling::StyleBase>> _styleKeys;
 		std::vector<std::shared_ptr<Styling::StyleBase>> _styles;
 
-		template <typename T, typename... Args> auto _addStyleIfNotFound(Args&&... args) -> Element*
+		template <typename T, typename... Args>
+		auto _addStyleIfNotFound(Args&&... args) -> Element*
 		{
 			typeCheck<Styling::StyleBase, T>();
 			auto style = std::make_shared<T>();
@@ -291,7 +303,5 @@ namespace Drift
 #ifdef DEBUG
 		[[nodiscard]] auto _getPaint() const -> unsigned int;
 #endif
-
-		friend class Activity;
 	};
 }

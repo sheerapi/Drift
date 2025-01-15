@@ -28,25 +28,15 @@ namespace Drift
 				(float)ConfigManager::GetGlobalInteger("general.scroll");
 		}
 
-		if (ConfigManager::HasGlobalValue("fonts.size"))
-		{
-			AddStyle<Styling::FontSize>((float)ConfigManager::GetGlobalInteger("fonts.size"));
-		}
-		else
-		{
-			AddStyle<Styling::FontSize>(16);
-		}
-
-		AddStyle<Styling::FontFamily>(std::vector<std::string>({"sans-serif"}));
-
 		auto* config = YGConfigNew();
 		YGConfigSetPointScaleFactor(config, 1);
 
 		_ygNode = YGNodeNewWithConfig(config);
-		Overflow(OverflowType::Hidden);
+		Overflow(OverflowType::Visible);
 		FlexShrink(0);
 		PositionType(PositionType::Static);
 		FlexDirection(Direction::Row);
+		AlignContent(Align::Stretch);
 		Padding(0);
 		Margin(0);
 
@@ -95,8 +85,6 @@ namespace Drift
 				element->_addExistingStyle(style);
 			}
 		}
-
-		element->Start();
 
 		std::sort(Children.begin(), Children.end(),
 				  [](const auto& a, const auto& b) { return a->_zIndex < b->_zIndex; });
@@ -184,9 +172,32 @@ namespace Drift
 
 	void Element::Tick()
 	{
-		if (_parent == nullptr && !HasClassName("root"))
+		if (IsOrphan() && !HasClassName("root"))
 		{
 			AddClassName("root");
+		}
+
+		if (IsOrphan() && !_init)
+		{
+			if (!HasStyle<Styling::FontSize>())
+			{
+				if (ConfigManager::HasGlobalValue("fonts.size"))
+				{
+					AddStyle<Styling::FontSize>(
+						(float)ConfigManager::GetGlobalInteger("fonts.size"));
+				}
+				else
+				{
+					AddStyle<Styling::FontSize>(16);
+				}
+			}
+
+			if (!HasStyle<Styling::FontFamily>())
+			{
+				AddStyle<Styling::FontFamily>(std::vector<std::string>({"sans-serif"}));
+			}
+
+			_init = true;
 		}
 
 		if (_scrollable.ScrollOffsetX != _scrollable.TargetScrollOffsetX)
@@ -239,9 +250,9 @@ namespace Drift
 	{
 		// auto bounds = GetBoundingBox();
 		// auto parentBounds =
-			// _parent != nullptr ? _parent->GetBoundingBox() : BoundingBox{0, 0, 0, 0};
+		// _parent != nullptr ? _parent->GetBoundingBox() : BoundingBox{0, 0, 0, 0};
 		// auto viewportBounds =
-			// GetContainingActivity()->GetContainingView()->GetBoundingBox();
+		// GetContainingActivity()->GetContainingView()->GetBoundingBox();
 
 		/* if (!SkRect::Intersects(
 				SkRect::MakeXYWH(bounds.X, bounds.Y, bounds.Width, bounds.Height),
@@ -446,7 +457,6 @@ namespace Drift
 
 	dt_yogaPropertyEnumDef(AlignContent, Align, YGAlign);
 	dt_yogaPropertyEnumDef(AlignItems, Align, YGAlign);
-	dt_yogaPropertyEnumDef(AlignSelf, Align, YGAlign);
 	dt_yogaPropertyEnumDef(JustifyContent, Justify, YGJustify);
 	dt_yogaPropertyEnumDef(Display, DisplayType, YGDisplay);
 	dt_yogaPropertyEnumDef(Overflow, OverflowType, YGOverflow);
