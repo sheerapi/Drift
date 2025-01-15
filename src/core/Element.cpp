@@ -28,6 +28,17 @@ namespace Drift
 				(float)ConfigManager::GetGlobalInteger("general.scroll");
 		}
 
+		if (ConfigManager::HasGlobalValue("fonts.size"))
+		{
+			AddStyle<Styling::FontSize>((float)ConfigManager::GetGlobalInteger("fonts.size"));
+		}
+		else
+		{
+			AddStyle<Styling::FontSize>(16);
+		}
+
+		AddStyle<Styling::FontFamily>(std::vector<std::string>({"sans-serif"}));
+
 		auto* config = YGConfigNew();
 		YGConfigSetPointScaleFactor(config, 1);
 
@@ -173,37 +184,9 @@ namespace Drift
 
 	void Element::Tick()
 	{
-		if (IsOrphan() && !HasClassName("root"))
+		if (_parent == nullptr && !HasClassName("root"))
 		{
 			AddClassName("root");
-		}
-
-		if (IsOrphan() && !_init)
-		{
-			if (!HasStyle<Styling::FontSize>())
-			{
-				if (ConfigManager::HasGlobalValue("fonts.size"))
-				{
-					AddStyle<Styling::FontSize>(
-						(float)ConfigManager::GetGlobalInteger("fonts.size"));
-				}
-				else
-				{
-					AddStyle<Styling::FontSize>(16);
-				}
-			}
-
-			if (!HasStyle<Styling::FontFamily>())
-			{
-				AddStyle<Styling::FontFamily>(std::vector<std::string>({"sans-serif"}));
-			}
-
-			if (!HasStyle<Styling::LineHeight>())
-			{
-				AddStyle<Styling::LineHeight>(-1);
-			}
-
-			_init = true;
 		}
 
 		if (_scrollable.ScrollOffsetX != _scrollable.TargetScrollOffsetX)
