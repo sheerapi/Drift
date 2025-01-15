@@ -1,6 +1,4 @@
 #pragma once
-#include "core/FontManager.h"
-#include "core/SkTypeface.h"
 #include "styles/Style.h"
 #include "core/Element.h"
 #include "yoga/YGNode.h"
@@ -62,9 +60,9 @@ namespace Drift::Styling
 			return 5;
 		}
 
-		[[nodiscard]] auto GetValue(Element* element) const -> Font*
+		[[nodiscard]] auto GetValue(Element* element) const -> void*
 		{
-			return _font;
+			return nullptr;
 		}
 
 		[[nodiscard]] inline auto IsAnimatable() const -> bool override
@@ -79,16 +77,12 @@ namespace Drift::Styling
 
 		void ApplyEdits(Element* element, std::vector<std::string> val) override
 		{
-			_font = FontManager::GetFont(FontManager::ResolveFontStack(val), element);
 			if (YGNodeHasMeasureFunc((YGNodeRef)element->GetLayoutEngineHandle()))
 			{
 				YGNodeMarkDirty((YGNodeRef)element->GetLayoutEngineHandle());
 			}
 			Dirty = false;
 		}
-
-	private:
-		Font* _font;
 	};
 
 	class dt_api LineHeight : public Style<float>

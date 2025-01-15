@@ -158,6 +158,7 @@ namespace Drift
 
 		void Tick();
 		void Render();
+		virtual void Start() {};
 
 		void ForceLayoutRefresh();
 

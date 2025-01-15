@@ -1,10 +1,11 @@
-#include "components/Text.h"
+#include "components/FadeActivity.h"
 #include "components/Window.h"
 #include "core/Application.h"
 #include "core/LayoutEnums.h"
+#include "styles/AnimationStyles.h"
 #include "styles/RenderingStyles.h"
 #include "styles/Style.h"
-#include "styles/TypographyStyles.h"
+#include "styles/TransitionFunction.h"
 #include "utils/Color.h"
 
 using namespace Drift;
@@ -12,29 +13,173 @@ using namespace Drift::Styling;
 
 auto main(int argc, const char** argv) -> int
 {
+	bool clicked1;
+	bool clicked2;
+
 	auto* app = new Application("com.drift.sandbox");
 
 	auto window = app->AttachView<Window>("Sandbox");
 
+	auto* easing = new CubicEasingFunction(0.175, 0.885, 0.32, 1.1);
+
+	auto popupActivity = std::make_shared<Components::FadeActivity>();
+	auto* popup = popupActivity->AttachRoot(std::make_shared<Element>())
+					  ->JustifyContent(Justify::Center)
+					  ->AlignItems(Align::Center);
+
+	auto* close = popup->AddChild<Element>()
+					  ->Width(500)
+					  ->Height(100)
+					  ->BorderRadius(20)
+					  ->AddStyle<Styling::BackgroundColor>(Color::FromHex(0xffffff))
+					  ->AddStyle<Styling::TransitionDuration>(500, TimeUnit::Milliseconds)
+					  ->AddStyle<Styling::TransitionEasingFunction>(easing);
+
+	close->On("click",
+			  [&clicked2, window](Event event)
+			  {
+				  clicked2 = !clicked2;
+				  window->NavigateBack();
+			  });
+
 	auto* root = window->GetCurrentActivity()
 					 ->AttachRoot(std::make_shared<Element>())
-					 ->FlexDirection(Direction::Column)
+					 ->FlexDirection(Direction::Row)
 					 ->Gap(10)
 					 ->Padding(10)
-					 ->AddStyle<BackgroundColor>(Color::FromHex(0xFFFFFF));
+					 ->AddStyle<Styling::BackgroundColor>(Color::FromHex(0xFFFFFF))
+					 ->AddStyle<Styling::TransitionDuration>(500, TimeUnit::Milliseconds)
+					 ->AddStyle<Styling::TransitionEasingFunction>(easing);
 
-	root->AddChild<Text>("Hello 🐸")->AddStyle<BackgroundColor>(Color::FromHex(0xFF0000));
+	auto* container1 =
+		root->AddChild<Element>()
+			->FlexGrow(1)
+			->FlexDirection(Direction::Column)
+			->JustifyContent(Justify::SpaceBetween)
+			->AddStyle<Styling::TransitionDuration>(500, TimeUnit::Milliseconds)
+			->AddStyle<Styling::TransitionEasingFunction>(easing)
+			->ID("panel");
 
-	root->AddChild<Text>(R"(Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec vitae urna nec lorem laoreet pulvinar nec ut sem. Integer consequat nunc eu sem gravida, nec fermentum dui sagittis. Aenean ut arcu odio. Integer eu aliquet lorem. Morbi rutrum ac erat sed egestas. Sed accumsan efficitur ligula, non iaculis ligula placerat quis. Phasellus egestas tellus hendrerit velit consectetur, eget rutrum eros euismod. Nullam quis arcu ex. Morbi elementum et elit eu vehicula. Quisque eget tortor id leo laoreet egestas. Integer vitae ullamcorper sapien, congue rhoncus lacus. Suspendisse rutrum cursus est eu dictum. Fusce in leo dolor. Aenean elementum erat ornare, hendrerit ipsum vitae, facilisis ex.
+	for (int i = 0; i < 5; i++)
+	{
+		auto* btn =
+			container1->AddChild<Element>()
+				->FlexGrow(1)
+				->AddStyle<Styling::BackgroundColor>(Color::FromHex(0x000000))
+				->ZIndex(i)
+				->AddStyle<Styling::TransitionDuration>(500, TimeUnit::Milliseconds)
+				->AddStyle<Styling::TransitionEasingFunction>(easing);
 
-Phasellus aliquet tempus ipsum, non iaculis nibh tristique at. Praesent auctor velit eget lectus placerat vestibulum. Phasellus eget diam sed turpis dictum pulvinar nec lacinia nibh. Suspendisse condimentum dolor non sem semper lobortis. Mauris nec viverra magna. Nunc mattis nunc hendrerit, vulputate leo sed, rhoncus arcu. Cras faucibus aliquam nisi, in lobortis sapien egestas condimentum. Nulla pretium lacus mi, lacinia ultrices metus accumsan ut. Morbi dui tortor, fermentum et pharetra mollis, hendrerit a augue.
+		btn->On("hover",
+				[btn, container1](Event event)
+				{
+					btn->AddStyle<Styling::BackgroundColor>(Color::FromHex(0x333333));
+					container1->GapVertical((float)btn->ZIndex() * 10);
+				});
 
-Etiam ultrices pellentesque purus, vitae sollicitudin neque imperdiet non. In faucibus aliquam enim, et rutrum metus pellentesque in. In quis mattis sem. Nunc ipsum quam, dapibus vehicula leo vitae, tempus facilisis tortor. Cras condimentum justo sed massa tempus mattis eu ac odio. Fusce mattis, leo mollis laoreet elementum, est erat tincidunt odio, ac sagittis mauris ex at arcu. Praesent consequat est ut feugiat porttitor. Donec scelerisque justo eu mollis suscipit. Proin pharetra aliquet tellus vehicula venenatis. Duis ut faucibus mi. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Proin tincidunt accumsan blandit.
+		btn->On("unhover",
+				[btn, container1](Event event)
+				{
+					btn->AddStyle<Styling::BackgroundColor>(Color::FromHex(0x000000));
+					container1->GapVertical(0);
+				});
+	}
 
-Morbi at erat maximus, posuere justo eu, fringilla nisi. Duis urna turpis, scelerisque eget nibh sed, sodales luctus purus. Vestibulum laoreet dignissim vehicula. In vestibulum accumsan nibh, quis sollicitudin tortor venenatis id. Aliquam auctor vel sapien sit amet gravida. Fusce euismod odio et ultricies varius. Vestibulum condimentum lacus eu mi malesuada, elementum convallis justo feugiat. Praesent ultricies nec metus quis accumsan. Nam in pellentesque ex, ac dapibus nunc. Donec eget enim eget elit blandit rhoncus.
+	auto* container2 = root->AddChild<Element>()
+						   ->FlexGrow(2)
+						   ->FlexDirection(Direction::Column)
+						   ->Gap(20)
+						   ->JustifyContent(Justify::SpaceBetween);
 
-Praesent sollicitudin lobortis consequat. Vestibulum justo erat, eleifend ac venenatis at, condimentum ac augue. Nullam rutrum venenatis ultrices. Fusce facilisis ipsum non consectetur iaculis. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque non turpis sit amet nisl congue luctus. Proin vitae ante ex. Praesent ornare lorem ut massa gravida convallis. Nam tempus erat non mi euismod, nec consequat dui malesuada. Aliquam aliquam, ligula in ultricies ullamcorper, orci sapien sagittis nisl, eget feugiat ex augue sed massa.)")
-		->AddStyle<BackgroundColor>(Color::FromHex(0x00FF00));
+	auto* container3 = container2->AddChild<Element>()
+						   ->FlexDirection(Direction::Row)
+						   ->JustifyContent(Justify::SpaceBetween);
+
+	for (size_t i = 0; i < 12; i++)
+	{
+		auto* btn =
+			container3->AddChild<Element>()
+				->FlexGrow(1)
+				->AddStyle<Styling::BackgroundColor>(Color::FromHex(0x000000))
+				->Height(50)
+				->AddStyle<Styling::TransitionDuration>(500, TimeUnit::Milliseconds)
+				->AddStyle<Styling::TransitionEasingFunction>(easing)
+				->ID("panel");
+
+		btn->On("hover",
+				[btn](Event event) {
+					btn->AddStyle<Styling::BackgroundColor>(Color::FromHex(0x333333))
+						->Height(150);
+				});
+
+		btn->On("unhover",
+				[btn](Event event) {
+					btn->AddStyle<Styling::BackgroundColor>(Color::FromHex(0x000000))
+						->Height(50);
+				});
+	}
+
+	auto* container4 =
+		container2->AddChild<Element>()
+			->AddStyle<Styling::BackgroundColor>(Color::FromHex(0x000000))
+			->FlexGrow(1)
+			->FlexDirection(Direction::Column)
+			->Gap(10)
+			->Padding(10)
+			->AddStyle<Styling::TransitionDuration>(500, TimeUnit::Milliseconds)
+			->AddStyle<Styling::TransitionEasingFunction>(easing);
+
+	container4->On("hover", [container4](Event event)
+				   { container4->AddStyle<BackgroundColor>(Color::FromHex(0xFF0000)); });
+
+	container4->On("unhover", [container4](Event event)
+				   { container4->AddStyle<BackgroundColor>(Color::FromHex(0x000000)); });
+
+	auto* btn1 = container4->AddChild<Element>()
+					 ->Width(Value(100, UnitType::Percent))
+					 ->Height(100)
+					 ->AddStyle<BackgroundColor>(Color::FromHex(0x00ff00))
+					 ->BorderRadius(20);
+
+	auto* btn2 = container4->AddChild<Element>()
+					 ->Width(Value(100, UnitType::Percent))
+					 ->Height(100)
+					 ->AddStyle<BackgroundColor>(Color::FromHex(0x00ff00))
+					 ->BorderRadius(Value(100, UnitType::Pixels))
+					 ->AddStyle<Styling::TransitionDuration>(500, TimeUnit::Milliseconds)
+					 ->AddStyle<Styling::TransitionEasingFunction>(easing);
+
+	btn2->On("hover",
+			 [btn2](Event event)
+			 {
+				 btn2->BorderRadius(0);
+				 event.StopPropagation();
+			 });
+
+	btn2->On("unhover",
+			 [btn2](Event event) { btn2->BorderRadius(Value(100, UnitType::Pixels)); });
+
+	btn1->On("click",
+			 [root, &clicked1](Event event)
+			 {
+				 clicked1 = !clicked1;
+
+				 if (clicked1)
+				 {
+					 root->Padding(40);
+				 }
+				 else
+				 {
+					 root->Padding(10);
+				 }
+			 });
+
+	btn2->On("click",
+			 [&clicked2, window, popupActivity](Event event)
+			 {
+				 clicked2 = !clicked2;
+				 window->AddActivity(popupActivity);
+			 });
 
 	return app->Present();
 }
