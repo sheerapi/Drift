@@ -2,6 +2,7 @@
 #include "../core/Macros.h"
 #include <functional>
 #include <memory>
+#include <vector>
 
 namespace Drift::Events
 {
@@ -12,12 +13,20 @@ namespace Drift::Events
 
 		void OnMutate(std::function<void(T old, T newVal)> callback)
 		{
-			_callback = callback;
+			_callbacks.push_back(callback);
+		}
+
+		void ClearCallbacks()
+		{
+			_callbacks.clear();
 		}
 
 		auto operator=(T val) -> MutableValue<T>&
 		{
-			_callback(*_value, val);
+			for (auto& callback : _callbacks)
+			{
+				callback(*_value, val);
+			}
 			*_value = val;
 		}
 
@@ -43,61 +52,88 @@ namespace Drift::Events
 
 		auto operator+=(T val) -> MutableValue<T>&
 		{
-			_callback(*_value, *_value + val);
+			for (auto& callback : _callbacks)
+			{
+				callback(*_value, *_value + val);
+			}
 			*_value += val;
 			return *this;
 		}
 
 		auto operator-=(T val) -> MutableValue<T>&
 		{
-			_callback(*_value, *_value - val);
+			for (auto& callback : _callbacks)
+			{
+				callback(*_value, *_value - val);
+			}
 			*_value -= val;
 			return *this;
 		}
 
 		auto operator*=(T val) -> MutableValue<T>&
 		{
-			_callback(*_value, *_value * val);
+			for (auto& callback : _callbacks)
+			{
+				callback(*_value, *_value * val);
+			}
 			*_value *= val;
 		}
 
 		auto operator/=(T val) -> MutableValue<T>&
 		{
-			_callback(*_value, *_value / val);
+			for (auto& callback : _callbacks)
+			{
+				callback(*_value, *_value / val);
+			}
 			*_value /= val;
 			return *this;
 		}
 
 		auto operator%=(T val) -> MutableValue<T>&
 		{
-			_callback(*_value, *_value % val);
+			for (auto& callback : _callbacks)
+			{
+				callback(*_value, *_value % val);
+			}
 			*_value %= val;
 			return *this;
 		}
 
 		auto operator&=(T val) -> MutableValue<T>&
 		{
-			_callback(*_value, *_value & val);
+			for (auto& callback : _callbacks)
+			{
+				callback(*_value, *_value & val);
+			}
 			*_value &= val;
 			return *this;
 		}
 
 		auto operator|=(T val) -> MutableValue<T>&
 		{
-			_callback(*_value, *_value | val);
+			for (auto& callback : _callbacks)
+			{
+				callback(*_value, *_value | val);
+			}
 			*_value |= val;
 			return *this;
 		}
 
 		auto operator++() -> MutableValue<T>&
 		{
-			_callback(*_value, ++*_value);
+			for (auto& callback : _callbacks)
+			{
+				callback(*_value, ++*_value);
+			}
 			return *this;
 		}
 
 		auto operator--() -> MutableValue<T>&
 		{
-			_callback(*_value, --*_value);
+			for (auto& callback : _callbacks)
+			{
+				callback(*_value, --*_value);
+			}
 			return *this;
 		}
 
@@ -108,6 +144,7 @@ namespace Drift::Events
 
 	private:
 		std::unique_ptr<T> _value;
-		std::function<void(T old, T newVal)> _callback{[](auto old, auto val) {}};
+		std::vector<std::function<void(T old, T newVal)>> _callbacks{
+			[](auto old, auto val) {}};
 	};
 }

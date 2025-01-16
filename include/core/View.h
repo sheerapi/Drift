@@ -33,7 +33,10 @@ namespace Drift
 			return Running;
 		}
 
-		[[nodiscard]] inline virtual auto GetBoundingBox() -> BoundingBox { return {}; };
+		[[nodiscard]] inline virtual auto GetBoundingBox() -> BoundingBox
+		{
+			return {};
+		};
 
 		[[nodiscard]] inline auto GetRendererContext() const -> Graphics::RendererContext
 		{
@@ -48,6 +51,16 @@ namespace Drift
 		void PrintElementTree();
 		void ForceLayoutRefresh();
 		void NavigateBack();
+
+		auto AttachRoot(const std::shared_ptr<Element>& root) -> std::shared_ptr<Element>;
+		auto AttachRoot() -> std::shared_ptr<Element>;
+
+		template<typename T, typename... Args>
+		auto AttachRoot(Args&&... args) -> std::shared_ptr<T>
+		{
+			typeCheck<Element, T>();
+			return std::static_pointer_cast<T>(AttachRoot(std::make_shared<T>(args...)));
+		}
 
 		auto GetCurrentActivity() -> std::shared_ptr<Activity>;
 

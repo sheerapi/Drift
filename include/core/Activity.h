@@ -45,6 +45,7 @@ namespace Drift
 		void PrintElementTree();
 
 		void SetStatus(Status status);
+		auto SetName(const std::string& name) -> Activity*;
 		void SetContainingView(View* view);
 
 		auto GetStatus() -> Status;
@@ -57,7 +58,8 @@ namespace Drift
 
 	private:
 		Status _status{Activity::Status::Active};
-		View* _containingView;
+		View* _containingView{nullptr};
+		std::string _name;
 
 		friend class Input;
 	};

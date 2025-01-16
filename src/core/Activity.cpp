@@ -23,8 +23,15 @@ namespace Drift
 
 	auto Activity::GetActivityID() -> std::string
 	{
-		return Application::GetApplicationID().GetCompoundID() + "." +
-			   getNamespaceFreeName(dt_type(*this));
+		return Application::GetApplicationID().GetCompoundID() + "." + (_name.empty()
+				   ? getNamespaceFreeName(dt_type(*this))
+				   : _name);
+	}
+
+	auto Activity::SetName(const std::string& name) -> Activity*
+	{
+		_name = name;
+		return this;
 	}
 
 	void Activity::PrintElementTree()
@@ -40,7 +47,7 @@ namespace Drift
 	{
 		Root = root;
 		Root->SetContainingActivity(this);
-		
+
 		if (_containingView != nullptr)
 		{
 			Root->Width(Styling::Value(_containingView->GetBoundingBox().Width));

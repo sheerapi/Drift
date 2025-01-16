@@ -27,7 +27,6 @@ sources = [
     'src/events/ShortcutManager.cpp',
     'src/utils/ConfigManager.cpp',
     'src/styles/Style.cpp',
-    'src/components/FadeActivity.cpp',
     'src/core/Scheduler.cpp',
     'src/styles/AnimationScheduler.cpp',
     'src/styles/TransitionFunction.cpp',

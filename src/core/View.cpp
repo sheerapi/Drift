@@ -132,4 +132,15 @@ namespace Drift
 	{
 		return Activities[Activities.size() - 1];
 	}
+
+	auto View::AttachRoot(const std::shared_ptr<Element>& root) -> std::shared_ptr<Element>
+	{
+		GetCurrentActivity()->AttachRoot(root);
+		return root;
+	}
+
+	auto View::AttachRoot() -> std::shared_ptr<Element>
+	{
+		return AttachRoot(std::make_shared<Element>());
+	}
 }
