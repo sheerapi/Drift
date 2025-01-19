@@ -96,5 +96,7 @@ namespace Drift
 
 	private:
 		bool _enabled{true};
+
+		friend class Activity;
 	};
 }

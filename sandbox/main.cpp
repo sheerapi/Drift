@@ -1,4 +1,5 @@
 #include "components/Window.h"
+#include "components/activities/ActivityEffect.h"
 #include "core/Application.h"
 #include "core/LayoutEnums.h"
 #include "styles/AnimationStyles.h"
@@ -9,6 +10,7 @@
 
 using namespace Drift;
 using namespace Drift::Styling;
+using namespace Drift::Components;
 
 auto main(int argc, const char** argv) -> int
 {
@@ -21,7 +23,9 @@ auto main(int argc, const char** argv) -> int
 
 	auto* easing = new CubicEasingFunction(0.175, 0.885, 0.32, 1.1);
 
-	auto popupActivity = std::make_shared<Activity>();
+	auto popupActivity = std::make_shared<Activity>("Popup");
+	popupActivity->AddEffect<Activities::FadeEffect>();
+
 	auto* popup = popupActivity->AttachRoot(std::make_shared<Element>())
 					  ->JustifyContent(Justify::Center)
 					  ->AlignItems(Align::Center);

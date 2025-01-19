@@ -1,7 +1,11 @@
 #pragma once
 #include "../core/Element.h"
 #include "../core/Macros.h"
+#include "components/activities/ActivityEffect.h"
 #include "events/Observable.h"
+#include "styles/AnimationStyles.h"
+#include "styles/TransitionFunction.h"
+#include <utility>
 
 namespace Drift
 {
@@ -18,17 +22,14 @@ namespace Drift
 		};
 
 		virtual ~Activity() = default;
-		Activity();
+		Activity(std::string name = "");
 
 		auto GetActivityID() -> std::string;
 
 		virtual void OnCreate() {};
 		virtual void OnPause() {};
 		virtual void OnResume() {};
-		virtual void OnDestroy()
-		{
-			Finish();
-		};
+		virtual void OnDestroy();
 
 		virtual void BeginDraw() {};
 		virtual void EndDraw() {};
@@ -43,6 +44,7 @@ namespace Drift
 
 		void Finish();
 		void PrintElementTree();
+		void HandleEffects();
 
 		void SetStatus(Status status);
 		auto SetName(const std::string& name) -> Activity*;
@@ -53,6 +55,27 @@ namespace Drift
 
 		auto CloneRoot() -> std::shared_ptr<Element>;
 
+		template <typename T, typename... Args>
+		auto AddEffect(Args&&... args) -> Activity*
+		{
+			typeCheck<Components::Activities::ActivityEffect, T>();
+			auto effect = std::make_shared<T>(std::forward<Args>(args)...);
+			_effects.push_back(effect);
+
+			std::sort(_effects.begin(), _effects.end(),
+					  [](auto a, auto b) { return a->GetPriority() > b->GetPriority(); });
+
+			return this;
+		}
+
+		auto GetEasing() -> Styling::EasingFunction*;
+		auto GetEasingDuration() -> int;
+
+		auto SetEasing(Styling::EasingFunction* easing) -> Activity*;
+		auto SetEasingDuration(int duration,
+							   Styling::TimeUnit unit = Styling::TimeUnit::Milliseconds)
+			-> Activity*;
+
 	protected:
 		std::shared_ptr<Element> Root;
 
@@ -60,6 +83,10 @@ namespace Drift
 		Status _status{Activity::Status::Active};
 		View* _containingView{nullptr};
 		std::string _name;
+		std::vector<std::shared_ptr<Components::Activities::ActivityEffect>> _effects;
+		Styling::EasingFunction* _easing{
+			new Styling::CubicEasingFunction(0.19, 1, 0.22, 1)};
+		int _easingDuration{350};
 
 		friend class Input;
 	};

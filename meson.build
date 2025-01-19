@@ -31,7 +31,8 @@ sources = [
     'src/styles/AnimationScheduler.cpp',
     'src/styles/TransitionFunction.cpp',
     'src/utils/CubicBezier.cpp',
-    'src/core/WorkerScheduler.cpp'
+    'src/core/WorkerScheduler.cpp',
+    'src/components/activities/ActivityEffect.cpp'
 ]
 
 cmake = import('cmake')

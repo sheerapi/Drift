@@ -1,12 +1,14 @@
 #include "core/Activity.h"
 #include "core/Application.h"
+#include "core/Scheduler.h"
 #include "styles/Style.h"
 
 namespace Drift
 {
-	Activity::Activity()
+	Activity::Activity(std::string name)
 	{
 		Root = std::make_shared<Element>();
+		_name = std::move(name);
 	}
 
 	void Activity::Finish()
@@ -23,9 +25,8 @@ namespace Drift
 
 	auto Activity::GetActivityID() -> std::string
 	{
-		return Application::GetApplicationID().GetCompoundID() + "." + (_name.empty()
-				   ? getNamespaceFreeName(dt_type(*this))
-				   : _name);
+		return Application::GetApplicationID().GetCompoundID() + "." +
+			   (_name.empty() ? getNamespaceFreeName(dt_type(*this)) : _name);
 	}
 
 	auto Activity::SetName(const std::string& name) -> Activity*
@@ -115,13 +116,95 @@ namespace Drift
 
 	void Activity::Render()
 	{
+		for (auto& effect : _effects)
+		{
+			effect->BeginDraw();
+		}
+
 		BeginDraw();
 		Root->Render();
 		EndDraw();
+
+		for (auto riter = _effects.rbegin(); riter != _effects.rend(); ++riter)
+		{
+			(*riter)->EndDraw();
+		}
 	}
 
 	auto Activity::CloneRoot() -> std::shared_ptr<Element>
 	{
 		return {Root};
+	}
+
+	auto Activity::GetEasing() -> Styling::EasingFunction*
+	{
+		return _easing;
+	}
+
+	auto Activity::GetEasingDuration() -> int
+	{
+		return _easingDuration;
+	}
+
+	auto Activity::SetEasing(Styling::EasingFunction* easing) -> Activity*
+	{
+		_easing = easing;
+		return this;
+	}
+
+	auto Activity::SetEasingDuration(int duration, Styling::TimeUnit unit) -> Activity*
+	{
+		auto result = duration;
+
+		switch (unit)
+		{
+		case Styling::TimeUnit::Seconds:
+			result *= 1000;
+			break;
+		case Styling::TimeUnit::Minutes:
+			result *= 60000;
+			break;
+		case Styling::TimeUnit::Hours:
+			result *= 3600000;
+			break;
+		default:
+			break;
+		};
+
+		_easingDuration = result;
+		return this;
+	}
+
+	void Activity::HandleEffects()
+	{
+		if (_effects.empty())
+		{
+			return;
+		}
+
+		if (GetStatus() == Status::Active)
+		{
+			for (auto& effect : _effects)
+			{
+				effect->Present(this);
+			}
+		}
+		else
+		{
+			dt_setTimeout([this]() { Finish(); }, _easingDuration);
+
+			for (auto& effect : _effects)
+			{
+				effect->Shutdown(this);
+			}
+		}
+	}
+
+	void Activity::OnDestroy()
+	{
+		if (_effects.empty())
+		{
+			Finish();
+		}
 	}
 }

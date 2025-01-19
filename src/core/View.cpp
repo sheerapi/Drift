@@ -28,6 +28,7 @@ namespace Drift
 
 		GetCurrentActivity()->SetStatus(Activity::Status::Paused);
 		GetCurrentActivity()->OnDestroy();
+		GetCurrentActivity()->HandleEffects();
 		DestroyedActivities.push_back(GetCurrentActivity());
 		Activities.pop_back();
 
@@ -79,6 +80,7 @@ namespace Drift
 		GetCurrentActivity()->OnResume();
 		GetCurrentActivity()->SetStatus(Activity::Status::Active);
 		GetCurrentActivity()->SetContainingView(this);
+		GetCurrentActivity()->HandleEffects();
 
 #ifdef DEBUG
 		auto current =
