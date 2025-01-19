@@ -119,7 +119,7 @@ namespace Drift
 	{
 		for (auto& effect : _effects)
 		{
-			effect->BeginDraw();
+			effect->BeginDraw(this);
 		}
 
 		BeginDraw();
@@ -128,7 +128,7 @@ namespace Drift
 
 		for (auto & _effect : std::ranges::reverse_view(_effects))
 		{
-			_effect->EndDraw();
+			_effect->EndDraw(this);
 		}
 	}
 

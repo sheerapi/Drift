@@ -24,7 +24,7 @@ auto main(int argc, const char** argv) -> int
 	auto* easing = new CubicEasingFunction(0.175, 0.885, 0.32, 1.1);
 
 	auto popupActivity = std::make_shared<Activity>("Popup");
-	popupActivity->AddEffect<Activities::FadeEffect>();
+	popupActivity->AddEffect<Activities::FadeEffect>()->AddEffect<Activities::ScaleEffect>();
 
 	auto* popup = popupActivity->AttachRoot(std::make_shared<Element>())
 					  ->JustifyContent(Justify::Center)
