@@ -74,6 +74,7 @@ namespace Drift
 			activity->SetContainingView(this);
 			activity->Update();
 		}
+		
 		DestroyedActivities.erase(
 			std::remove_if(
 				DestroyedActivities.begin(), DestroyedActivities.end(), [](auto& activity)

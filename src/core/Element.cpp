@@ -212,19 +212,23 @@ namespace Drift
 												  _scrollable.TargetScrollOffsetY, 0.5F);
 		}
 
-		if (_states.Enabled &&
-			GetContainingActivity()->GetStatus() != Activity::Status::Paused)
+		if (_states.Enabled)
 		{
-			BeginUpdate();
-
-			Update();
-
+			if (GetContainingActivity()->GetStatus() != Activity::Status::Paused)
+			{
+				BeginUpdate();
+				Update();
+			}
+			
 			for (auto& child : Children)
 			{
 				child->Tick();
 			}
 
-			EndUpdate();
+			if (GetContainingActivity()->GetStatus() != Activity::Status::Paused)
+			{
+				EndUpdate();
+			}
 		}
 
 		if (_zOrderingChanged)
