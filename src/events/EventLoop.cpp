@@ -24,12 +24,6 @@ namespace Drift::Events
 
 	void EventLoop::Update()
 	{
-		Time::Update();
-		Styling::AnimationScheduler::Update();
-		Scheduler::Update();
-		Internals::WorkerScheduler::Update();
-		Input::RecalculateState();
-		
 		if (Views.empty())
 		{
 			Running = false;
@@ -40,6 +34,12 @@ namespace Drift::Events
 		{
 			Tick();
 		}
+
+		Time::Update();
+		Styling::AnimationScheduler::Update();
+		Scheduler::Update();
+		Internals::WorkerScheduler::Update();
+		Input::RecalculateState();
 
 		for (auto& view : Views)
 		{

@@ -20,6 +20,7 @@ namespace Drift
 		static auto GetApplicationID() -> ApplicationID;
 		static auto GetEnvironmentInfo() -> EnvironmentInfo;
 		static void ForceGlobalLayoutRefresh();
+		[[nodiscard]] auto HasPresented() const -> bool;
 
 		template <typename T> void AttachEventLoop()
 		{

@@ -1,4 +1,5 @@
 #include "core/Activity.h"
+#include <ranges>
 #include "core/Application.h"
 #include "core/Scheduler.h"
 #include "styles/Style.h"
@@ -125,9 +126,9 @@ namespace Drift
 		Root->Render();
 		EndDraw();
 
-		for (auto riter = _effects.rbegin(); riter != _effects.rend(); ++riter)
+		for (auto & _effect : std::ranges::reverse_view(_effects))
 		{
-			(*riter)->EndDraw();
+			_effect->EndDraw();
 		}
 	}
 
@@ -141,7 +142,7 @@ namespace Drift
 		return _easing;
 	}
 
-	auto Activity::GetEasingDuration() -> int
+	auto Activity::GetEasingDuration() const -> int
 	{
 		return _easingDuration;
 	}

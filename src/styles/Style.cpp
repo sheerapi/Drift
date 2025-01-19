@@ -1,13 +1,11 @@
 #include "styles/Style.h"
 #include "core/Activity.h"
 #include "core/Element.h"
-#include "core/Logger.h"
+#include "core/Application.h"
 #include "core/View.h"
-#include "magic_enum.hpp"
 #include "styles/AnimationScheduler.h"
 #include "styles/AnimationStyles.h"
 #include "styles/TransitionFunction.h"
-#include "utils/Demangle.h"
 
 namespace Drift::Styling
 {
@@ -259,6 +257,11 @@ namespace Drift::Styling
 		}
 
 		if (element->GetContainingActivity()->GetContainingView() == nullptr)
+		{
+			return false;
+		}
+
+		if (!Application::main->HasPresented())
 		{
 			return false;
 		}

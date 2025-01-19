@@ -69,7 +69,7 @@ namespace Drift
 		}
 
 		auto GetEasing() -> Styling::EasingFunction*;
-		auto GetEasingDuration() -> int;
+		auto GetEasingDuration() const -> int;
 
 		auto SetEasing(Styling::EasingFunction* easing) -> Activity*;
 		auto SetEasingDuration(int duration,

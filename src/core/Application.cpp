@@ -107,4 +107,9 @@ namespace Drift
 		ConfigManager::Write();
 		delete _env;
 	}
+
+	auto Application::HasPresented() const -> bool
+	{
+		return _presented;
+	}
 }
