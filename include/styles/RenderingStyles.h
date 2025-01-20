@@ -2,7 +2,9 @@
 #include "Style.h"
 #include "core/Element.h"
 #include "core/Macros.h"
+#include "core/SkBlurTypes.h"
 #include "core/SkCanvas.h"
+#include "core/SkMaskFilter.h"
 #include "core/SkRRect.h"
 #include "utils/BoundingBoxV.h"
 #include "utils/Color.h"
@@ -113,12 +115,7 @@ namespace Drift::Styling
 			auto bl = _bottomLeftX.Resolve(element);
 			auto br = _bottomRightX.Resolve(element);
 
-			SkVector radii[4] = {
-				{tl, tl},
-				{tr, tr},
-				{br, br},
-				{bl, bl}
-			};
+			SkVector radii[4] = {{tl, tl}, {tr, tr}, {br, br}, {bl, bl}};
 
 			auto bounds = element->GetBoundingBox();
 			auto rrect = SkRRect();
@@ -224,5 +221,104 @@ namespace Drift::Styling
 		Value _bottom;
 		Value _left;
 		float _oldMargin;
+	};
+
+	class dt_api BoxShadow : public Style<Value, Value, Value, Color>
+	{
+	public:
+		[[nodiscard]] inline auto StyleName() const -> std::string override
+		{
+			return "box-shadow";
+		}
+
+		[[nodiscard]] inline auto StylePriority() const -> int override
+		{
+			return 11;
+		}
+
+		auto GetValue(Element* element) -> Color
+		{
+			return _color;
+		}
+
+		void ApplyEdits(Element* element, Value xPos, Value yPos, Value radius,
+						Color color) override
+		{
+			Internals::animateValue(&_color.R, color.R, element);
+			Internals::animateValue(&_color.G, color.G, element);
+			Internals::animateValue(&_color.B, color.B, element);
+			Internals::animateValue(&_color.A, color.A, element);
+
+			if (StyleBase::IsReadyToResolve(element))
+			{
+				Internals::animateValue(&_x.Val, _x.Convert(xPos.Unit, element), xPos.Val,
+										element);
+				Internals::animateValue(
+					&_y.Val, _y.Convert(yPos.Unit, element, PreferredDimension::Height),
+					yPos.Val, element);
+				Internals::animateValue(&_radius.Val,
+										_radius.Convert(radius.Unit, element), radius.Val,
+										element);
+			}
+			else
+			{
+				_x.Val = xPos.Val;
+				_x.Unit = xPos.Unit;
+
+				_y.Val = yPos.Val;
+				_y.Unit = yPos.Unit;
+
+				_radius.Val = radius.Val;
+				_radius.Unit = radius.Unit;
+			}
+
+			Dirty = false;
+		}
+
+		inline void BeginDrawStyle(Element* element, SkCanvas* ctx) override
+		{
+			auto rrect = SkRRect();
+			auto bounds = element->GetBoundingBox();
+
+			auto elementRect = SkRect::MakeXYWH(
+				bounds.X + element->GetScrollOffsetX() + _x.Resolve(element),
+				bounds.Y + element->GetScrollOffsetY() +
+					_y.Resolve(element, PreferredDimension::Height),
+				bounds.Width, bounds.Height);
+
+			if (element->HasStyle<BorderRadius>())
+			{
+				auto border = element->GetStyle<BorderRadius>()->GetValue(element);
+
+				auto tl = border.X.Resolve(element);
+				auto tr = border.Width.Resolve(element);
+				auto bl = border.Y.Resolve(element);
+				auto br = border.Height.Resolve(element);
+
+				SkVector radii[4] = {{tl, tl}, {tr, tr}, {br, br}, {bl, bl}};
+
+				rrect.setRectRadii(elementRect, radii);
+			}
+			else
+			{
+				SkVector radii[4] = {{0, 0}, {0, 0}, {0, 0}, {0, 0}};
+				rrect.setRectRadii(elementRect, radii);
+			}
+
+			SkPaint shadowPaint;
+			shadowPaint.setColor(SK_ColorBLACK);
+			shadowPaint.setMaskFilter(SkMaskFilter::MakeBlur(
+				SkBlurStyle::kNormal_SkBlurStyle, _radius.Resolve(element)));
+			shadowPaint.setColor(_color.ToHex());
+			shadowPaint.setAntiAlias(true);
+
+			ctx->drawRRect(rrect, shadowPaint);
+		}
+
+	private:
+		Color _color;
+		Value _x;
+		Value _y;
+		Value _radius;
 	};
 }

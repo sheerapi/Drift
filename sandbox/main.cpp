@@ -27,7 +27,7 @@ auto main(int argc, const char** argv) -> int
 					->AddStyle<BackgroundColor>(Color::FromHex(0x222222))
 					->AddStyle<TransitionEasingFunction>(easing)
 					->AddStyle<TransitionDuration>(450, TimeUnit::Milliseconds)
-					->BorderRadius(10);
+					->BorderRadius(10)->AddStyle<BoxShadow>(4, 4, 24, Color(0, 0, 0, 64));
 
 	btn->AddChild<Element>()->Width(65)->Height(16);
 
@@ -39,16 +39,19 @@ auto main(int argc, const char** argv) -> int
 
 	auto popup = std::make_shared<Activity>("TestModal");
 	popup->AddEffect<Activities::SlideEffect>(
-		Activities::SlideEffect::Direction::Bottom);
+		Activities::SlideEffect::Direction::Bottom)
+		->AddEffect<Activities::FadeEffect>(0.1F);
 
 	popup->SetEasing(easing)->SetEasingDuration(500);
 
 	auto root2 = popup->AttachRoot(std::make_shared<Element>())->AlignItems(Align::FlexEnd)->AddChild<Element>();
+
 	root2->AddStyle<BackgroundColor>(Color::FromHex(0xffffff))
 		->Height(Value(50, UnitType::Percent))
 		->Width(Value(100, UnitType::Percent))
 		->AlignItems(Align::Center)
-		->JustifyContent(Justify::Center);
+		->JustifyContent(Justify::Center)
+		->AddStyle<BoxShadow>(0, -12, 24, Color(0, 0, 0, 96));
 
 	btn->On("click", [popup, window](const Event& event){
 		window->AddActivity(popup);
