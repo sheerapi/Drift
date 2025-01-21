@@ -208,4 +208,19 @@ namespace Drift
 			Finish();
 		}
 	}
+
+	auto Activity::AttachRoot(Element* root) -> std::shared_ptr<Element>
+	{
+		return AttachRoot(std::shared_ptr<Element>(root));
+	}
+
+	auto Activity::AttachRoot() -> std::shared_ptr<Element>
+	{
+		return AttachRoot(std::make_shared<Element>());
+	}
+
+	auto Activity::GetRoot() -> std::shared_ptr<Element>
+	{
+		return Root;
+	}
 }

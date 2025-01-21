@@ -82,10 +82,10 @@ namespace Drift::Components::Activities
 		}
 
 		Styling::AnimationScheduler::AnimateValue(
-			&_xPos, newX, activity->GetEasingDuration(), activity->GetEasing());
+			&_xPos, 0, newX, activity->GetEasingDuration(), activity->GetEasing());
 
 		Styling::AnimationScheduler::AnimateValue(
-			&_yPos, newY, activity->GetEasingDuration(), activity->GetEasing());
+			&_yPos, 0, newY, activity->GetEasingDuration(), activity->GetEasing());
 	}
 
 	void SlideEffect::BeginDraw(Activity* activity)

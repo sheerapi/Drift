@@ -41,7 +41,7 @@ namespace Drift
 		friend class Element;
 	};
 
-	using EventHandler = std::function<void(Event)>;
+	using EventHandler = std::function<void(Event&)>;
 
 	struct dt_api ElementStates
 	{

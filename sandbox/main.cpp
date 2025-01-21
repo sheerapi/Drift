@@ -27,7 +27,8 @@ auto main(int argc, const char** argv) -> int
 					->AddStyle<BackgroundColor>(Color::FromHex(0x222222))
 					->AddStyle<TransitionEasingFunction>(easing)
 					->AddStyle<TransitionDuration>(450, TimeUnit::Milliseconds)
-					->BorderRadius(10)->AddStyle<BoxShadow>(4, 4, 24, Color(0, 0, 0, 64));
+					->BorderRadius(10)
+					->AddStyle<BoxShadow>(4, 4, 24, Color(0, 0, 0, 64));
 
 	btn->AddChild<Element>()->Width(65)->Height(16);
 
@@ -38,44 +39,48 @@ auto main(int argc, const char** argv) -> int
 			{ btn->AddStyle<BackgroundColor>(Color::FromHex(0x222222)); });
 
 	auto popup = std::make_shared<Activity>("TestModal");
-	popup->AddEffect<Activities::SlideEffect>(
-		Activities::SlideEffect::Direction::Bottom)
-		->AddEffect<Activities::FadeEffect>(0.1F);
+	popup->AddEffect<Activities::SlideEffect>(Activities::SlideEffect::Direction::Bottom)
+		->AddEffect<Activities::FadeEffect>(0.05F);
 
-	popup->SetEasing(easing)->SetEasingDuration(500);
+	popup->SetEasing(easing)->SetEasingDuration(5000);
 
-	auto root2 = popup->AttachRoot(std::make_shared<Element>())->AlignItems(Align::FlexEnd)->AddChild<Element>();
+	auto* root2 = popup->AttachRoot()->AlignItems(Align::FlexEnd)->AddChild<Element>()->ReceivesInput(false);
+
+	root2->On("click", [window](auto event) { event.StopPropagation(); });
+
+	popup->GetRoot()->On("click", [window](auto event) { window->NavigateBack(); });
 
 	root2->AddStyle<BackgroundColor>(Color::FromHex(0xffffff))
 		->Height(Value(50, UnitType::Percent))
 		->Width(Value(100, UnitType::Percent))
 		->AlignItems(Align::Center)
 		->JustifyContent(Justify::Center)
-		->AddStyle<BoxShadow>(0, -12, 24, Color(0, 0, 0, 96));
+		->AddStyle<BoxShadow>(0, -12, 24, Color(0, 0, 0, 72));
 
-	btn->On("click", [popup, window](const Event& event){
-		window->AddActivity(popup);
-	});
+	btn->On("click", [popup, window](const Event& event) { window->AddActivity(popup); });
 
 	auto* btn2 = root2->AddChild<Element>()
-					->PaddingHorizontal(15)
-					->PaddingVertical(10)
-					->AddStyle<BackgroundColor>(Color::FromHex(0x222222))
-					->AddStyle<TransitionEasingFunction>(easing)
-					->AddStyle<TransitionDuration>(450, TimeUnit::Milliseconds)
-					->BorderRadius(10);
+					 ->PaddingHorizontal(15)
+					 ->PaddingVertical(10)
+					 ->AddStyle<BackgroundColor>(Color::FromHex(0x222222))
+					 ->AddStyle<TransitionEasingFunction>(easing)
+					 ->AddStyle<TransitionDuration>(450, TimeUnit::Milliseconds)
+					 ->BorderRadius(10);
 
 	btn2->AddChild<Element>()->Width(65)->Height(16);
 
 	btn2->On("hover", [btn2](const Event& event)
-			{ btn2->AddStyle<BackgroundColor>(Color::FromHex(0x333333)); });
+			 { btn2->AddStyle<BackgroundColor>(Color::FromHex(0x333333)); });
 
 	btn2->On("unhover", [btn2](const Event& event)
 			 { btn2->AddStyle<BackgroundColor>(Color::FromHex(0x222222)); });
 
-	btn2->On("click", [popup, window](const Event& event){
-		window->NavigateBack();
-	});
+	btn2->On("click",
+			 [popup, window](Event& event)
+			 {
+				 window->NavigateBack();
+				 event.StopPropagation();
+			 });
 
 	return app->Present();
 }

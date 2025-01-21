@@ -41,6 +41,15 @@ namespace Drift
 		void ForceLayoutRefresh();
 
 		auto AttachRoot(const std::shared_ptr<Element>& root) -> std::shared_ptr<Element>;
+		auto AttachRoot(Element* root) -> std::shared_ptr<Element>;
+		auto AttachRoot() -> std::shared_ptr<Element>;
+
+		template<typename T, typename... Args>
+		auto AttachRoot(Args&&... args) -> std::shared_ptr<T>
+		{
+			typeCheck<Element, T>();
+			return std::dynamic_pointer_cast<T>(AttachRoot(std::make_shared<T>(args...)));
+		}
 
 		void Finish();
 		void PrintElementTree();
@@ -75,6 +84,8 @@ namespace Drift
 		auto SetEasingDuration(int duration,
 							   Styling::TimeUnit unit = Styling::TimeUnit::Milliseconds)
 			-> Activity*;
+
+		auto GetRoot() -> std::shared_ptr<Element>;
 
 	protected:
 		std::shared_ptr<Element> Root;
